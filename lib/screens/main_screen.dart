@@ -5,6 +5,7 @@ import 'package:Viiddo/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../themes.dart';
@@ -65,8 +66,36 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             length: 2,
             child: new Scaffold(
               appBar: new AppBar(
-                title: new Text(titles[_selectedIndex]),
+                title: _selectedIndex == 0
+                    ? ImageIcon(
+                        AssetImage('assets/icons/home_top_image.png'),
+                        size: 72,
+                      )
+                    : Text(titles[_selectedIndex]),
                 backgroundColor: Colors.white,
+                automaticallyImplyLeading: false,
+                leading: _selectedIndex == 0
+                    ? IconButton(
+                        icon: ImageIcon(
+                          AssetImage('assets/icons/home_baby.png'),
+                          size: 24,
+                        ),
+                        tooltip: 'Next page',
+                        onPressed: () {},
+                      )
+                    : Container(),
+                actions: <Widget>[
+                  _selectedIndex == 0
+                      ? IconButton(
+                          icon: ImageIcon(
+                            AssetImage('assets/icons/notification.png'),
+                            size: 24,
+                          ),
+                          tooltip: 'Next page',
+                          onPressed: () {},
+                        )
+                      : Container(),
+                ],
                 elevation: 0,
                 textTheme: TextTheme(
                   title: TextStyle(
@@ -87,11 +116,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 items: [
                   BottomNavigationBarItem(
                       icon: ImageIcon(
-                        AssetImage("assets/icons/tab_home_n.png"),
+                        AssetImage('assets/icons/tab_home_n.png'),
                         color: Colors.black,
                       ),
                       activeIcon: ImageIcon(
-                        AssetImage("assets/icons/tab_home_s.png"),
+                        AssetImage('assets/icons/tab_home_s.png'),
                         color: Colors.black,
                       ),
                       title: Text('Home')),
