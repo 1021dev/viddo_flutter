@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'main_screen.dart';
+
 class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -257,7 +259,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 )),
-            onPressed: () {},
+            onPressed: () {
+              Navigation.toScreenAndCleanBackStack(
+                context: context,
+                screen: MainScreen(),
+              );
+            },
           ),
         ),
       ),

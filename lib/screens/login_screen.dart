@@ -1,6 +1,7 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/login/login_bloc.dart';
 import 'package:Viiddo/blocs/login/login_state.dart';
+import 'package:Viiddo/screens/main_screen.dart';
 import 'package:Viiddo/screens/register_screen.dart';
 import 'package:Viiddo/screens/reset_password_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -239,10 +240,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.w500,
                 )),
             onPressed: () {
-              screenBloc.add(Login(
-                emailController.text,
-                passwordController.text,
-              ));
+              Navigation.toScreenAndCleanBackStack(
+                context: context,
+                screen: MainScreen(),
+              );
             },
           ),
         ),
