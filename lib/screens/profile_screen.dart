@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       return SafeArea(
         key: formKey,
         child: Container(
-          child: Image.asset('assets/icons/baby_empty.png'),
+          child: Image.asset('assets/icons/mine_houlder.png'),
         ),
       );
     }
