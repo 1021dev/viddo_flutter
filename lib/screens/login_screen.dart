@@ -305,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             icon: Image(
-              image: AssetImage("assets/icons/login_facebook.png"),
+              image: AssetImage("assets/icons/2.0x/login_facebook.png"),
               width: 24.0,
               height: 24.0,
             ),
