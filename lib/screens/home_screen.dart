@@ -55,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen>
       return SafeArea(
         key: formKey,
         child: Container(
-          child: Image.asset('assets/icons/baby_empty.png'),
+          child: Center(
+            child: Image.asset('assets/icons/2.0x/baby_empty.png'),
+          ),
         ),
       );
     }

@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _getBody(SplashScreenState state) {
-    return Center(child: Image.asset('assets/icons/ic_splash.png'));
+    return Center(child: Image.asset('assets/icons/2.0x/ic_splash.png'));
   }
 
   @override
