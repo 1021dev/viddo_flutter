@@ -1,10 +1,15 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/profile/change_location_screen.dart';
+import 'package:Viiddo/screens/profile/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
+import '../../utils/navigation.dart';
 import '../../utils/widget_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -95,27 +100,111 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           width: 40,
         ),
         height: 60,
-        function: () {},
+        function: () {
+          showCupertinoModalPopup(
+            context: context,
+            builder: (BuildContext context) => CupertinoActionSheet(
+                title: const Text('Choose Photo'),
+                message: const Text('Your options are '),
+                actions: <Widget>[
+                  CupertinoActionSheetAction(
+                    child: const Text('Take a Picture'),
+                    onPressed: () {
+                      Navigator.pop(context, 'Take a Picture');
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('Camera Roll'),
+                    onPressed: () {
+                      Navigator.pop(context, 'Camera Roll');
+                    },
+                  )
+                ],
+                cancelButton: CupertinoActionSheetAction(
+                  child: const Text('Cancel'),
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context, 'Cancel');
+                  },
+                )),
+          );
+        },
       ),
       EditProfileSettingTile(
         title: 'Name',
         value: 'Demo User',
-        function: () {},
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: ChangeNameScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
       ),
       EditProfileSettingTile(
         title: 'Gender',
         value: 'Select Gender',
-        function: () {},
+        function: () {
+          showCupertinoModalPopup(
+            context: context,
+            builder: (BuildContext context) => CupertinoActionSheet(
+                title: const Text('Choose Gender'),
+                message: const Text('Your options are '),
+                actions: <Widget>[
+                  CupertinoActionSheetAction(
+                    child: const Text('Male'),
+                    onPressed: () {
+                      Navigator.pop(context, 'Male');
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('Female'),
+                    onPressed: () {
+                      Navigator.pop(context, 'Female');
+                    },
+                  )
+                ],
+                cancelButton: CupertinoActionSheetAction(
+                  child: const Text('Cancel'),
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context, 'Cancel');
+                  },
+                )),
+          );
+        },
       ),
       EditProfileSettingTile(
         title: 'Birthdate',
         value: 'Select Date',
-        function: () {},
+        function: () async => await showModalBottomSheet(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              child: CupertinoDatePicker(
+                initialDateTime: DateTime.now(),
+                onDateTimeChanged: (DateTime newdate) {
+                  print(newdate);
+                },
+                mode: CupertinoDatePickerMode.date,
+              ),
+            );
+          },
+        ),
       ),
       EditProfileSettingTile(
         title: 'Location',
         value: 'Select Location',
-        function: () {},
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: ChangeLocationScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
       ),
     ];
     return Container(
