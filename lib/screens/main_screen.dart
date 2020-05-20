@@ -1,7 +1,7 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/main.dart';
 import 'package:Viiddo/screens/home_screen.dart';
-import 'package:Viiddo/screens/profile_screen.dart';
+import 'package:Viiddo/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,7 +68,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               appBar: new AppBar(
                 title: _selectedIndex == 0
                     ? ImageIcon(
-                        AssetImage('assets/icons/home_top_image.png'),
+                        AssetImage('assets/icons/2.0x/home_top_image.png'),
                         size: 72,
                       )
                     : Text(titles[_selectedIndex]),
@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 leading: _selectedIndex == 0
                     ? IconButton(
                         icon: ImageIcon(
-                          AssetImage('assets/icons/home_baby.png'),
+                          AssetImage('assets/icons/2.0x/home_baby.png'),
                           size: 24,
                         ),
                         tooltip: 'Next page',
@@ -88,7 +88,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   _selectedIndex == 0
                       ? IconButton(
                           icon: ImageIcon(
-                            AssetImage('assets/icons/notification.png'),
+                            AssetImage('assets/icons/2.0x/notification.png'),
                             size: 24,
                           ),
                           tooltip: 'Next page',
@@ -116,28 +116,28 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 items: [
                   BottomNavigationBarItem(
                       icon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_n.png'),
+                        AssetImage('assets/icons/2.0x/tab_home_n.png'),
                         color: Colors.black,
                       ),
                       activeIcon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_s.png'),
+                        AssetImage('assets/icons/2.0x/tab_home_s.png'),
                         color: Colors.black,
                       ),
                       title: Text('Home')),
                   BottomNavigationBarItem(
                     icon: ImageIcon(
-                      AssetImage("assets/icons/tab_release.png"),
+                      AssetImage("assets/icons/2.0x/tab_release.png"),
                       color: Colors.black,
                     ),
                     title: Text('Profile'),
                   ),
                   BottomNavigationBarItem(
                     icon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_n.png"),
+                      AssetImage("assets/icons/2.0x/tab_profile_n.png"),
                       color: Colors.black,
                     ),
                     activeIcon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_s.png"),
+                      AssetImage("assets/icons/2.0x/tab_profile_s.png"),
                       color: Colors.black,
                     ),
                     title: Text('Profile'),
