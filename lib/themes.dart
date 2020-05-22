@@ -13,11 +13,14 @@ ThemeData lightTheme = ThemeData(
     button: TextStyle(color: Colors.white),
   ),
   textSelectionColor: Color(0xFF000000),
-  accentColor: Color(0xFFE66E5C),
+  accentColor: Color(0xFFFFA685),
   primaryColor: Color(0xFFFFFFFF),
+  hintColor: Color(0x998476AB),
+  focusColor: Color(0xFF8476AB),
   buttonTheme: ButtonThemeData(
-    buttonColor: Color(0xFFE66E5C),
+    buttonColor: Color(0xFFFFA685),
     highlightColor: Color(0xFFF6AE5C),
     textTheme: ButtonTextTheme.primary,
   ),
+  fontFamily: 'Roboto',
 );
