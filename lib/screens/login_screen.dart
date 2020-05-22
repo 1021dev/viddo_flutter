@@ -9,7 +9,12 @@ import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../themes.dart';
+import '../themes.dart';
+import '../themes.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   SharedPreferences sharedPreferences;
   @override
@@ -61,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (BuildContext context, state) {
           return Scaffold(
             resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
             key: scaffoldKey,
             body: _getBody(state),
           );
@@ -77,63 +84,76 @@ class _LoginScreenState extends State<LoginScreen> {
           currentFocus.unfocus();
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SingleChildScrollView(
-            padding: EdgeInsets.all(45.0),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 64),
-                  child: _title(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: loginFields(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: _forgotPassword(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 44),
-                  child: state.isLoading
-                      ? WidgetUtils.loadingView()
-                      : _loginButton(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: _divider(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: _facebookButton(),
-                ),
-              ],
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 80, bottom: 24),
+              child: _title(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 64, top: 24),
-            child: _signUpButton(),
-          ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                physics: ScrollPhysics(),
+                padding: EdgeInsets.only(left: 45.0, right: 45.0),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: loginFields(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: _forgotPassword(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: state.isLoading
+                          ? WidgetUtils.loadingView()
+                          : _loginButton(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: _divider(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: _facebookButton(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 44, top: 24),
+              child: _signUpButton(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _title() {
     return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Image.asset(
+            'assets/icons/2.0x/singin_logo.png',
+            height: 40,
+            width: 40,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+          ),
           Text(
             'Sign In',
             style: TextStyle(
-              color: Colors.black87,
-              fontSize: 28,
-              fontWeight: FontWeight.w500,
+              color: Color(0xFFFFA685),
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -145,50 +165,73 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       child: Column(
         children: <Widget>[
-          Container(
-            height: 70,
+          Padding(
+            padding: EdgeInsets.only(
+              top: 20.0,
+            ),
             child: TextField(
+              focusNode: emailFocus,
               controller: emailController,
+              autocorrect: false,
               textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.emailAddress,
               style: TextStyle(
-                color: Color(0xFF203152),
-                fontSize: 20.0,
+                fontFamily: "Roboto",
+                fontSize: 16.0,
+                color: Color(0xFF8476AB),
               ),
               decoration: InputDecoration(
-                labelText: 'Email',
-                hasFloatingPlaceholder: true,
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color(0xFFE66E5C), style: BorderStyle.solid)),
+                border: InputBorder.none,
+                icon: Image.asset(
+                  'assets/icons/ic_email.png',
+                ),
+                hintText: "Enter Email address",
+                hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
               ),
-              keyboardType: TextInputType.emailAddress,
               onSubmitted: (_) {
                 FocusScope.of(context).requestFocus(passwordFocus);
               },
             ),
           ),
-          Container(
-            height: 70,
+          Divider(
+            color: Color(0xFF8476AB),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: 20.0,
+            ),
             child: TextField(
-              controller: passwordController,
-              textInputAction: TextInputAction.next,
               focusNode: passwordFocus,
+              controller: passwordController,
+              autocorrect: false,
+              obscureText: true,
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.text,
               style: TextStyle(
-                color: Color(0xFF203152),
-                fontSize: 20.0,
+                fontFamily: "Roboto",
+                fontSize: 16.0,
+                color: Color(0xFF8476AB),
               ),
               decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                hasFloatingPlaceholder: true,
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color(0xFFE66E5C), style: BorderStyle.solid)),
+                border: InputBorder.none,
+                icon: Image.asset(
+                  'assets/icons/ic_password.png',
+                ),
+                hintText: "Enter Password",
+                hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
+                suffixIcon: GestureDetector(
+                  onTap: () {},
+                  child: Icon(
+                    FontAwesomeIcons.eye,
+                    size: 20.0,
+                    color: Color(0xFF8476AB),
+                  ),
+                ),
               ),
-              obscureText: true,
-              onSubmitted: (_) {
-                FocusScope.of(context).unfocus();
-              },
             ),
+          ),
+          Divider(
+            color: Color(0xFF8476AB),
           ),
         ],
       ),
@@ -198,17 +241,17 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _forgotPassword() {
     return Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           FlatButton(
             padding: EdgeInsets.only(right: 0.0),
             color: Colors.transparent,
             child: Text('Forgot password?',
-                textAlign: TextAlign.end,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12.0,
-                  color: Color(0xFFE66E5C),
-                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Roboto',
+                  color: Color(0xFFFAA382),
                 )),
             onPressed: () {
               Navigation.toScreen(
@@ -226,18 +269,18 @@ class _LoginScreenState extends State<LoginScreen> {
       child: SizedBox.expand(
         child: Material(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-          elevation: 4.0,
-          color: Color(0xFFE66E5C),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+          elevation: 1.0,
+          color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
           child: MaterialButton(
             height: 46.0,
-            color: Color(0xFFE66E5C),
+            color: Color(0xFFFFA685),
             child: Text('Sign In',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 14.0,
                   color: Colors.white,
-                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Roboto',
                 )),
             onPressed: () {
               Navigation.toScreenAndCleanBackStack(
@@ -262,20 +305,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   right: 20.0,
                 ),
                 child: Divider(
-                  color: Color(0xFFE5E5E5),
-                  thickness: 1,
+                  color: Color(0x808476AB),
+                  thickness: 0.5,
                   height: 36,
                 )),
           ),
-          Text("or"),
+          Text(
+            "or",
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFF8476AB),
+              fontFamily: 'Roboto',
+            ),
+          ),
           Expanded(
             child: new Container(
                 margin: const EdgeInsets.only(
                   left: 20.0,
                 ),
                 child: Divider(
-                  color: Color(0xFFE5E5E5),
-                  thickness: 1,
+                  color: Color(0x808476AB),
+                  thickness: 0.5,
                   height: 36,
                 )),
           ),
@@ -298,9 +348,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Sign in with Facebook',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                      fontSize: 14.0,
-                      color: Color(0xFFE66E5C),
-                      fontWeight: FontWeight.w500),
+                    fontSize: 12.0,
+                    color: Color(0xFF439EF2),
+                  ),
                 ),
               ),
             ),
@@ -325,6 +375,11 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 16,
             child: Text(
               'Don\'t have an account yet?',
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Color(0xFF8476AB),
+                fontFamily: 'Roboto',
+              ),
             ),
           ),
           GestureDetector(
@@ -332,8 +387,8 @@ class _LoginScreenState extends State<LoginScreen> {
               'Sign up now',
               style: TextStyle(
                 fontSize: 14.0,
-                color: Color(0xFF203152),
-                fontWeight: FontWeight.w500,
+                color: Color(0xFFFAA382),
+                fontFamily: 'Roboto-Bold',
               ),
             ),
             onTap: () {
