@@ -15,12 +15,15 @@ class ProfileSettingTile extends StatelessWidget {
     final makeListTile = ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
       leading: model.icon,
-      title: Text(
-        model.title,
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.black87,
+      title: Align(
+        child: new Text(
+          model.title,
+          style: TextStyle(
+            fontSize: 12,
+            color: Color(0xFF8476AB),
+          ),
         ),
+        alignment: Alignment(-1.2, 0),
       ),
     );
 

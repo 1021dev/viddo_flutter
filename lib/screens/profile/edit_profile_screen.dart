@@ -52,12 +52,14 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               elevation: 0,
               textTheme: TextTheme(
                 title: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
+                  color: Color(0xFF7861B7),
+                  fontSize: 18.0,
+                  fontFamily: 'Roboto',
                 ),
               ),
               iconTheme: IconThemeData(
-                color: Colors.black,
+                color: Color(0xFFFFA685),
+                size: 12,
               ),
             ),
             key: scaffoldKey,
@@ -97,9 +99,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         image: Image.asset(
           'assets/icons/2.0x/icon_place_holder.png',
           fit: BoxFit.cover,
-          width: 40,
+          width: 30,
         ),
-        height: 60,
+        height: 44,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -133,6 +135,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Name',
         value: 'Demo User',
+        height: 44,
         function: () {
           Navigation.toScreen(
             context: context,
@@ -145,6 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Gender',
         value: 'Select Gender',
+        height: 44,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -178,6 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Birthdate',
         value: 'Select Date',
+        height: 44,
         function: () async => await showModalBottomSheet(
           context: context,
           builder: (BuildContext builder) {
@@ -197,6 +202,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Location',
         value: 'Select Location',
+        height: 44,
         function: () {
           Navigation.toScreen(
             context: context,
