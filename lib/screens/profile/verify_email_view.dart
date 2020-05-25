@@ -56,8 +56,8 @@ class VerifyEmailView extends StatelessWidget {
               'Please verify your email before continuing',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
-                fontWeight: FontWeight.normal,
+                color: Color(0xFF8476AB),
+                fontFamily: 'Roboto',
               ),
             ),
             Padding(

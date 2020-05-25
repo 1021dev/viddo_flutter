@@ -55,12 +55,14 @@ class _ChangeLocationScreenState extends State<ChangeLocationScreen>
               elevation: 0,
               textTheme: TextTheme(
                 title: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
+                  color: Color(0xFF7861B7),
+                  fontSize: 18.0,
+                  fontFamily: 'Roboto',
                 ),
               ),
               iconTheme: IconThemeData(
-                color: Colors.black,
+                color: Color(0xFFFFA685),
+                size: 12,
               ),
             ),
             key: scaffoldKey,
@@ -116,10 +118,10 @@ class _ChangeLocationScreenState extends State<ChangeLocationScreen>
                 height: 200,
               ),
               Container(
-                height: 50,
+                height: 44,
                 padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
+                  left: 45,
+                  right: 45,
                 ),
                 child: SizedBox.expand(
                   child: Material(
@@ -129,7 +131,7 @@ class _ChangeLocationScreenState extends State<ChangeLocationScreen>
                     color: lightTheme.accentColor,
                     clipBehavior: Clip.antiAlias,
                     child: MaterialButton(
-                      height: 46.0,
+                      height: 44.0,
                       color: lightTheme.accentColor,
                       child: Text('Save',
                           style: TextStyle(

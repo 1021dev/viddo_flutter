@@ -20,42 +20,46 @@ class EditProfileSettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final makeListTile = ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
-      trailing: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: 16,
-          minHeight: 16,
-          maxWidth: 16,
-          maxHeight: 16,
+    final makeListTile = Container(
+        padding: EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
         ),
-        child: Icon(
-          Icons.arrow_forward_ios,
-          size: 12,
-        ),
-      ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFF8476AB),
+                fontFamily: 'Roboto',
+              ),
             ),
-          ),
-          image != null
-              ? image
-              : Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
+            Row(
+              children: <Widget>[
+                image != null
+                    ? image
+                    : Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0x808476AB),
+                          fontFamily: 'Roboto',
+                        ),
+                      ),
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
                 ),
-        ],
-      ),
-    );
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: Color(0xFFFFA685),
+                ),
+              ],
+            ),
+          ],
+        ));
 
     final inkWell = Positioned.fill(
       child: new Material(
@@ -72,6 +76,7 @@ class EditProfileSettingTile extends StatelessWidget {
             ? Container(
                 child: makeListTile,
                 height: height,
+                alignment: Alignment.centerLeft,
               )
             : makeListTile,
         inkWell,

@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
+import 'package:Viiddo/screens/profile/babies_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_screen.dart';
+import 'package:Viiddo/screens/profile/family_screen.dart';
 import 'package:Viiddo/screens/profile/profile_header.dart';
 import 'package:Viiddo/screens/profile/profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/report_problem_screen.dart';
+import 'package:Viiddo/screens/profile/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
@@ -32,26 +36,74 @@ class _ProfileScreenState extends State<ProfileScreen>
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   int resourceID;
 
-  List<ProfileSettingModel> list = [
-    ProfileSettingModel(
-      icon: ImageIcon(
-        AssetImage('assets/icons/2.0x/report_image.png'),
-        size: 24,
-        color: lightTheme.accentColor,
+  List<ProfileSettingModel> listViewItems(BuildContext context) {
+    return [
+      ProfileSettingModel(
+        icon: ImageIcon(
+          AssetImage('assets/icons/family_solid.png'),
+          size: 20,
+          color: lightTheme.accentColor,
+        ),
+        title: 'Family',
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: FamilyScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
       ),
-      title: 'Report a Problem',
-      function: () {},
-    ),
-    ProfileSettingModel(
-      icon: ImageIcon(
-        AssetImage('assets/icons/2.0x/settings_image.png'),
-        size: 24,
-        color: lightTheme.accentColor,
+      ProfileSettingModel(
+        icon: ImageIcon(
+          AssetImage('assets/icons/baby_solid.png'),
+          size: 20,
+          color: lightTheme.accentColor,
+        ),
+        title: 'Babies',
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: BabiesScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
       ),
-      title: 'Settings',
-      function: () {},
-    ),
-  ];
+      ProfileSettingModel(
+        icon: ImageIcon(
+          AssetImage('assets/icons/2.0x/report_image.png'),
+          size: 20,
+          color: lightTheme.accentColor,
+        ),
+        title: 'Report a Problem',
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: ReportProblemScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
+      ),
+      ProfileSettingModel(
+        icon: ImageIcon(
+          AssetImage('assets/icons/2.0x/settings_image.png'),
+          size: 20,
+          color: lightTheme.accentColor,
+        ),
+        title: 'Settings',
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: SettingsScreen(
+              bloc: widget.bloc,
+            ),
+          );
+        },
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -85,35 +137,38 @@ class _ProfileScreenState extends State<ProfileScreen>
     } else {
       return SafeArea(
         key: formKey,
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ProfileHeaderView(
-                onTap: () {
-                  Navigation.toScreen(
-                    context: context,
-                    screen: EditProfileScreen(
-                      bloc: widget.bloc,
-                    ),
-                  );
-                },
-              ),
-              Container(
-                color: Color(0xFFF5F5F5),
-                height: 8,
-                width: MediaQuery.of(context).size.width,
-              ),
-              _listView(),
-              VerifyEmailView(
-                onTap: () {
-                  WidgetUtils.showSuccessDialog(
-                    context,
-                    'Please check your email and click on the link to complete verification.',
-                  );
-                },
-              ),
-            ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 24),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ProfileHeaderView(
+                  onTap: () {
+                    Navigation.toScreen(
+                      context: context,
+                      screen: EditProfileScreen(
+                        bloc: widget.bloc,
+                      ),
+                    );
+                  },
+                ),
+                Container(
+                  color: Color(0xFFF5F5F5),
+                  height: 8,
+                  width: MediaQuery.of(context).size.width,
+                ),
+                _listView(),
+                VerifyEmailView(
+                  onTap: () {
+                    WidgetUtils.showSuccessDialog(
+                      context,
+                      'Please check your email and click on the link to complete verification.',
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -125,10 +180,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       color: Colors.white,
       child: ListView.separated(
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 2,
+        itemCount: listViewItems(context).length,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
-          return _buildItem(list[index]);
+          return _buildItem(listViewItems(context)[index]);
         },
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
