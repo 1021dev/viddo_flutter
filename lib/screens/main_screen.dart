@@ -71,7 +71,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         AssetImage('assets/icons/2.0x/home_top_image.png'),
                         size: 72,
                       )
-                    : Text(titles[_selectedIndex]),
+                    : Text(
+                        titles[_selectedIndex],
+                        style: TextStyle(color: Color(0xFF7861B7)),
+                      ),
                 backgroundColor: Colors.white,
                 automaticallyImplyLeading: false,
                 leading: _selectedIndex == 0
@@ -99,12 +102,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 elevation: 0,
                 textTheme: TextTheme(
                   title: TextStyle(
-                    color: Colors.black,
+                    color: Color(0xFFFFA685),
                     fontSize: 20.0,
                   ),
                 ),
                 iconTheme: IconThemeData(
-                  color: Colors.black,
+                  color: Color(0xFFFFA685),
                 ),
               ),
               body: Center(
@@ -117,28 +120,28 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   BottomNavigationBarItem(
                       icon: ImageIcon(
                         AssetImage('assets/icons/2.0x/tab_home_n.png'),
-                        color: Colors.black,
+                        color: Color(0xFFFFA685),
                       ),
                       activeIcon: ImageIcon(
                         AssetImage('assets/icons/2.0x/tab_home_s.png'),
-                        color: Colors.black,
+                        color: Color(0xFFFFA685),
                       ),
                       title: Text('Home')),
                   BottomNavigationBarItem(
                     icon: ImageIcon(
                       AssetImage("assets/icons/2.0x/tab_release.png"),
-                      color: Colors.black,
+                      color: Color(0xFFFFA685),
                     ),
                     title: Text('Profile'),
                   ),
                   BottomNavigationBarItem(
                     icon: ImageIcon(
                       AssetImage("assets/icons/2.0x/tab_profile_n.png"),
-                      color: Colors.black,
+                      color: Color(0xFFFFA685),
                     ),
                     activeIcon: ImageIcon(
                       AssetImage("assets/icons/2.0x/tab_profile_s.png"),
-                      color: Colors.black,
+                      color: Color(0xFFFFA685),
                     ),
                     title: Text('Profile'),
                   ),

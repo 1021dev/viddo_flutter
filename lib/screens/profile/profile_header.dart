@@ -32,12 +32,12 @@ class ProfileHeaderView extends StatelessWidget {
                   Image.asset(
                     'assets/icons/2.0x/user_icon_bg.png',
                     fit: BoxFit.cover,
-                    width: 60,
+                    width: 40,
                   ),
                   Image.asset(
                     'assets/icons/2.0x/icon_place_holder.png',
                     fit: BoxFit.cover,
-                    width: 54,
+                    width: 40,
                   ),
                 ],
               ),
@@ -52,9 +52,9 @@ class ProfileHeaderView extends StatelessWidget {
                     Text(
                       'Test',
                       style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                        color: Color(0xFFE46E5C),
+                        fontFamily: 'Roboto',
                       ),
                     ),
                     Padding(
@@ -65,9 +65,9 @@ class ProfileHeaderView extends StatelessWidget {
                     Text(
                       'Edit Profile',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF9C9C9C),
-                        fontWeight: FontWeight.normal,
+                        fontSize: 10,
+                        color: Color(0x998476AB),
+                        fontFamily: 'Roboto',
                       ),
                     ),
                   ],
@@ -79,7 +79,7 @@ class ProfileHeaderView extends StatelessWidget {
               ImageIcon(
                 AssetImage('assets/icons/2.0x/publish_right.png'),
                 size: 13,
-                color: Color(0xFFC8C8C8),
+                color: Color(0xFFFFA685),
               ),
             ],
           ),
