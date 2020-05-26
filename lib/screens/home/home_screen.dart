@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/home/add_baby_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,17 @@ class _HomeScreenState extends State<HomeScreen>
         key: formKey,
         child: Container(
           child: Center(
-            child: Image.asset('assets/icons/2.0x/baby_empty.png'),
+            child: GestureDetector(
+              child: Image.asset('assets/icons/home_add_baby.png'),
+              onTap: () {
+                Navigation.toScreen(
+                  context: context,
+                  screen: AddBabyScreen(
+                    bloc: widget.bloc,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       );
