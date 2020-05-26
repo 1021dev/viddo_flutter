@@ -1,5 +1,7 @@
 import 'package:Viiddo/models/profile_setting_model.dart';
+import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -58,11 +60,11 @@ class BabyItemTile extends StatelessWidget {
           ),
         ],
       ),
-      trailing: Switch(
-        activeTrackColor: Color(0xFFFFA685),
-        inactiveTrackColor: Color(0xFFC4C4C4),
+      trailing: CupertinoSwitch(
         value: ison,
         onChanged: function,
+        activeColor: Color(0xFFFFA685),
+        dragStartBehavior: DragStartBehavior.start,
       ),
     );
 
