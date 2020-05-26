@@ -1,7 +1,9 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/main.dart';
-import 'package:Viiddo/screens/home_screen.dart';
+import 'package:Viiddo/screens/home/home_screen.dart';
+import 'package:Viiddo/screens/home/notifications_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
+import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +97,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             size: 24,
                           ),
                           tooltip: 'Next page',
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigation.toScreen(
+                              context: context,
+                              screen: NotificationsScreen(
+                                bloc: mainScreenBloc,
+                              ),
+                            );
+                          },
                         )
                       : Container(),
                 ],
