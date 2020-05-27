@@ -1,5 +1,4 @@
 import 'package:Viiddo/models/profile_setting_model.dart';
-import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

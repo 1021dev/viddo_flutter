@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/add_baby_screen.dart';
+import 'package:Viiddo/screens/home/post_item_no_activity.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  int resourceID;
+  bool isPost = false;
   @override
   void initState() {
     super.initState();
@@ -56,22 +57,49 @@ class _HomeScreenState extends State<HomeScreen>
       return SafeArea(
         key: formKey,
         child: Container(
-          child: Center(
-            child: GestureDetector(
-              child: Image.asset('assets/icons/home_add_baby.png'),
-              onTap: () {
-                Navigation.toScreen(
-                  context: context,
-                  screen: AddBabyScreen(
-                    bloc: widget.bloc,
+          child: isPost
+              ? _buildPostList()
+              : Center(
+                  child: GestureDetector(
+                    child: Image.asset('assets/icons/home_add_baby.png'),
+                    onTap: () {
+                      setState(() {
+                        isPost = true;
+                      });
+                      Navigation.toScreen(
+                        context: context,
+                        screen: AddBabyScreen(
+                          bloc: widget.bloc,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                ),
         ),
       );
     }
+  }
+
+  Widget _buildPostList() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFFF5EF),
+              Colors.white,
+            ]),
+      ),
+      child: ListView.builder(
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return PostNoActivityItem(
+            index: index,
+          );
+        },
+      ),
+    );
   }
 
   Future<Null> _handleRefresh(context) {
