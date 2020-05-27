@@ -65,7 +65,7 @@ class BabiesItemTile extends StatelessWidget {
         ],
       ),
       trailing: Image.asset(
-        'assets/icons/2.0x/publish_right.png',
+        'assets/icons/ic_right_arrow.png',
         width: 16,
         height: 16,
         color: Color(0xFFFFA685),

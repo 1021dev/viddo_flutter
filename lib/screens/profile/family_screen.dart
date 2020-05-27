@@ -90,7 +90,7 @@ class _FamilyScreenState extends State<FamilyScreen>
       FamilyItemTile(
         title: 'Tom',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
@@ -101,7 +101,7 @@ class _FamilyScreenState extends State<FamilyScreen>
         title: 'Van Le',
         value: 'Mother',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),

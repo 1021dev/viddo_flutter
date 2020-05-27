@@ -158,7 +158,7 @@ class NotificationActivityItem extends StatelessWidget {
                   ),
                 ),
                 Image.asset(
-                  'assets/icons/2.0x/publish_right.png',
+                  'assets/icons/ic_right_arrow.png',
                   width: 7,
                   height: 13,
                   color: Color(0xFFFAA382),

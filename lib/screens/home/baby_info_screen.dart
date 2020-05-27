@@ -197,7 +197,7 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
                                       padding: EdgeInsets.only(left: 8),
                                     ),
                                     Image.asset(
-                                      'assets/icons/2.0x/add_baby_time.png',
+                                      'assets/icons/ic_calendar.png',
                                       width: 20,
                                       color: Color(0xFFFFA685),
                                     ),
@@ -284,7 +284,7 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
         child: Row(
           children: <Widget>[
             Image.asset(
-              'assets/icons/2.0x/add_baby_select_normal.png',
+              'assets/icons/add_baby_select_normal.png',
               width: 8,
               height: 8,
               color: isSelected ? Color(0xFFFFA685) : Color(0xFF8476AB),
