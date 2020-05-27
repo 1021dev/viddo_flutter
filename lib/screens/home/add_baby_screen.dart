@@ -25,9 +25,9 @@ class _AddBabyScreenState extends State<AddBabyScreen>
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   List<Image> list = [
-    Image.asset('assets/icons/2.0x/add_baby_girl.png'),
-    Image.asset('assets/icons/2.0x/add_baby_boy.png'),
-    Image.asset('assets/icons/2.0x/add_baby_pregnancy.png')
+    Image.asset('assets/icons/add_baby_girl.png'),
+    Image.asset('assets/icons/add_baby_boy.png'),
+    Image.asset('assets/icons/add_baby_pregnancy.png')
   ];
   @override
   void initState() {

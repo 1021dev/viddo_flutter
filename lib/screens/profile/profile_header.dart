@@ -30,12 +30,12 @@ class ProfileHeaderView extends StatelessWidget {
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
                   Image.asset(
-                    'assets/icons/2.0x/user_icon_bg.png',
+                    'assets/icons/user_icon_bg.png',
                     fit: BoxFit.cover,
                     width: 40,
                   ),
                   Image.asset(
-                    'assets/icons/2.0x/icon_place_holder.png',
+                    'assets/icons/icon_place_holder.png',
                     fit: BoxFit.cover,
                     width: 40,
                   ),
@@ -77,7 +77,7 @@ class ProfileHeaderView extends StatelessWidget {
                 padding: EdgeInsets.only(left: 8),
               ),
               ImageIcon(
-                AssetImage('assets/icons/2.0x/publish_right.png'),
+                AssetImage('assets/icons/ic_right_arrow.png'),
                 size: 13,
                 color: Color(0xFFFFA685),
               ),

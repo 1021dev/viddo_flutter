@@ -92,7 +92,7 @@ class _BabiesScreenState extends State<BabiesScreen>
       BabyItemTile(
         title: 'Kendra',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
@@ -104,7 +104,7 @@ class _BabiesScreenState extends State<BabiesScreen>
         title: 'Kendra',
         value: '07/15/2013',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
@@ -115,7 +115,7 @@ class _BabiesScreenState extends State<BabiesScreen>
         title: 'Kendra',
         value: '07/15/2013',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
@@ -126,7 +126,7 @@ class _BabiesScreenState extends State<BabiesScreen>
         title: 'Kendra',
         value: '07/15/2013',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),

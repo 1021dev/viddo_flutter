@@ -97,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Change Profile Photo',
         image: Image.asset(
-          'assets/icons/2.0x/icon_place_holder.png',
+          'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 30,
         ),

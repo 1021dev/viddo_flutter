@@ -39,7 +39,7 @@ class VerifyEmailView extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Image.asset(
-                    'assets/icons/2.0x/mine_houlder.png',
+                    'assets/icons/mine_houlder.png',
                     fit: BoxFit.cover,
                   ),
                 ),

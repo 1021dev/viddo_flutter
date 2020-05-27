@@ -379,7 +379,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             icon: Image(
-              image: AssetImage("assets/icons/2.0x/login_facebook.png"),
+              image: AssetImage("assets/icons/facebook_logo.png"),
               width: 24.0,
               height: 24.0,
             ),
