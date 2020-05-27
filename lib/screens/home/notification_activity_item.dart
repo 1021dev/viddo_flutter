@@ -1,5 +1,4 @@
 import 'package:Viiddo/models/profile_setting_model.dart';
-import 'package:custom_switch/custom_switch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,7 @@ class NotificationActivityItem extends StatelessWidget {
                                     decoration: new BoxDecoration(
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                         image: new NetworkImage(
                                           'https://i.imgur.com/BoN9kdC.png',
                                         ),
@@ -133,7 +132,7 @@ class NotificationActivityItem extends StatelessWidget {
                   decoration: new BoxDecoration(
                     shape: BoxShape.rectangle,
                     image: new DecorationImage(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       image: NetworkImage('https://i.imgur.com/bFFfXSmg.png'),
                     ),
                   ),
@@ -197,6 +196,5 @@ class NotificationActivityItem extends StatelessWidget {
       ),
       child: stackView,
     );
-    ;
   }
 }
