@@ -4,8 +4,10 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/baby_info_screen.dart';
 import 'package:Viiddo/screens/home/invitation_code_input_screen.dart';
 import 'package:Viiddo/screens/home/notification_activity_item.dart';
+import 'package:Viiddo/screens/home/notification_message_item.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -156,7 +158,33 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         fontSize: 14,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (BuildContext context) => CupertinoActionSheet(
+                            actions: <Widget>[
+                              CupertinoActionSheetAction(
+                                child: const Text('Mark all as read'),
+                                onPressed: () {
+                                  Navigator.pop(context, 'Mark all as read');
+                                },
+                              ),
+                              CupertinoActionSheetAction(
+                                child: const Text('Clear all'),
+                                onPressed: () {
+                                  Navigator.pop(context, 'Clear all');
+                                },
+                              )
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: const Text('Cancel'),
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.pop(context, 'Cancel');
+                              },
+                            )),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -265,46 +293,56 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               Colors.white,
             ]),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Image.asset(
-                'assets/icons/2.0x/no_message_image.png',
-                width: MediaQuery.of(context).size.width / 2.5,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  top: 24,
+      child: isEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/icons/2.0x/no_message_image.png',
+                      width: MediaQuery.of(context).size.width / 2.5,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 24,
+                      ),
+                    ),
+                    Text(
+                      'Never miss a moment',
+                      style: TextStyle(
+                        color: Color(0xFF8476AB),
+                        fontSize: 18,
+                        fontFamily: 'Roboto-Bold',
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 8,
+                      ),
+                    ),
+                    Text(
+                      'Turn on push notifications',
+                      style: TextStyle(
+                        color: Color(0xFF8476AB),
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                'Never miss a moment',
-                style: TextStyle(
-                  color: Color(0xFF8476AB),
-                  fontSize: 18,
-                  fontFamily: 'Roboto-Bold',
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  top: 8,
-                ),
-              ),
-              Text(
-                'Turn on push notifications',
-                style: TextStyle(
-                  color: Color(0xFF8476AB),
-                  fontSize: 14,
-                  fontFamily: 'Roboto',
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            )
+          : ListView.builder(
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) {
+                return NotificationMessageItem(
+                  index: index,
+                  function: () {},
+                );
+              },
+            ),
     );
   }
 

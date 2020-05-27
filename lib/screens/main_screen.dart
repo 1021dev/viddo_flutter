@@ -1,5 +1,6 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/main.dart';
+import 'package:Viiddo/screens/home/babies_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
 import 'package:Viiddo/screens/home/notifications_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
@@ -86,7 +87,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           size: 24,
                         ),
                         tooltip: 'Next page',
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigation.toScreen(
+                              context: context,
+                              screen: BabiesScreen(
+                                bloc: mainScreenBloc,
+                              ));
+                        },
                       )
                     : Container(),
                 actions: <Widget>[
