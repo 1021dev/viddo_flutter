@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/icons/2.0x/singin_logo.png',
+            'assets/icons/signin_logo.png',
             height: 40,
             width: 40,
           ),
@@ -355,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             icon: Image(
-              image: AssetImage("assets/icons/2.0x/login_facebook.png"),
+              image: AssetImage("assets/icons/facebook_logo.png"),
               width: 24.0,
               height: 24.0,
             ),

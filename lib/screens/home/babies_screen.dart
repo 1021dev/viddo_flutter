@@ -108,7 +108,7 @@ class _BabiesScreenState extends State<BabiesScreen>
                         child: Column(
                           children: <Widget>[
                             Image.asset(
-                              'assets/icons/2.0x/baby_list_add.png',
+                              'assets/icons/baby_list_add.png',
                               width: 45,
                               height: 45,
                               color: Color(0xFFFFA685),
@@ -128,7 +128,7 @@ class _BabiesScreenState extends State<BabiesScreen>
                         child: Column(
                           children: <Widget>[
                             Image.asset(
-                              'assets/icons/2.0x/baby_list_invite.png',
+                              'assets/icons/invitation_code.png',
                               width: 45,
                               height: 45,
                               color: Color(0xFFFFA685),

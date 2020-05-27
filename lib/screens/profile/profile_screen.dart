@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/2.0x/report_image.png'),
+          AssetImage('assets/icons/report_problem.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),
@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/2.0x/settings_image.png'),
+          AssetImage('assets/icons/ic_settings.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),

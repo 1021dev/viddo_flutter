@@ -193,7 +193,7 @@ class _InvitationCodeInputScreenState extends State<InvitationCodeInputScreen>
         child: Row(
           children: <Widget>[
             Image.asset(
-              'assets/icons/2.0x/add_baby_select_normal.png',
+              'assets/icons/add_baby_select_normal.png',
               width: 8,
               height: 8,
               color: isSelected ? Color(0xFFFFA685) : Color(0xFF8476AB),

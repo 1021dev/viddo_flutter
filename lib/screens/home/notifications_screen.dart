@@ -236,7 +236,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 Column(
                   children: <Widget>[
                     Image.asset(
-                      'assets/icons/2.0x/no_message_image.png',
+                      'assets/icons/no_message_image.png',
                       width: MediaQuery.of(context).size.width / 2.5,
                     ),
                     Padding(
@@ -301,7 +301,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 Column(
                   children: <Widget>[
                     Image.asset(
-                      'assets/icons/2.0x/no_message_image.png',
+                      'assets/icons/no_message_image.png',
                       width: MediaQuery.of(context).size.width / 2.5,
                     ),
                     Padding(
