@@ -131,7 +131,7 @@ class _InvitationCodeInputScreenState extends State<InvitationCodeInputScreen>
                             counterText: '',
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Color(0xFF8476AB),
+                                  color: Color(0x2F8476AB),
                                   style: BorderStyle.solid),
                             ),
                           ),

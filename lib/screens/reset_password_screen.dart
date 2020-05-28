@@ -156,8 +156,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       height: 50,
       child: SizedBox.expand(
         child: Material(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
           elevation: 1.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,

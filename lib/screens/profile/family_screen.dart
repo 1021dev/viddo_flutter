@@ -1,4 +1,5 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/home/invite/invite_someone_screen.dart';
 import 'package:Viiddo/screens/profile/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
@@ -62,6 +63,25 @@ class _FamilyScreenState extends State<FamilyScreen>
                 color: Color(0xFFFFA685),
                 size: 12,
               ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'Invite',
+                    style: TextStyle(
+                      color: Color(0xFFFAA382),
+                      fontSize: 14,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigation.toScreen(
+                      context: context,
+                      screen: InviteSomeOneScreen(
+                        bloc: widget.bloc,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             key: scaffoldKey,
             body: _getBody(state),
