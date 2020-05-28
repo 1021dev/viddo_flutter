@@ -269,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: SizedBox.expand(
         child: Material(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),),
           elevation: 1.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
@@ -311,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 )),
           ),
           Text(
-            "or",
+            'or',
             style: TextStyle(
               fontSize: 12,
               color: Color(0xFF8476AB),

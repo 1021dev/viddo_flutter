@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/babies_item_tile.dart';
+import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
+import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../themes.dart';
+import '../../../themes.dart';
 
 class BabiesScreen extends StatefulWidget {
   final MainScreenBloc bloc;
@@ -172,7 +173,14 @@ class _BabiesScreenState extends State<BabiesScreen>
                     itemBuilder: (BuildContext context, int index) {
                       return BabiesItemTile(
                         index: index,
-                        function: () {},
+                        function: () {
+                          Navigation.toScreen(
+                            context: context,
+                            screen: EditBabyInformationScreen(
+                              bloc: widget.bloc,
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

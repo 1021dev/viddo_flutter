@@ -1,10 +1,13 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/main.dart';
-import 'package:Viiddo/screens/home/babies_screen.dart';
+import 'package:Viiddo/screens/home/babies/babies_screen.dart';
+import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
-import 'package:Viiddo/screens/home/notifications_screen.dart';
+import 'package:Viiddo/screens/home/notifications/notifications_screen.dart';
+import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
+import 'package:Viiddo/widgets/bottom_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -178,9 +181,60 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index != 1) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    } else {
+      showGeneralDialog(
+        barrierLabel: "Label",
+        barrierDismissible: true,
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionDuration: Duration(milliseconds: 235),
+        context: context,
+        pageBuilder: (context, anim1, anim2) {
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: BottomSelector(
+              closeFunction: () {
+                Navigator.pop(context, 'close');
+              },
+              libraryFunction: () {
+                Navigator.pop(context, 'library');
+              },
+              cameraFunction: () {
+                Navigator.pop(context, 'camera');
+              },
+              growthFunction: () {
+                Navigator.pop(context, 'growth');
+                Navigation.toScreen(
+                  context: context,
+                  screen: GrowthScreen(
+                    bloc: mainScreenBloc,
+                  ),
+                );
+              },
+              vaccinesFunction: () {
+                Navigator.pop(context, 'vaccines');
+                Navigation.toScreen(
+                  context: context,
+                  screen: VaccinesScreen(
+                    bloc: mainScreenBloc,
+                  ),
+                );
+              },
+            ),
+          );
+        },
+        transitionBuilder: (context, anim1, anim2, child) {
+          return SlideTransition(
+            position:
+                Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+            child: child,
+          );
+        },
+      );
+    }
   }
 
   @override

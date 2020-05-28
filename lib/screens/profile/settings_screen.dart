@@ -1,5 +1,7 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/login_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -103,7 +105,10 @@ class _SettingsScreenState extends State<SettingsScreen>
                                 color: Colors.white,
                                 fontFamily: 'Roboto',
                               )),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigation.toScreenAndCleanBackStack(
+                                context: context, screen: LoginScreen());
+                          },
                         ),
                       ),
                     )),
