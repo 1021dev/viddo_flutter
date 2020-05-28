@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/baby_info_screen.dart';
+import 'package:Viiddo/screens/home/babies/baby_info_screen.dart';
 import 'package:Viiddo/screens/home/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
