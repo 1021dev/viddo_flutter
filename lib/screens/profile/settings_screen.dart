@@ -83,35 +83,36 @@ class _SettingsScreenState extends State<SettingsScreen>
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
                 child: Container(
-                    height: 100,
-                    padding: EdgeInsets.only(
-                      left: 45,
-                      right: 45,
-                      bottom: 56,
-                    ),
-                    child: SizedBox.expand(
-                      child: Material(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)),
-                        elevation: 4.0,
+                  height: 100,
+                  padding: EdgeInsets.only(
+                    left: 45,
+                    right: 45,
+                    bottom: 56,
+                  ),
+                  child: SizedBox.expand(
+                    child: Material(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0)),
+                      elevation: 4.0,
+                      color: lightTheme.accentColor,
+                      clipBehavior: Clip.antiAlias,
+                      child: MaterialButton(
+                        height: 44.0,
                         color: lightTheme.accentColor,
-                        clipBehavior: Clip.antiAlias,
-                        child: MaterialButton(
-                          height: 44.0,
-                          color: lightTheme.accentColor,
-                          child: Text('Log Out',
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.white,
-                                fontFamily: 'Roboto',
-                              )),
-                          onPressed: () {
-                            Navigation.toScreenAndCleanBackStack(
-                                context: context, screen: LoginScreen());
-                          },
-                        ),
+                        child: Text('Log Out',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.white,
+                              fontFamily: 'Roboto',
+                            )),
+                        onPressed: () {
+                          Navigation.toScreenAndCleanBackStack(
+                              context: context, screen: LoginScreen());
+                        },
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
