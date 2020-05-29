@@ -1,10 +1,11 @@
+import 'package:Viiddo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'main.dart';
 
 class Env {
   static Env value;
 
-  final String baseUrl = 'http://www.icranetrax.info/';
+  final String baseUrl = Constants.shared;
 
   // Support contact info
 
