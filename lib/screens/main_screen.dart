@@ -4,6 +4,7 @@ import 'package:Viiddo/screens/home/babies/babies_screen.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
 import 'package:Viiddo/screens/home/notifications/notifications_screen.dart';
+import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../themes.dart';
@@ -201,9 +203,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               },
               libraryFunction: () {
                 Navigator.pop(context, 'library');
+                getImage(0);
               },
               cameraFunction: () {
                 Navigator.pop(context, 'camera');
+                getImage(1);
               },
               growthFunction: () {
                 Navigator.pop(context, 'growth');
@@ -233,6 +237,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             child: child,
           );
         },
+      );
+    }
+  }
+
+  Future getImage(int type) async {
+    var image = await ImagePicker.pickImage(
+      source: type == 0 ? ImageSource.gallery : ImageSource.camera,
+    );
+
+    if (image != null) {
+      Navigation.toScreen(
+        context: context,
+        screen: EditPictureScreen(
+          bloc: mainScreenBloc,
+          image: image,
+        ),
       );
     }
   }
