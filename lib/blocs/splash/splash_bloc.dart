@@ -17,7 +17,7 @@ class SplashScreenBloc extends Bloc<SplashScreenEvent, SplashScreenState> {
 
   Stream<SplashScreenState> _autoLogin() async* {
     try {
-      yield AutoLoginFailure();
+      yield AutoLoginSuccess();
     } catch (error) {
       yield AutoLoginFailure();
     }

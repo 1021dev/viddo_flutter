@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   SharedPreferences sharedPreferences;
+
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
@@ -60,6 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
               'username', emailController.text.toString());
           sharedPreferences.setString(
               'password', passwordController.text.toString());
+          Navigation.toScreenAndCleanBackStack(
+            context: context,
+            screen: MainScreen(),
+          );
         }
       },
       child: BlocBuilder<LoginScreenBloc, LoginScreenState>(
@@ -268,8 +273,9 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 50,
       child: SizedBox.expand(
         child: Material(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
           elevation: 1.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
@@ -283,9 +289,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontFamily: 'Roboto',
                 )),
             onPressed: () {
-              Navigation.toScreenAndCleanBackStack(
-                context: context,
-                screen: MainScreen(),
+              FocusScope.of(context).unfocus();
+              screenBloc.add(
+                Login(
+                  emailController.text,
+                  passwordController.text,
+                ),
               );
             },
           ),

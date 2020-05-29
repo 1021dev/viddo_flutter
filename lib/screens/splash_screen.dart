@@ -48,8 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocBuilder<SplashScreenBloc, SplashScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, SplashScreenState state) {
-          return Scaffold(
-              backgroundColor: lightTheme.accentColor, body: _getBody(state));
+          return Scaffold(backgroundColor: Colors.white, body: _getBody(state));
         },
       ),
     );
