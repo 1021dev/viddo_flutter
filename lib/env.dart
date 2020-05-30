@@ -5,7 +5,7 @@ import 'main.dart';
 class Env {
   static Env value;
 
-  final String baseUrl = Constants.shared;
+  final String baseUrl = Constants.baseUrl;
 
   // Support contact info
 
