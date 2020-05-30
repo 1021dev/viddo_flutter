@@ -7,7 +7,7 @@ import 'package:Viiddo/screens/home/invitation_code_input_screen.dart';
 import 'package:Viiddo/screens/home/notifications/notification_activity_item.dart';
 import 'package:Viiddo/screens/home/notifications/notification_message_item.dart';
 import 'package:Viiddo/screens/home/post/all_stickers_screen.dart';
-import 'package:Viiddo/screens/home/post/edit_picture_complete_screen.dart';
+import 'package:Viiddo/screens/home/post/post_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccine_list_item.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
@@ -15,20 +15,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EditPictureScreen extends StatefulWidget {
+class EditPictureCompleteScreen extends StatefulWidget {
   MainScreenBloc bloc;
 
   final File image;
-  EditPictureScreen({
+  EditPictureCompleteScreen({
     this.bloc,
     this.image,
   });
 
   @override
-  _EditPictureScreenState createState() => _EditPictureScreenState(this.image);
+  _EditPictureCompleteScreenState createState() =>
+      _EditPictureCompleteScreenState(this.image);
 }
 
-class _EditPictureScreenState extends State<EditPictureScreen>
+class _EditPictureCompleteScreenState extends State<EditPictureCompleteScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -38,7 +39,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
   Animation<double> animation;
   AnimationController controller;
 
-  _EditPictureScreenState(this.image);
+  _EditPictureCompleteScreenState(this.image);
 
   @override
   void initState() {
@@ -82,7 +83,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
               actions: <Widget>[
                 FlatButton(
                   child: Text(
-                    'Next',
+                    'Done',
                     style: TextStyle(
                       color: Color(0xFFFAA382),
                       fontSize: 14,
@@ -91,9 +92,8 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                   onPressed: () {
                     Navigation.toScreen(
                       context: context,
-                      screen: EditPictureCompleteScreen(
+                      screen: PostScreen(
                         bloc: widget.bloc,
-                        image: this.image,
                       ),
                     );
                   },
