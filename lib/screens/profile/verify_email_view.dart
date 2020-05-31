@@ -15,7 +15,7 @@ class VerifyEmailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFF5F5F5),
+        color: Color(0xFFFFFBF8),
       ),
       width: MediaQuery.of(context).size.width,
       child: Padding(

@@ -11,6 +11,7 @@ import 'package:Viiddo/screens/profile/report_problem_screen.dart';
 import 'package:Viiddo/screens/profile/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -161,10 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _listView(),
                 VerifyEmailView(
                   onTap: () {
-                    WidgetUtils.showSuccessDialog(
-                      context,
-                      'Please check your email and click on the link to complete verification.',
-                    );
+                    _hadleVerification();
                   },
                 ),
               ],
@@ -205,6 +203,45 @@ class _ProfileScreenState extends State<ProfileScreen>
   Future<Null> _handleRefresh(context) {
     Completer<Null> completer = new Completer<Null>();
     return completer.future;
+  }
+
+  Future<void> _hadleVerification() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: Padding(
+            padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+            child: Text(
+              'Please check your email and click on the link to complete verification.',
+              style: TextStyle(
+                color: Color(0xFF8476AB),
+                fontFamily: 'Roboto',
+                fontSize: 13,
+                height: 1.5,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Color(0xFFE46E5C),
+                  fontFamily: 'Roboto',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

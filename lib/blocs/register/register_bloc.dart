@@ -3,41 +3,43 @@ import 'dart:async';
 import 'package:Viiddo/apis/api_service.dart';
 import 'package:bloc/bloc.dart';
 
-import 'login_event.dart';
-import 'login_state.dart';
+import 'register_event.dart';
+import 'register_state.dart';
 
-class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
+class RegisterScreenBloc
+    extends Bloc<RegisterScreenEvent, RegisterScreenState> {
   ApiService _apiService = ApiService();
   @override
-  LoginScreenState get initialState => LoginScreenState();
+  RegisterScreenState get initialState => RegisterScreenState();
 
   @override
-  Stream<LoginScreenState> mapEventToState(LoginScreenEvent event) async* {
-    if (event is Login) {
-      yield* _login(event);
+  Stream<RegisterScreenState> mapEventToState(
+      RegisterScreenEvent event) async* {
+    if (event is Register) {
+      yield* _register(event);
     } else if (event is FacebookLogin) {
       yield* _facebookLogin(event);
     }
   }
 
-  Stream<LoginScreenState> _login(Login event) async* {
+  Stream<RegisterScreenState> _register(Register event) async* {
     yield state.copyWith(isLoading: true);
     try {
       bool isLogin =
           await _apiService.accountLogin(event.username, event.password);
       if (isLogin) {
-        yield LoginSuccess();
+        yield RegisterSuccess();
       } else {
-        yield LoginScreenFailure(error: 'error');
+        yield RegisterScreenFailure(error: 'error');
       }
     } catch (error) {
-      yield LoginScreenFailure(error: error);
+      yield RegisterScreenFailure(error: error);
     } finally {
       yield state.copyWith(isLoading: false);
     }
   }
 
-  Stream<LoginScreenState> _facebookLogin(FacebookLogin event) async* {
+  Stream<RegisterScreenState> _facebookLogin(FacebookLogin event) async* {
     yield state.copyWith(isLoading: true);
     try {
       bool isLogin = await _apiService.facebookLogin(
@@ -47,12 +49,12 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
         event.avatar,
       );
       if (isLogin) {
-        yield LoginSuccess();
+        yield RegisterSuccess();
       } else {
-        yield LoginScreenFailure(error: 'error');
+        yield RegisterScreenFailure(error: 'error');
       }
     } catch (error) {
-      yield LoginScreenFailure(error: error);
+      yield RegisterScreenFailure(error: error);
     } finally {
       yield state.copyWith(isLoading: false);
     }

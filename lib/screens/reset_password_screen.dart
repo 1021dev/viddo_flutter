@@ -1,6 +1,6 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/blocs/login/login_bloc.dart';
-import 'package:Viiddo/blocs/login/login_state.dart';
+import 'package:Viiddo/blocs/reset_password/reset__password_bloc.dart';
+import 'package:Viiddo/blocs/reset_password/reset_password.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +9,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
+  String email = '';
+  ResetPasswordScreen({
+    this.email = '',
+  });
+
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  LoginScreenBloc screenBloc;
+  ResetPassowrdScreenBloc screenBloc;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController emailController = TextEditingController();
 
@@ -25,8 +30,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    screenBloc = LoginScreenBloc();
-    emailController.text = '';
+    screenBloc = ResetPassowrdScreenBloc();
+    emailController.text = widget.email;
     super.initState();
   }
 
@@ -34,8 +39,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: screenBloc,
-      listener: (BuildContext context, LoginScreenState state) async {},
-      child: BlocBuilder<LoginScreenBloc, LoginScreenState>(
+      listener: (BuildContext context, ResetPasswordScreenState state) async {
+        if (state is ResetCodeSentSuccess) {
+          _handleResetPassword();
+        }
+      },
+      child: BlocBuilder<ResetPassowrdScreenBloc, ResetPasswordScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -57,7 +66,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 
-  Widget _getBody(LoginScreenState state) {
+  Widget _getBody(ResetPasswordScreenState state) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);

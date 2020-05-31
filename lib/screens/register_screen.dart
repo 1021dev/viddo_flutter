@@ -1,6 +1,8 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/login/login_bloc.dart';
 import 'package:Viiddo/blocs/login/login_state.dart';
+import 'package:Viiddo/blocs/register/register.dart';
+import 'package:Viiddo/utils/email_validator.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  LoginScreenBloc screenBloc;
+  RegisterScreenBloc screenBloc;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -29,13 +31,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   FocusNode userNameFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
+  bool isPasswordShow = false;
+  bool isConfirmPasswordShow = false;
+
   SharedPreferences sharedPreferences;
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    screenBloc = LoginScreenBloc();
+    screenBloc = RegisterScreenBloc();
     userNameController.text = '';
     emailController.text = '';
     confirmPasswordController.text = '';
@@ -47,8 +52,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: screenBloc,
-      listener: (BuildContext context, LoginScreenState state) async {},
-      child: BlocBuilder<LoginScreenBloc, LoginScreenState>(
+      listener: (BuildContext context, RegisterScreenState state) async {},
+      child: BlocBuilder<RegisterScreenBloc, RegisterScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -62,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _getBody(LoginScreenState state) {
+  Widget _getBody(RegisterScreenState state) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -76,31 +81,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 80, bottom: 24),
+              padding: const EdgeInsets.only(
+                top: 80,
+                bottom: 24,
+              ),
               child: _title(),
             ),
             Expanded(
               child: SingleChildScrollView(
                 physics: ScrollPhysics(),
-                padding: EdgeInsets.only(left: 45.0, right: 45.0),
+                padding: EdgeInsets.only(
+                  left: 45.0,
+                  right: 45.0,
+                ),
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: loginFields(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 44),
+                      padding: const EdgeInsets.only(
+                        top: 44,
+                      ),
                       child: state.isLoading
                           ? WidgetUtils.loadingView()
                           : _signUoButton(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: _divider(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: _facebookButton(),
                     ),
                   ],
@@ -108,7 +127,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 44, top: 24),
+              padding: const EdgeInsets.only(
+                bottom: 44,
+                top: 24,
+              ),
               child: _loginButton(),
             ),
           ],
@@ -210,7 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               focusNode: passwordFocus,
               controller: passwordController,
               autocorrect: false,
-              obscureText: true,
+              obscureText: !isPasswordShow,
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.text,
               style: TextStyle(
@@ -225,13 +247,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 hintText: "Password",
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
-                suffixIcon: GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    FontAwesomeIcons.eye,
-                    size: 20.0,
-                    color: Color(0xFF8476AB),
+                suffixIcon: IconButton(
+                  icon: ImageIcon(
+                    AssetImage('assets/icons/ic_show_password.png'),
                   ),
+                  color: isPasswordShow ? Color(0xFF8476AB) : Color(0xFFFAA382),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordShow = !isPasswordShow;
+                    });
+                  },
                 ),
               ),
               onSubmitted: (_) {
@@ -250,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               focusNode: confirmPasswordFocus,
               controller: confirmPasswordController,
               autocorrect: false,
-              obscureText: true,
+              obscureText: !isConfirmPasswordShow,
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.text,
               style: TextStyle(
@@ -265,13 +290,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 hintText: "Repeat Password",
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
-                suffixIcon: GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    FontAwesomeIcons.eye,
-                    size: 20.0,
-                    color: Color(0xFF8476AB),
+                suffixIcon: IconButton(
+                  icon: ImageIcon(
+                    AssetImage('assets/icons/ic_show_password.png'),
                   ),
+                  color: isConfirmPasswordShow
+                      ? Color(0xFF8476AB)
+                      : Color(0xFFFAA382),
+                  onPressed: () {
+                    setState(() {
+                      isConfirmPasswordShow = !isConfirmPasswordShow;
+                    });
+                  },
                 ),
               ),
               onSubmitted: (_) {
@@ -308,10 +338,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fontFamily: 'Roboto',
                 )),
             onPressed: () {
-              Navigation.toScreenAndCleanBackStack(
-                context: context,
-                screen: MainScreen(),
-              );
+              if (userNameController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter username'),
+                  ),
+                );
+              } else if (emailController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter email address'),
+                  ),
+                );
+              } else if (passwordController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter password'),
+                  ),
+                );
+              } else if (confirmPasswordController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter confirm password'),
+                  ),
+                );
+              } else if (!EmailValidator.validate(emailController.text)) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter valid email address'),
+                  ),
+                );
+              } else {
+                screenBloc.add(
+                  Register(
+                    userNameController.text,
+                    emailController.text,
+                    passwordController.text,
+                  ),
+                );
+              }
             },
           ),
         ),
