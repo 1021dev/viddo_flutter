@@ -4,6 +4,7 @@ import 'package:Viiddo/blocs/login/login_state.dart';
 import 'package:Viiddo/screens/main_screen.dart';
 import 'package:Viiddo/screens/register_screen.dart';
 import 'package:Viiddo/screens/reset_password_screen.dart';
+import 'package:Viiddo/utils/email_validator.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   SharedPreferences sharedPreferences;
+  bool isPasswordShow = false;
 
   @override
   void initState() {
@@ -89,41 +91,57 @@ class _LoginScreenState extends State<LoginScreen> {
           currentFocus.unfocus();
         }
       },
-      child: Container(
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 80, bottom: 24),
+              padding: const EdgeInsets.only(
+                top: 80,
+                bottom: 24,
+              ),
               child: _title(),
             ),
             Expanded(
               child: SingleChildScrollView(
                 physics: ScrollPhysics(),
-                padding: EdgeInsets.only(left: 45.0, right: 45.0),
+                padding: EdgeInsets.only(
+                  left: 45.0,
+                  right: 45.0,
+                ),
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: loginFields(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: _forgotPassword(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: state.isLoading
                           ? WidgetUtils.loadingView()
                           : _loginButton(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: _divider(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(
+                        top: 24,
+                      ),
                       child: _facebookButton(),
                     ),
                   ],
@@ -209,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
               focusNode: passwordFocus,
               controller: passwordController,
               autocorrect: false,
-              obscureText: true,
+              obscureText: !isPasswordShow,
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.text,
               style: TextStyle(
@@ -224,15 +242,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 hintText: "Enter Password",
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
-                suffixIcon: GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    FontAwesomeIcons.eye,
-                    size: 20.0,
-                    color: Color(0xFF8476AB),
+                suffixIcon: IconButton(
+                  icon: ImageIcon(
+                    AssetImage('assets/icons/ic_show_password.png'),
                   ),
+                  color: isPasswordShow ? Color(0xFF8476AB) : Color(0xFFFAA382),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordShow = !isPasswordShow;
+                    });
+                  },
                 ),
               ),
+              onSubmitted: (_) {
+                FocusScope.of(context).unfocus();
+              },
             ),
           ),
           Divider(
@@ -260,7 +284,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 )),
             onPressed: () {
               Navigation.toScreen(
-                  context: context, screen: ResetPasswordScreen());
+                  context: context,
+                  screen: ResetPasswordScreen(email: emailController.text));
             },
           ),
         ],
@@ -290,12 +315,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 )),
             onPressed: () {
               FocusScope.of(context).unfocus();
-              screenBloc.add(
-                Login(
-                  emailController.text,
-                  passwordController.text,
-                ),
-              );
+              if (emailController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter email address'),
+                  ),
+                );
+              } else if (passwordController.text.length == 0) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter password'),
+                  ),
+                );
+              } else if (!EmailValidator.validate(emailController.text)) {
+                scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter valid email address'),
+                  ),
+                );
+              } else {
+                screenBloc.add(
+                  Login(
+                    emailController.text,
+                    passwordController.text,
+                  ),
+                );
+              }
             },
           ),
         ),

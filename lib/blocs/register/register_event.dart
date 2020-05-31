@@ -1,24 +1,33 @@
 import 'package:equatable/equatable.dart';
 
-abstract class LoginScreenEvent extends Equatable {
-  LoginScreenEvent();
+abstract class RegisterScreenEvent extends Equatable {
+  RegisterScreenEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class Login extends LoginScreenEvent {
+class Register extends RegisterScreenEvent {
   final String username;
+  final String email;
   final String password;
 
-  Login(this.username, this.password);
+  Register(
+    this.username,
+    this.email,
+    this.password,
+  );
 
   @override
-  List<Object> get props => [username, password];
+  List<Object> get props => [
+        username,
+        email,
+        password,
+      ];
 }
 
 // ignore: must_be_immutable
-class FacebookLogin extends LoginScreenEvent {
+class FacebookLogin extends RegisterScreenEvent {
   final String platform = 'Facebook';
   final String nikeName;
   final String code;
