@@ -1,8 +1,10 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/profile/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,7 +15,7 @@ import '../../utils/navigation.dart';
 import '../../utils/widget_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  ProfileScreenBloc bloc;
 
   EditProfileScreen({
     this.bloc,
@@ -41,8 +43,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, ProfileScreenState state) async {},
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -70,7 +72,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(ProfileScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
@@ -84,7 +86,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 color: Color(0xFFF0F0F0),
                 height: 10,
               ),
-              _listView(),
+              _listView(state),
             ],
           ),
         ),
@@ -92,16 +94,54 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     }
   }
 
-  Widget _listView() {
+  Widget _listView(ProfileScreenState state) {
+    String avatar = '';
+    String nikName = '';
+    String gender = 'Select gender';
+    String area = 'Select region';
+    String birthDateString = 'Select date';
+    if (state.userModel != null) {
+      avatar = state.userModel.avatar;
+      nikName = state.userModel.nikeName;
+      gender = state.userModel.gender == 'M'
+          ? 'Male'
+          : (state.userModel.gender == 'FM' ? 'Female' : 'Select Gender');
+      if (state.userModel.area != '') {
+        area = state.userModel.area;
+      }
+      DateTime birthday = state.userModel.birthDay != null
+          ? DateTime.fromMicrosecondsSinceEpoch(state.userModel.birthDay)
+          : null;
+      if (birthday != null) {
+        birthDateString = formatDate(
+          birthday,
+          [
+            mm,
+            '/',
+            dd,
+            '/',
+            yyyy,
+          ],
+        );
+      }
+    }
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(
         title: 'Change Profile Photo',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 30,
-        ),
-        height: 44,
+        image: state.userModel != null
+            ? (state.userModel.avatar != ''
+                ? NetworkImage(state.userModel.avatar)
+                : Image.asset(
+                    'assets/icons/icon_place_holder.png',
+                    fit: BoxFit.cover,
+                    width: 30,
+                  ))
+            : Image.asset(
+                'assets/icons/icon_place_holder.png',
+                fit: BoxFit.cover,
+                width: 30,
+              ),
+        height: 55,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -134,21 +174,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       EditProfileSettingTile(
         title: 'Name',
-        value: 'Demo User',
-        height: 44,
+        value: nikName,
+        height: 55,
+        color: nikName != '' ? Color(0xFFFFA685) : Color(0x808476AB),
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: ChangeNameScreen(
-              bloc: widget.bloc,
-            ),
+            screen: ChangeNameScreen(),
           );
         },
       ),
       EditProfileSettingTile(
         title: 'Gender',
-        value: 'Select Gender',
-        height: 44,
+        value: gender,
+        height: 55,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -181,8 +220,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       EditProfileSettingTile(
         title: 'Birthdate',
-        value: 'Select Date',
-        height: 44,
+        value: birthDateString,
+        height: 55,
         function: () async => await showModalBottomSheet(
           context: context,
           builder: (BuildContext builder) {
@@ -201,8 +240,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       EditProfileSettingTile(
         title: 'Location',
-        value: 'Select Location',
-        height: 44,
+        value: area,
+        height: 55,
         function: () {
           Navigation.toScreen(
             context: context,

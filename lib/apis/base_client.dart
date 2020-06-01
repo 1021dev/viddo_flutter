@@ -1,8 +1,11 @@
 import 'dart:io';
 
-import 'package:Viiddo/apis/api_service.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_rsa/simple_rsa.dart';
 
 import '../utils/cookie_utils.dart';
 import 'jsonable.dart';
@@ -261,9 +264,20 @@ class BaseClient {
   }) async {
     bool reAuthRequired = false;
     Response response;
+
     do {
       if (headers == null) {
         headers = {};
+      }
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String token = sharedPreferences.getString(Constants.TOKEN);
+      String endcryptString =
+          await encryptString(Constants.netWorkTicket, Constants.rsaPublicKey);
+      headers['ticket'] = endcryptString;
+
+      if (token != null && token.length > 0) {
+        headers['token'] = token;
       }
 //      List<String> cookies = await CookieUtils.getCookies();
 //      if (cookies != null) {

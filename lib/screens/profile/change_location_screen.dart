@@ -1,4 +1,5 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,7 @@ import '../../themes.dart';
 import '../../utils/widget_utils.dart';
 
 class ChangeLocationScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  ProfileScreenBloc bloc;
 
   ChangeLocationScreen({
     this.bloc,
@@ -42,10 +43,10 @@ class _ChangeLocationScreenState extends State<ChangeLocationScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {
+      listener: (BuildContext context, ProfileScreenState state) async {
         FocusScope.of(context).requestFocus(nameFocus);
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -73,7 +74,7 @@ class _ChangeLocationScreenState extends State<ChangeLocationScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(ProfileScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {

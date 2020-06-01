@@ -1,4 +1,5 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/profile/baby_item_tile.dart';
 import 'package:Viiddo/screens/profile/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/change_name_screen.dart';
@@ -16,7 +17,7 @@ import '../../utils/widget_utils.dart';
 import 'family_item_tile.dart';
 
 class BabiesScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  ProfileScreenBloc bloc;
 
   BabiesScreen({
     this.bloc,
@@ -44,8 +45,8 @@ class _BabiesScreenState extends State<BabiesScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, ProfileScreenState state) async {},
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -74,7 +75,7 @@ class _BabiesScreenState extends State<BabiesScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(ProfileScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {

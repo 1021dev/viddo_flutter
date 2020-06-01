@@ -1,12 +1,15 @@
+import 'package:Viiddo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderView extends StatelessWidget {
   final Function onTap;
+  UserModel userModel;
 
-  const ProfileHeaderView({
+  ProfileHeaderView({
     Key key,
     @required this.onTap,
+    this.userModel,
   }) : super(key: key);
 
   @override
@@ -34,11 +37,19 @@ class ProfileHeaderView extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: 40,
                   ),
-                  Image.asset(
-                    'assets/icons/icon_place_holder.png',
-                    fit: BoxFit.cover,
-                    width: 40,
-                  ),
+                  userModel != null
+                      ? (userModel.avatar != ''
+                          ? NetworkImage(userModel.avatar)
+                          : Image.asset(
+                              'assets/icons/icon_place_holder.png',
+                              fit: BoxFit.cover,
+                              width: 40,
+                            ))
+                      : Image.asset(
+                          'assets/icons/icon_place_holder.png',
+                          fit: BoxFit.cover,
+                          width: 40,
+                        ),
                 ],
               ),
               Padding(
@@ -50,7 +61,7 @@ class ProfileHeaderView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Test',
+                      userModel != null ? userModel.nikeName : '',
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFFE46E5C),
