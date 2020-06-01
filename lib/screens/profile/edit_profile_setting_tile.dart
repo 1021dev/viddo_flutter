@@ -7,15 +7,17 @@ class EditProfileSettingTile extends StatelessWidget {
   final String value;
   final Image image;
   final double height;
+  Color color;
   final Function function;
 
-  const EditProfileSettingTile({
+  EditProfileSettingTile({
     Key key,
     this.title,
     this.value,
     this.image,
     this.height,
     this.function,
+    this.color = const Color(0x808476AB),
   }) : super(key: key);
 
   @override
@@ -44,7 +46,7 @@ class EditProfileSettingTile extends StatelessWidget {
                         value,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color(0x808476AB),
+                          color: color,
                           fontFamily: 'Roboto',
                         ),
                       ),

@@ -66,9 +66,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               bloc: mainScreenBloc,
             ),
             Container(),
-            ProfileScreen(
-              bloc: mainScreenBloc,
-            ),
+            ProfileScreen(),
           ];
           return DefaultTabController(
             length: 2,

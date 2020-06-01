@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/home/babies/baby_info_screen.dart';
 import 'package:Viiddo/screens/home/invitation_code_input_screen.dart';
 import 'package:Viiddo/screens/home/notifications/notification_activity_item.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class InviteSomeOneScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  ProfileScreenBloc bloc;
 
   InviteSomeOneScreen({
     this.bloc,
@@ -45,8 +46,8 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, ProfileScreenState state) async {},
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return DefaultTabController(
@@ -140,7 +141,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _codeBody(MainScreenState state) {
+  Widget _codeBody(ProfileScreenState state) {
     return Container(
       alignment: Alignment.center,
       child: Padding(
@@ -229,7 +230,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _emailBody(MainScreenState state) {
+  Widget _emailBody(ProfileScreenState state) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -408,7 +409,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _qrBody(MainScreenState state) {
+  Widget _qrBody(ProfileScreenState state) {
     return Container(
       alignment: Alignment.topCenter,
       color: Color(0xFFFFF5EF),

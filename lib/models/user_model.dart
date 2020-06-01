@@ -7,7 +7,7 @@ class UserModel extends Jsonable {
   String nikeName;
   int objectId;
   String gender;
-  DateTime birthDay;
+  int birthDay;
   String area;
   String avatar;
   String email;
@@ -45,7 +45,7 @@ class UserModel extends Jsonable {
     String nikeName,
     int objectId,
     String gender,
-    DateTime birthDay,
+    int birthDay,
     String area,
     String avatar,
     String email,

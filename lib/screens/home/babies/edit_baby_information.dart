@@ -167,9 +167,7 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: ChangeNameScreen(
-              bloc: widget.bloc,
-            ),
+            screen: ChangeNameScreen(),
           );
         },
       ),
