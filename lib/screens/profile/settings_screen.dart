@@ -1,4 +1,5 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/login_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../themes.dart';
 
 class SettingsScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  ProfileScreenBloc bloc;
 
   SettingsScreen({
     this.bloc,
@@ -38,8 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, ProfileScreenState state) async {},
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -67,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(ProfileScreenState state) {
     return SafeArea(
       key: formKey,
       child: Container(

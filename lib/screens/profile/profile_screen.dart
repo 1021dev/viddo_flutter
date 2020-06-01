@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
 import 'package:Viiddo/screens/profile/babies_screen.dart';
 import 'package:Viiddo/screens/profile/edit_profile_screen.dart';
@@ -21,11 +22,7 @@ import '../../utils/navigation.dart';
 import '../../utils/widget_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
-  MainScreenBloc bloc;
-
-  ProfileScreen({
-    this.bloc,
-  });
+  ProfileScreen();
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -35,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  int resourceID;
+  ProfileScreenBloc screenBloc = ProfileScreenBloc();
 
   List<ProfileSettingModel> listViewItems(BuildContext context) {
     return [
@@ -50,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: FamilyScreen(
-              bloc: widget.bloc,
+              bloc: screenBloc,
             ),
           );
         },
@@ -66,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: BabiesScreen(
-              bloc: widget.bloc,
+              bloc: screenBloc,
             ),
           );
         },
@@ -82,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: ReportProblemScreen(
-              bloc: widget.bloc,
+              bloc: screenBloc,
             ),
           );
         },
@@ -98,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: SettingsScreen(
-              bloc: widget.bloc,
+              bloc: screenBloc,
             ),
           );
         },
@@ -108,6 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
+    screenBloc.add(UserProfile());
     super.initState();
   }
 
@@ -118,10 +116,10 @@ class _ProfileScreenState extends State<ProfileScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
-        bloc: widget.bloc,
+      bloc: screenBloc,
+      listener: (BuildContext context, ProfileScreenState state) async {},
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+        bloc: screenBloc,
         builder: (BuildContext context, state) {
           return Scaffold(
             key: scaffoldKey,
@@ -132,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(ProfileScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
@@ -149,10 +147,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Navigation.toScreen(
                       context: context,
                       screen: EditProfileScreen(
-                        bloc: widget.bloc,
+                        bloc: screenBloc,
                       ),
                     );
                   },
+                  userModel: state.userModel,
                 ),
                 Container(
                   color: Color(0xFFF5F5F5),

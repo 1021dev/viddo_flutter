@@ -31,7 +31,7 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
         yield LoginScreenFailure(error: 'error');
       }
     } catch (error) {
-      yield LoginScreenFailure(error: error);
+      yield LoginScreenFailure(error: error.toString());
     } finally {
       yield state.copyWith(isLoading: false);
     }

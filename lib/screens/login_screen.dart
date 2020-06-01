@@ -284,8 +284,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 )),
             onPressed: () {
               Navigation.toScreen(
-                  context: context,
-                  screen: ResetPasswordScreen(email: emailController.text));
+                context: context,
+                screen: ResetPasswordScreen(
+                  email: emailController.text,
+                ),
+              );
             },
           ),
         ],
