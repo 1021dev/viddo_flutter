@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
-import 'package:Viiddo/screens/profile/babies_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_screen.dart';
-import 'package:Viiddo/screens/profile/family_screen.dart';
+import 'package:Viiddo/screens/profile/baby/babies_screen.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_screen.dart';
+import 'package:Viiddo/screens/profile/family/family_screen.dart';
 import 'package:Viiddo/screens/profile/profile_header.dart';
-import 'package:Viiddo/screens/profile/profile_setting_tile.dart';
-import 'package:Viiddo/screens/profile/report_problem_screen.dart';
-import 'package:Viiddo/screens/profile/settings_screen.dart';
+import 'package:Viiddo/screens/profile/settings/profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/settings/report_problem_screen.dart';
+import 'package:Viiddo/screens/profile/settings/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +33,10 @@ class _ProfileScreenState extends State<ProfileScreen>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   ProfileScreenBloc screenBloc = ProfileScreenBloc();
+
+  Timer _timer;
+  int _start = 10;
+  bool _sentCode = false;
 
   List<ProfileSettingModel> listViewItems(BuildContext context) {
     return [
@@ -134,6 +138,10 @@ class _ProfileScreenState extends State<ProfileScreen>
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
+      bool isVerified = false;
+      if (state.userModel != null) {
+        isVerified = state.userModel.vertical;
+      }
       return SafeArea(
         key: formKey,
         child: SingleChildScrollView(
@@ -159,11 +167,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                   width: MediaQuery.of(context).size.width,
                 ),
                 _listView(),
-                VerifyEmailView(
-                  onTap: () {
-                    _hadleVerification();
-                  },
-                ),
+                isVerified
+                    ? Container()
+                    : VerifyEmailView(
+                        time: _start,
+                        sentCode: _sentCode,
+                        onTap: () {
+                          _hadleVerification();
+                          startTimer();
+                        },
+                      ),
               ],
             ),
           ),
@@ -245,6 +258,32 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void dispose() {
+    _timer.cancel();
     super.dispose();
+  }
+
+  void startTimer() {
+    setState(() {
+      _start = 119;
+      _sentCode = true;
+    });
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (_start < 1) {
+            setState(() {
+              _sentCode = false;
+            });
+            timer.cancel();
+          } else {
+            setState(() {
+              _start = _start - 1;
+            });
+          }
+        },
+      ),
+    );
   }
 }

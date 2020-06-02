@@ -1,18 +1,19 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
-import 'package:Viiddo/screens/profile/change_location_screen.dart';
-import 'package:Viiddo/screens/profile/change_name_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
+import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-import '../../utils/navigation.dart';
-import '../../utils/widget_utils.dart';
+import '../../../utils/navigation.dart';
+import '../../../utils/widget_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   ProfileScreenBloc bloc;
@@ -110,7 +111,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         area = state.userModel.area;
       }
       DateTime birthday = state.userModel.birthDay != null
-          ? DateTime.fromMicrosecondsSinceEpoch(state.userModel.birthDay)
+          ? DateTime.fromMillisecondsSinceEpoch(
+              state.userModel.birthDay,
+            )
           : null;
       if (birthday != null) {
         birthDateString = formatDate(

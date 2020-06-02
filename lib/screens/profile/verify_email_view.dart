@@ -6,9 +6,13 @@ import '../../themes.dart';
 class VerifyEmailView extends StatelessWidget {
   final Function onTap;
 
-  const VerifyEmailView({
+  int time;
+  bool sentCode;
+  VerifyEmailView({
     Key key,
     @required this.onTap,
+    this.time,
+    this.sentCode = false,
   }) : super(key: key);
 
   @override
@@ -75,7 +79,7 @@ class VerifyEmailView extends StatelessWidget {
                   child: MaterialButton(
                     height: 46.0,
                     color: lightTheme.accentColor,
-                    child: Text('Verify Email',
+                    child: Text(sentCode ? '${time}s' : 'Verify Email',
                         style: TextStyle(
                           fontSize: 18.0,
                           color: Colors.white,
