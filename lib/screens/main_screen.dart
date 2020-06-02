@@ -7,8 +7,11 @@ import 'package:Viiddo/screens/home/notifications/notifications_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
+import 'package:Viiddo/screens/profile/welcome_view.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/widgets/bottom_selector.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +34,11 @@ class OverflowMenuItem {
 }
 
 class MainScreen extends StatefulWidget {
+  int selectedPage;
+
+  MainScreen({
+    this.selectedPage = 0,
+  });
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -49,7 +57,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    _selectedIndex = widget.selectedPage;
     tabController = TabController(length: 2, vsync: this);
+
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      sharedPreferences = sp;
+      bool isShowWelcome = sp.getBool(Constants.SHOWWELCOME) ?? false;
+      if (!isShowWelcome) {
+        sharedPreferences.setBool(Constants.SHOWWELCOME, false);
+        showWelcome();
+      }
+    });
+
     super.initState();
   }
 
@@ -259,5 +278,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void dispose() {
     mainScreenBloc.close();
     super.dispose();
+  }
+
+  void showWelcome() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return WelcomeView(
+          onTapSkip: () {},
+          onTapWatchVideo: () {},
+        );
+      },
+    );
   }
 }

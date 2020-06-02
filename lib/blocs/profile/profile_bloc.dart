@@ -22,11 +22,9 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
   }
 
   Stream<ProfileScreenState> _getAccountInfo(UserProfile event) async* {
-    yield state.copyWith(isLoading: true);
     try {
       UserModel userModel = await _apiService.getUserProfile();
       yield state.copyWith(
-        isLoading: false,
         userModel: userModel,
       );
     } catch (error) {
