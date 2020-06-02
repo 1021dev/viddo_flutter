@@ -41,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     return [
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/family_solid.png'),
+          AssetImage('assets/icons/ic_family_solid.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),
@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/baby_solid.png'),
+          AssetImage('assets/icons/ic_baby_solid.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/report_problem.png'),
+          AssetImage('assets/icons/ic_report_solid.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),
@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/ic_settings.png'),
+          AssetImage('assets/icons/ic_settings_solid.png'),
           size: 20,
           color: lightTheme.accentColor,
         ),
@@ -257,7 +257,9 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void dispose() {
-    _timer.cancel();
+    if (_timer != null) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 

@@ -16,7 +16,10 @@ class WelcomeView extends StatelessWidget {
       alignment: Alignment.center,
       padding: EdgeInsets.all(0),
       child: Container(
-        margin: EdgeInsets.only(left: 24, right:24,),
+        margin: EdgeInsets.only(
+          left: 24,
+          right: 24,
+        ),
         clipBehavior: Clip.antiAlias,
         height: 400,
         alignment: Alignment.center,
@@ -37,14 +40,16 @@ class WelcomeView extends StatelessWidget {
               padding: EdgeInsets.only(top: 36),
             ),
             Expanded(
-              child: Text(
-                'One-stop app to share photos of your kiddos.\nDon’t know where to start?',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF8476AB),
-                  fontFamily: 'Roboto',
+              child: Material(
+                color: Colors.transparent,
+                child: Text(
+                  'One-stop app to share photos of your kiddos.\nDon’t know where to start?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF8476AB),
+                    fontFamily: 'Roboto',
+                  ),
                 ),
               ),
             ),
@@ -64,7 +69,11 @@ class WelcomeView extends StatelessWidget {
                     child: MaterialButton(
                       height: 50.0,
                       elevation: 0.0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),),),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(5),
+                        ),
+                      ),
                       color: Color(0xFFFFA685),
                       child: Text(
                         'Skip',
@@ -82,7 +91,11 @@ class WelcomeView extends StatelessWidget {
                   Expanded(
                     child: MaterialButton(
                       height: 50.0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomRight: Radius.circular(5),),),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(5),
+                        ),
+                      ),
                       elevation: 0.0,
                       color: Color(0xFFE46E5C),
                       child: Text(

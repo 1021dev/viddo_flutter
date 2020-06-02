@@ -43,7 +43,7 @@ class VerifyEmailView extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Image.asset(
-                    'assets/icons/mine_houlder.png',
+                    'assets/icons/ic_verification_code.png',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -68,25 +68,21 @@ class VerifyEmailView extends StatelessWidget {
               padding: EdgeInsets.only(top: 24),
             ),
             Container(
-              height: 50,
+              height: 44,
               child: SizedBox.expand(
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0)),
-                  elevation: 4.0,
-                  color: lightTheme.accentColor,
-                  clipBehavior: Clip.antiAlias,
-                  child: MaterialButton(
-                    height: 46.0,
-                    color: lightTheme.accentColor,
-                    child: Text(sentCode ? '${time}s' : 'Verify Email',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        )),
-                    onPressed: onTap,
-                  ),
+                child: MaterialButton(
+                  height: 44.0,
+                  color: Color(0xFFFFA685),
+                  elevation: 0.0,
+                  focusElevation: 0.0,
+                  highlightElevation: 0.0,
+                  child: Text(sentCode ? '${time}s' : 'Verify Email',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      )),
+                  onPressed: onTap,
                 ),
               ),
             ),
