@@ -1,5 +1,4 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/main.dart';
 import 'package:Viiddo/screens/home/babies/babies_screen.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -285,8 +283,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       context: context,
       builder: (context) {
         return WelcomeView(
-          onTapSkip: () {},
-          onTapWatchVideo: () {},
+          onTapSkip: () {
+            Navigator.pop(context);
+          },
+          onTapWatchVideo: () {
+            Navigator.pop(context);
+          },
         );
       },
     );

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:Viiddo/utils/constants.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_rsa/simple_rsa.dart';
 
-import '../utils/cookie_utils.dart';
 import 'jsonable.dart';
 
 enum RestCallType { get, post, formPost, put, delete }
