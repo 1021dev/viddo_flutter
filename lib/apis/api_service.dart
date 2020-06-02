@@ -1,13 +1,10 @@
-import 'dart:io';
 
-import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/login_model.dart';
 import 'package:Viiddo/models/response_model.dart';
 import 'package:Viiddo/models/user_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:dio/dio.dart';
 
-import 'package:device_info/device_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../env.dart';
