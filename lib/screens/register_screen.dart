@@ -2,6 +2,7 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/login/login_bloc.dart';
 import 'package:Viiddo/blocs/login/login_state.dart';
 import 'package:Viiddo/blocs/register/register.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/email_validator.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
@@ -52,7 +53,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: screenBloc,
-      listener: (BuildContext context, RegisterScreenState state) async {},
+      listener: (BuildContext context, RegisterScreenState state) async {
+        if (state is RegisterSuccess) {
+          Navigation.toScreenWithReplacement(
+            context: context,
+            screen: MainScreen(
+              selectedPage: 2,
+            ),
+          );
+        } else if (state is RegisterScreenFailure) {
+          WidgetUtils.showErrorDialog(context, state.error);
+        }
+      },
       child: BlocBuilder<RegisterScreenBloc, RegisterScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {

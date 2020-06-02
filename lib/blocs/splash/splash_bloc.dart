@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc.dart';
 
@@ -17,7 +19,14 @@ class SplashScreenBloc extends Bloc<SplashScreenEvent, SplashScreenState> {
 
   Stream<SplashScreenState> _autoLogin() async* {
     try {
-      yield AutoLoginSuccess();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String token = sharedPreferences.get(Constants.TOKEN);
+      if (token != null && token.length > 0) {
+        yield AutoLoginSuccess();
+      } else {
+        yield AutoLoginFailure();
+      }
     } catch (error) {
       yield AutoLoginFailure();
     }

@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:Viiddo/apis/api_service.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'register_event.dart';
 import 'register_state.dart';
@@ -28,6 +31,9 @@ class RegisterScreenBloc
       bool isLogin =
           await _apiService.accountLogin(event.username, event.password);
       if (isLogin) {
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        sharedPreferences.setBool(Constants.SHOWWELCOME, true);
         yield RegisterSuccess();
       } else {
         yield RegisterScreenFailure(error: 'error');

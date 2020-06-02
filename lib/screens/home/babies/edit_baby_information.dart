@@ -1,7 +1,7 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/profile/change_location_screen.dart';
-import 'package:Viiddo/screens/profile/change_name_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
+import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,14 +1,14 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/login_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../themes.dart';
+import '../../../themes.dart';
 
 class SettingsScreen extends StatefulWidget {
   ProfileScreenBloc bloc;

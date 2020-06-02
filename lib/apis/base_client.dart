@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:Viiddo/utils/constants.dart';
@@ -274,7 +275,7 @@ class BaseClient {
       String token = sharedPreferences.getString(Constants.TOKEN);
       String endcryptString =
           await encryptString(Constants.netWorkTicket, Constants.rsaPublicKey);
-      headers['ticket'] = endcryptString;
+//      headers['ticket'] = endcryptString;
 
       if (token != null && token.length > 0) {
         headers['token'] = token;

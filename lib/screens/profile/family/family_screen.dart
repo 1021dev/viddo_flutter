@@ -1,33 +1,32 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
-import 'package:Viiddo/screens/profile/baby_item_tile.dart';
-import 'package:Viiddo/screens/profile/change_location_screen.dart';
-import 'package:Viiddo/screens/profile/change_name_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/home/invite/invite_someone_screen.dart';
+import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
+import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-import '../../utils/navigation.dart';
-import '../../utils/widget_utils.dart';
+import '../../../utils/navigation.dart';
+import '../../../utils/widget_utils.dart';
 import 'family_item_tile.dart';
 
-class BabiesScreen extends StatefulWidget {
+class FamilyScreen extends StatefulWidget {
   ProfileScreenBloc bloc;
 
-  BabiesScreen({
+  FamilyScreen({
     this.bloc,
   });
 
   @override
-  _BabiesScreenState createState() => _BabiesScreenState();
+  _FamilyScreenState createState() => _FamilyScreenState();
 }
 
-class _BabiesScreenState extends State<BabiesScreen>
+class _FamilyScreenState extends State<FamilyScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -51,7 +50,7 @@ class _BabiesScreenState extends State<BabiesScreen>
         builder: (BuildContext context, state) {
           return Scaffold(
             appBar: new AppBar(
-              title: Text('Visibility'),
+              title: Text('Family'),
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
@@ -65,6 +64,25 @@ class _BabiesScreenState extends State<BabiesScreen>
                 color: Color(0xFFFFA685),
                 size: 12,
               ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'Invite',
+                    style: TextStyle(
+                      color: Color(0xFFFAA382),
+                      fontSize: 14,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigation.toScreen(
+                      context: context,
+                      screen: InviteSomeOneScreen(
+                        bloc: widget.bloc,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             key: scaffoldKey,
             body: _getBody(state),
@@ -89,67 +107,37 @@ class _BabiesScreenState extends State<BabiesScreen>
   }
 
   Widget _listView() {
-    List<BabyItemTile> list = [
-      BabyItemTile(
-        title: 'Kendra',
+    List<FamilyItemTile> list = [
+      FamilyItemTile(
+        title: 'Tom',
         image: Image.asset(
           'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
-        value: '07/15/2013',
-        ison: true,
-        function: (_) {},
+        value: 'Father',
+        function: () {},
       ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
+      FamilyItemTile(
+        title: 'Van Le',
+        value: 'Mother',
         image: Image.asset(
           'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
-        ison: true,
-        function: (_) {},
-      ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        ison: true,
-        function: (_) {},
-      ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        ison: true,
-        function: (_) {},
+        function: () {},
       ),
     ];
-    return RefreshIndicator(
-      child: ListView.separated(
+    return Container(
+      color: Colors.white,
+      child: ListView.builder(
         itemCount: list.length,
+        shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return list[index];
         },
-        separatorBuilder: (BuildContext context, int index) {
-          return Divider(
-            height: 0,
-            thickness: 1.4,
-            color: Colors.transparent,
-          );
-        },
       ),
-      onRefresh: () {},
     );
   }
 

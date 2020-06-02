@@ -1,32 +1,33 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
-import 'package:Viiddo/screens/home/invite/invite_someone_screen.dart';
-import 'package:Viiddo/screens/profile/change_location_screen.dart';
-import 'package:Viiddo/screens/profile/change_name_screen.dart';
-import 'package:Viiddo/screens/profile/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/baby/baby_item_tile.dart';
+import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
+import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
+import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-import '../../utils/navigation.dart';
-import '../../utils/widget_utils.dart';
-import 'family_item_tile.dart';
+import '../../../utils/navigation.dart';
+import '../../../utils/widget_utils.dart';
+import '../family/family_item_tile.dart';
 
-class FamilyScreen extends StatefulWidget {
+class BabiesScreen extends StatefulWidget {
   ProfileScreenBloc bloc;
 
-  FamilyScreen({
+  BabiesScreen({
     this.bloc,
   });
 
   @override
-  _FamilyScreenState createState() => _FamilyScreenState();
+  _BabiesScreenState createState() => _BabiesScreenState();
 }
 
-class _FamilyScreenState extends State<FamilyScreen>
+class _BabiesScreenState extends State<BabiesScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -50,7 +51,7 @@ class _FamilyScreenState extends State<FamilyScreen>
         builder: (BuildContext context, state) {
           return Scaffold(
             appBar: new AppBar(
-              title: Text('Family'),
+              title: Text('Visibility'),
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
@@ -64,25 +65,6 @@ class _FamilyScreenState extends State<FamilyScreen>
                 color: Color(0xFFFFA685),
                 size: 12,
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'Invite',
-                    style: TextStyle(
-                      color: Color(0xFFFAA382),
-                      fontSize: 14,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigation.toScreen(
-                      context: context,
-                      screen: InviteSomeOneScreen(
-                        bloc: widget.bloc,
-                      ),
-                    );
-                  },
-                ),
-              ],
             ),
             key: scaffoldKey,
             body: _getBody(state),
@@ -107,37 +89,67 @@ class _FamilyScreenState extends State<FamilyScreen>
   }
 
   Widget _listView() {
-    List<FamilyItemTile> list = [
-      FamilyItemTile(
-        title: 'Tom',
+    List<BabyItemTile> list = [
+      BabyItemTile(
+        title: 'Kendra',
         image: Image.asset(
           'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
-        value: 'Father',
-        function: () {},
+        value: '07/15/2013',
+        ison: true,
+        function: (_) {},
       ),
-      FamilyItemTile(
-        title: 'Van Le',
-        value: 'Mother',
+      BabyItemTile(
+        title: 'Kendra',
+        value: '07/15/2013',
         image: Image.asset(
           'assets/icons/icon_place_holder.png',
           fit: BoxFit.cover,
           width: 40,
         ),
-        function: () {},
+        ison: true,
+        function: (_) {},
+      ),
+      BabyItemTile(
+        title: 'Kendra',
+        value: '07/15/2013',
+        image: Image.asset(
+          'assets/icons/icon_place_holder.png',
+          fit: BoxFit.cover,
+          width: 40,
+        ),
+        ison: true,
+        function: (_) {},
+      ),
+      BabyItemTile(
+        title: 'Kendra',
+        value: '07/15/2013',
+        image: Image.asset(
+          'assets/icons/icon_place_holder.png',
+          fit: BoxFit.cover,
+          width: 40,
+        ),
+        ison: true,
+        function: (_) {},
       ),
     ];
-    return Container(
-      color: Colors.white,
-      child: ListView.builder(
+    return RefreshIndicator(
+      child: ListView.separated(
         itemCount: list.length,
-        shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return list[index];
         },
+        separatorBuilder: (BuildContext context, int index) {
+          return Divider(
+            height: 0,
+            thickness: 1.4,
+            color: Colors.transparent,
+          );
+        },
       ),
+      onRefresh: () {},
     );
   }
 

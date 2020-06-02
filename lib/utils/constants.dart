@@ -12,6 +12,7 @@ class Constants {
   static String OBJECTID = 'objectId';
   static String FACEBOOK_LOGIN = 'isFacebookLogin';
   static String EMAIL = 'email';
+  static String SHOWWELCOME = 'isShowWelcome';
 }
 
 enum Gender { M, FM }
