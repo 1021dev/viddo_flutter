@@ -68,7 +68,54 @@ class _HomeScreenState extends State<HomeScreen>
               ? _buildPostList()
               : Center(
                   child: GestureDetector(
-                    child: Image.asset('assets/icons/home_add_baby.png'),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset('assets/icons/ic_home_empty.png'),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 8,
+                          ),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Add a baby ',
+                            style: TextStyle(
+                              color: Color(0xFFFFA685),
+                              fontFamily: 'Roboto-Bold',
+                              fontSize: 13,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: ' or ',
+                                style: TextStyle(
+                                  color: Color(0xFF8476AB),
+                                  fontFamily: 'Roboto-Light',
+                                  fontSize: 13,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'enter invitation code',
+                                style: TextStyle(
+                                  color: Color(0xFFFFA685),
+                                  fontFamily: 'Roboto-Bold',
+                                  fontSize: 13,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' to join a group',
+                                style: TextStyle(
+                                  color: Color(0xFF8476AB),
+                                  fontFamily: 'Roboto-Light',
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     onTap: () {
                       setState(() {
                         isPost = true;

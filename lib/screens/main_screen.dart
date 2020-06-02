@@ -61,7 +61,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       bool isShowWelcome = sp.getBool(Constants.SHOWWELCOME) ?? false;
-      if (!isShowWelcome) {
+      if (isShowWelcome) {
         sharedPreferences.setBool(Constants.SHOWWELCOME, false);
         showWelcome();
       }
@@ -91,7 +91,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               appBar: new AppBar(
                 title: _selectedIndex == 0
                     ? ImageIcon(
-                        AssetImage('assets/icons/home_top_image.png'),
+                        AssetImage('assets/icons/ic_logo_viiddo.png'),
                         size: 72,
                       )
                     : Text(
@@ -280,6 +280,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void showWelcome() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return WelcomeView(
