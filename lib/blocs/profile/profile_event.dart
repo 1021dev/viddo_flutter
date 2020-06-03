@@ -7,11 +7,25 @@ abstract class ProfileScreenEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitProfileScreen extends ProfileScreenEvent {}
+
 class UserProfile extends ProfileScreenEvent {
   UserProfile();
 
   @override
   List<Object> get props => [];
+}
+
+class UpdateUserProfile extends ProfileScreenEvent {
+  dynamic map;
+  UpdateUserProfile(
+    this.map,
+  );
+
+  @override
+  List<Object> get props => [
+        this.map,
+      ];
 }
 
 class VerificationCode extends ProfileScreenEvent {

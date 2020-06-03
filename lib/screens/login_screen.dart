@@ -10,12 +10,8 @@ import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../themes.dart';
-import '../themes.dart';
-import '../themes.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -27,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -190,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: emailFocus,
@@ -221,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: passwordFocus,
@@ -244,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
                 suffixIcon: IconButton(
                   icon: ImageIcon(
-                    AssetImage('assets/icons/ic_show_password.png'),
+                    AssetImage('assets/icons/ic_reveal_password.png'),
                   ),
                   color: isPasswordShow ? Color(0xFF8476AB) : Color(0xFFFAA382),
                   onPressed: () {
@@ -298,17 +295,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _loginButton() {
     return Container(
-      height: 50,
+      height: 44,
       child: SizedBox.expand(
         child: Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
           ),
-          elevation: 1.0,
+          elevation: 0.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
           child: MaterialButton(
-            height: 46.0,
+            height: 44.0,
             color: Color(0xFFFFA685),
             child: Text('Sign In',
                 style: TextStyle(
@@ -416,7 +413,9 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 24.0,
               height: 24.0,
             ),
-            onPressed: () {},
+            onPressed: () {
+              _loginFacebook();
+            },
           ),
         ],
       ),
@@ -455,6 +454,33 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<Null> _loginFacebook() async {
+    final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accessToken = result.accessToken;
+        print('''
+         Logged in!
+         
+         Token: ${accessToken.token}
+         User id: ${accessToken.userId}
+         Expires: ${accessToken.expires}
+         Permissions: ${accessToken.permissions}
+         Declined permissions: ${accessToken.declinedPermissions}
+         ''');
+        screenBloc.add(FacebookLoginEvent(accessToken));
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print('Login cancelled by the user.');
+        break;
+      case FacebookLoginStatus.error:
+        print('Something went wrong with the login process.\n'
+            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        break;
+    }
   }
 
   @override

@@ -1,9 +1,12 @@
+import 'dart:math';
 
 import 'package:Viiddo/models/login_model.dart';
 import 'package:Viiddo/models/response_model.dart';
 import 'package:Viiddo/models/user_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,7 +45,7 @@ class ApiService {
               await SharedPreferences.getInstance();
           sharedPreferences.setString(Constants.TOKEN, loginModel.token);
           sharedPreferences.setInt(
-              Constants.OBJECTID, loginModel.user.objectId);
+              Constants.OBJECT_ID, loginModel.user.objectId);
           sharedPreferences.setBool(Constants.FACEBOOK_LOGIN, false);
           sharedPreferences.setString(Constants.EMAIL, loginModel.user.email);
           return true;
@@ -55,10 +58,22 @@ class ApiService {
     }
   }
 
+  Future<dynamic> getFacebookProfile(FacebookAccessToken accessToken) async {
+    try {
+      Response graphResponse = await _client.getTypeless(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email,picture.height(200)&access_token=${accessToken.token}');
+      var profile = json.decode(graphResponse.data);
+      return profile;
+    } on DioError catch (e, s) {
+      print('graph api error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
   Future<bool> facebookLogin(
     String platform,
-    String code,
     String nikeName,
+    String code,
     String avatar,
   ) async {
     try {
@@ -85,8 +100,19 @@ class ApiService {
               await SharedPreferences.getInstance();
           sharedPreferences.setString(Constants.TOKEN, loginModel.token);
           sharedPreferences.setInt(
-              Constants.OBJECTID, loginModel.user.objectId);
-          sharedPreferences.setBool(Constants.FACEBOOK_LOGIN, true);
+              Constants.OBJECT_ID, loginModel.user.objectId);
+          if (loginModel.user != null) {
+            UserModel userModel = loginModel.user;
+            sharedPreferences.setString(
+                Constants.USERNAME, userModel.nikeName ?? '');
+            sharedPreferences.setString(
+                Constants.AVATAR, userModel.avatar ?? '');
+            sharedPreferences.setString(Constants.GENDER, userModel.gender);
+            sharedPreferences.setString(
+                Constants.LOCATION, userModel.area ?? '');
+            sharedPreferences.setInt(
+                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+          }
 
           return true;
         }
@@ -122,6 +148,25 @@ class ApiService {
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
         if (responseModel.content != null) {
+          LoginModel loginModel = LoginModel.fromJson(responseModel.content);
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          sharedPreferences.setString(Constants.TOKEN, loginModel.token);
+          sharedPreferences.setInt(
+              Constants.OBJECT_ID, loginModel.user.objectId);
+          if (loginModel.user != null) {
+            UserModel userModel = loginModel.user;
+            sharedPreferences.setString(
+                Constants.USERNAME, userModel.nikeName ?? '');
+            sharedPreferences.setString(
+                Constants.AVATAR, userModel.avatar ?? '');
+            sharedPreferences.setString(Constants.GENDER, userModel.gender);
+            sharedPreferences.setString(
+                Constants.LOCATION, userModel.area ?? '');
+            sharedPreferences.setInt(
+                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+          }
+
           return true;
         }
       }
@@ -173,8 +218,17 @@ class ApiService {
       print('getUserProfile: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
         if (responseModel.content != null) {
           UserModel userModel = UserModel.fromJson(responseModel.content);
+          sharedPreferences.setString(
+              Constants.USERNAME, userModel.nikeName ?? '');
+          sharedPreferences.setString(Constants.AVATAR, userModel.avatar ?? '');
+          sharedPreferences.setString(Constants.GENDER, userModel.gender);
+          sharedPreferences.setString(Constants.LOCATION, userModel.area ?? '');
+          sharedPreferences.setInt(Constants.BIRTHDAY, userModel.birthDay ?? 0);
+
           return userModel;
         }
       }
@@ -212,6 +266,33 @@ class ApiService {
       return false;
     } on DioError catch (e, s) {
       print('updatePassword error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> updateProfile(
+    dynamic map,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap(map);
+      Response response = await _client.postForm(
+        '${url}user/editMyProfile',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('updateProfile: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('updateProfile error: $e, $s');
       return Future.error(e);
     }
   }

@@ -8,11 +8,17 @@ class Constants {
   static String netWorkTicket = '054b0d16dc6146eb9b03743a19807253';
 
   // Paramenters
-  static String TOKEN = 'token';
-  static String OBJECTID = 'objectId';
-  static String FACEBOOK_LOGIN = 'isFacebookLogin';
-  static String EMAIL = 'email';
-  static String SHOWWELCOME = 'isShowWelcome';
+  static const String TOKEN = 'token';
+  static const String OBJECT_ID = 'objectId';
+  static const String FACEBOOK_LOGIN = 'isFacebookLogin';
+  static const String EMAIL = 'email';
+  static const String SHOW_WELCOME = 'isShowWelcome';
+
+  static const String USERNAME = 'nikName';
+  static const String AVATAR = 'avatar';
+  static const String BIRTHDAY = 'birthday';
+  static const String LOCATION = 'area';
+  static const String GENDER = 'gender';
 }
 
 enum Gender { M, FM }

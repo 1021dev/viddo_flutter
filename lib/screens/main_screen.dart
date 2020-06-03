@@ -60,9 +60,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
-      bool isShowWelcome = sp.getBool(Constants.SHOWWELCOME) ?? false;
+      bool isShowWelcome = sp.getBool(Constants.SHOW_WELCOME) ?? false;
       if (isShowWelcome) {
-        sharedPreferences.setBool(Constants.SHOWWELCOME, false);
+        sharedPreferences.setBool(Constants.SHOW_WELCOME, false);
         showWelcome();
       }
     });

@@ -15,7 +15,7 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
   Stream<LoginScreenState> mapEventToState(LoginScreenEvent event) async* {
     if (event is Login) {
       yield* _login(event);
-    } else if (event is FacebookLogin) {
+    } else if (event is FacebookLoginEvent) {
       yield* _facebookLogin(event);
     }
   }
@@ -37,14 +37,17 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
     }
   }
 
-  Stream<LoginScreenState> _facebookLogin(FacebookLogin event) async* {
+  Stream<LoginScreenState> _facebookLogin(FacebookLoginEvent event) async* {
     yield state.copyWith(isLoading: true);
     try {
+      var profile = await _apiService.getFacebookProfile(event.accessToken);
+      String avatar = profile['picture']['data']['url'];
+      String nikName = profile['name'];
       bool isLogin = await _apiService.facebookLogin(
-        event.platform,
-        event.nikeName,
-        event.code,
-        event.avatar,
+        'Facebook',
+        nikName,
+        '${event.accessToken.userId}',
+        avatar,
       );
       if (isLogin) {
         yield LoginSuccess();
