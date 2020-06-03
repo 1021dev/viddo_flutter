@@ -124,11 +124,7 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(
         title: 'Profile Picture',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 30,
-        ),
+        image: 'assets/icons/icon_place_holder.png',
         height: 44,
         function: () {
           showCupertinoModalPopup(

@@ -1,6 +1,7 @@
 import 'package:Viiddo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProfileHeaderView extends StatelessWidget {
   final Function onTap;
@@ -14,6 +15,12 @@ class ProfileHeaderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String avatar = '';
+    String name = '';
+    if (userModel != null) {
+      avatar = userModel.avatar;
+      name = userModel.nikeName;
+    }
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -37,19 +44,26 @@ class ProfileHeaderView extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: 40,
                   ),
-                  userModel != null
-                      ? (userModel.avatar != ''
-                          ? NetworkImage(userModel.avatar)
-                          : Image.asset(
-                              'assets/icons/icon_place_holder.png',
+                  (avatar != ''
+                      ? Container(
+                          width: 35.0,
+                          height: 35.0,
+                          padding: EdgeInsets.all(4),
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
                               fit: BoxFit.cover,
-                              width: 40,
-                            ))
+                              image: new NetworkImage(
+                                avatar,
+                              ),
+                            ),
+                          ),
+                        )
                       : Image.asset(
                           'assets/icons/icon_place_holder.png',
                           fit: BoxFit.cover,
                           width: 40,
-                        ),
+                        ))
                 ],
               ),
               Padding(
@@ -61,7 +75,7 @@ class ProfileHeaderView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      userModel != null ? userModel.nikeName : '',
+                      name,
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFFE46E5C),

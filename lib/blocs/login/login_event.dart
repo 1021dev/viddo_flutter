@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 abstract class LoginScreenEvent extends Equatable {
   LoginScreenEvent();
@@ -18,14 +19,11 @@ class Login extends LoginScreenEvent {
 }
 
 // ignore: must_be_immutable
-class FacebookLogin extends LoginScreenEvent {
-  final String platform = 'Facebook';
-  final String nikeName;
-  final String code;
-  final String avatar;
+class FacebookLoginEvent extends LoginScreenEvent {
+  final FacebookAccessToken accessToken;
 
-  FacebookLogin(this.nikeName, this.code, this.avatar);
+  FacebookLoginEvent(this.accessToken);
 
   @override
-  List<Object> get props => [platform, nikeName, code, avatar];
+  List<Object> get props => [accessToken];
 }
