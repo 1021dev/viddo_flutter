@@ -21,7 +21,7 @@ class SplashScreenBloc extends Bloc<SplashScreenEvent, SplashScreenState> {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      String token = sharedPreferences.get(Constants.TOKEN);
+      String token = sharedPreferences.getString(Constants.TOKEN);
       if (token != null && token.length > 0) {
         yield AutoLoginSuccess();
       } else {

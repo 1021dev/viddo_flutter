@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class EditProfileSettingTile extends StatelessWidget {
   final String title;
-  final String value;
-  final Image image;
+  String value;
+  final String image;
   final double height;
   Color color;
   final Function function;
@@ -13,7 +13,7 @@ class EditProfileSettingTile extends StatelessWidget {
   EditProfileSettingTile({
     Key key,
     this.title,
-    this.value,
+    this.value = '',
     this.image,
     this.height,
     this.function,
@@ -41,7 +41,33 @@ class EditProfileSettingTile extends StatelessWidget {
             Row(
               children: <Widget>[
                 image != null
-                    ? image
+                    ? (image.contains('http')
+                        ? Container(
+                            width: 30.0,
+                            height: 30.0,
+                            padding: EdgeInsets.all(4),
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                fit: BoxFit.cover,
+                                image: new NetworkImage(
+                                  image,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: 30.0,
+                            height: 30.0,
+                            padding: EdgeInsets.all(4),
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage(image),
+                              ),
+                            ),
+                          ))
                     : Text(
                         value,
                         style: TextStyle(

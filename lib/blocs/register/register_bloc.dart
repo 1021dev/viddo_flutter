@@ -20,7 +20,7 @@ class RegisterScreenBloc
       RegisterScreenEvent event) async* {
     if (event is Register) {
       yield* _register(event);
-    } else if (event is FacebookLogin) {
+    } else if (event is FacebookLoginEvent) {
       yield* _facebookLogin(event);
     }
   }
@@ -33,7 +33,7 @@ class RegisterScreenBloc
       if (isLogin) {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
-        sharedPreferences.setBool(Constants.SHOWWELCOME, true);
+        sharedPreferences.setBool(Constants.SHOW_WELCOME, true);
         yield RegisterSuccess();
       } else {
         yield RegisterScreenFailure(error: 'error');
@@ -45,14 +45,17 @@ class RegisterScreenBloc
     }
   }
 
-  Stream<RegisterScreenState> _facebookLogin(FacebookLogin event) async* {
+  Stream<RegisterScreenState> _facebookLogin(FacebookLoginEvent event) async* {
     yield state.copyWith(isLoading: true);
     try {
+      var profile = await _apiService.getFacebookProfile(event.accessToken);
+      String avatar = profile['picture']['data']['url'];
+      String nikName = profile['name'];
       bool isLogin = await _apiService.facebookLogin(
-        event.platform,
-        event.nikeName,
-        event.code,
-        event.avatar,
+        'Facebook',
+        nikName,
+        '${event.accessToken.userId}',
+        avatar,
       );
       if (isLogin) {
         yield RegisterSuccess();

@@ -176,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: emailFocus,
@@ -207,7 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: userNameFocus,
@@ -238,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: passwordFocus,
@@ -261,7 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
                 suffixIcon: IconButton(
                   icon: ImageIcon(
-                    AssetImage('assets/icons/ic_show_password.png'),
+                    AssetImage('assets/icons/ic_reveal_password.png'),
                   ),
                   color: isPasswordShow ? Color(0xFF8476AB) : Color(0xFFFAA382),
                   onPressed: () {
@@ -281,7 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: confirmPasswordFocus,
@@ -304,7 +304,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
                 suffixIcon: IconButton(
                   icon: ImageIcon(
-                    AssetImage('assets/icons/ic_show_password.png'),
+                    AssetImage('assets/icons/ic_reveal_password.png'),
                   ),
                   color: isConfirmPasswordShow
                       ? Color(0xFF8476AB)
@@ -331,17 +331,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _signUoButton() {
     return Container(
-      height: 50,
+      height: 44,
       child: SizedBox.expand(
         child: Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
           ),
-          elevation: 1.0,
+          elevation: 0.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
           child: MaterialButton(
-            height: 46.0,
+            height: 44.0,
             color: Color(0xFFFFA685),
             child: Text('Register',
                 style: TextStyle(

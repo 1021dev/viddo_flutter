@@ -131,19 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(
         title: 'Change Profile Photo',
-        image: state.userModel != null
-            ? (state.userModel.avatar != ''
-                ? NetworkImage(state.userModel.avatar)
-                : Image.asset(
-                    'assets/icons/icon_place_holder.png',
-                    fit: BoxFit.cover,
-                    width: 30,
-                  ))
-            : Image.asset(
-                'assets/icons/icon_place_holder.png',
-                fit: BoxFit.cover,
-                width: 30,
-              ),
+        image: avatar != '' ? avatar : 'assets/icons/icon_place_holder.png',
         height: 55,
         function: () {
           showCupertinoModalPopup(
