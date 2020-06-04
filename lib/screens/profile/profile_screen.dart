@@ -144,6 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: 24),
         child: Container(
+          color: Color(0xFFFFFBF8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -159,10 +160,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 nikName: state.username,
                 avatar: state.avatar,
               ),
-              Container(
-                color: Color(0xFFF5F5F5),
-                height: 8,
-                width: MediaQuery.of(context).size.width,
+              Padding(
+                padding: EdgeInsets.only(top: 10),
               ),
               _listView(),
               isVerified
@@ -198,7 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           return Divider(
             height: 0,
             thickness: 1,
-            color: Colors.black12,
+            color: Color(0xFFF4F4F4),
           );
         },
       ),

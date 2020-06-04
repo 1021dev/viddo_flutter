@@ -29,6 +29,15 @@
             </array>
         </dict>
     </array>
+    <key>io.flutter.embedded_views_preview</key>
+    <string>YES</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+    </dict>
     <key>FacebookAppID</key>
     <string>2424610224449561</string>
     <key>FacebookDisplayName</key>

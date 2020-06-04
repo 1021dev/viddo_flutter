@@ -2,6 +2,8 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/login_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
+import 'package:Viiddo/screens/profile/settings/webview_screen.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,14 +74,14 @@ class _SettingsScreenState extends State<SettingsScreen>
     return SafeArea(
       key: formKey,
       child: Container(
+        color: Color(0xFFFFFBF8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              color: Color(0xFFF0F0F0),
-              height: 10,
+            Padding(
+              padding: EdgeInsets.only(top: 10),
             ),
-            _listView(),
+            _listView(state),
             Expanded(
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
@@ -94,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                     child: Material(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.0)),
-                      elevation: 4.0,
+                      elevation: 0.0,
                       color: lightTheme.accentColor,
                       clipBehavior: Clip.antiAlias,
                       child: MaterialButton(
@@ -122,11 +124,14 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _listView() {
+  Widget _listView(ProfileScreenState state) {
+    String email = state.email;
+
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(
         title: 'Email',
-        value: 'tomliu@gmail.com',
+        value: email,
+        color: Color(0xFFFFA685),
         height: 44,
         function: () {},
       ),
@@ -140,13 +145,29 @@ class _SettingsScreenState extends State<SettingsScreen>
         title: 'Terms of Service',
         value: '',
         height: 44,
-        function: () {},
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: WebViewScreen(
+              title: 'Terms',
+              url: Constants.termsURL,
+            ),
+          );
+        },
       ),
       EditProfileSettingTile(
         title: 'Privacy Policy',
         value: '',
         height: 44,
-        function: () {},
+        function: () {
+          Navigation.toScreen(
+            context: context,
+            screen: WebViewScreen(
+              title: 'Privacy',
+              url: Constants.privacyURL,
+            ),
+          );
+        },
       ),
     ];
     return Container(
@@ -162,7 +183,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           return Divider(
             height: 0,
             thickness: 1,
-            color: Colors.black12,
+            color: Color(0xFFF4F4F4),
             indent: 12,
             endIndent: 12,
           );
