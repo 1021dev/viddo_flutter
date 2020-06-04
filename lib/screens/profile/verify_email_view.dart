@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../themes.dart';
-import '../../themes.dart';
-
 class VerifyEmailView extends StatelessWidget {
   final Function onTap;
 

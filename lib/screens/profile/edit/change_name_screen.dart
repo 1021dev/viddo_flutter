@@ -1,15 +1,8 @@
-import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/blocs/profile/profile.dart';
-import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../../../themes.dart';
-import '../../../utils/widget_utils.dart';
 
 class ChangeNameScreen extends StatefulWidget {
   ChangeNameScreen();
@@ -63,12 +56,12 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
     return SafeArea(
       key: formKey,
       child: Container(
+        color: Color(0xFFFFFBF8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              color: Color(0xFFF0F0F0),
-              height: 10,
+            Padding(
+              padding: EdgeInsets.only(top: 10),
             ),
             Container(
               height: 50,
@@ -96,9 +89,8 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                 },
               ),
             ),
-            Container(
-              color: Color(0xFFF0F0F0),
-              height: 200,
+            Padding(
+              padding: EdgeInsets.only(top: 200),
             ),
             Container(
               height: 44,
@@ -110,7 +102,7 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                 child: Material(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.0)),
-                  elevation: 4.0,
+                  elevation: 0.0,
                   color: lightTheme.accentColor,
                   clipBehavior: Clip.antiAlias,
                   child: MaterialButton(

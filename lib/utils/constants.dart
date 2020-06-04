@@ -7,6 +7,10 @@ class Constants {
       'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjTc20H6i7UnNkLDk90FD8LbedYJE0Lt/bGFQ4rSk+EowBEM1guynv5Gju7OFCQfv3bz3zqZ55/03Ge+DNRAf7zzOWnj3GvEC7A4xeXh7Efs+KUjJHjEKPYATSmd+fAHLjbuONf2dtpoEyvt6D5AkI+q2Xfo1O2oiV5WVPmuAQpwIDAQAB';
   static String netWorkTicket = '054b0d16dc6146eb9b03743a19807253';
 
+  static String cognitoPoolId =
+      'us-east-2:c7128890-214d-48f4-807c-3275e8501928';
+  static String cognitoRegion = 'us-east-2';
+
   // Paramenters
   static const String TOKEN = 'token';
   static const String OBJECT_ID = 'objectId';
