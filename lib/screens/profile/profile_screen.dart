@@ -108,6 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
+    screenBloc.add(InitProfileScreen());
     screenBloc.add(UserProfile());
     super.initState();
   }
@@ -134,54 +135,53 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _getBody(ProfileScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      bool isVerified = false;
-      if (state.userModel != null) {
-        isVerified = state.userModel.vertical;
-      }
-      return SafeArea(
-        key: formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 24),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                ProfileHeaderView(
-                  onTap: () {
-                    Navigation.toScreen(
-                      context: context,
-                      screen: EditProfileScreen(
-                        bloc: screenBloc,
-                      ),
-                    );
-                  },
-                  userModel: state.userModel,
-                ),
-                Container(
-                  color: Color(0xFFF5F5F5),
-                  height: 8,
-                  width: MediaQuery.of(context).size.width,
-                ),
-                _listView(),
-                isVerified
-                    ? Container()
-                    : VerifyEmailView(
-                        time: _start,
-                        sentCode: _sentCode,
-                        onTap: () {
+    bool isVerified = false;
+    if (state.userModel != null) {
+      isVerified = state.userModel.vertical;
+    }
+    return SafeArea(
+      key: formKey,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 24),
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ProfileHeaderView(
+                onTap: () {
+                  Navigation.toScreen(
+                    context: context,
+                    screen: EditProfileScreen(
+                      bloc: screenBloc,
+                    ),
+                  );
+                },
+                nikName: state.username,
+                avatar: state.avatar,
+              ),
+              Container(
+                color: Color(0xFFF5F5F5),
+                height: 8,
+                width: MediaQuery.of(context).size.width,
+              ),
+              _listView(),
+              isVerified
+                  ? Container()
+                  : VerifyEmailView(
+                      time: _start,
+                      sentCode: _sentCode,
+                      onTap: () {
+                        if (!_sentCode) {
                           _hadleVerification();
                           startTimer();
-                        },
-                      ),
-              ],
-            ),
+                        }
+                      },
+                    ),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   Widget _listView() {

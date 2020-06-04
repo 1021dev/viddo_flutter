@@ -5,22 +5,18 @@ import 'package:flutter/services.dart';
 
 class ProfileHeaderView extends StatelessWidget {
   final Function onTap;
-  UserModel userModel;
+  String avatar;
+  String nikName;
 
   ProfileHeaderView({
     Key key,
     @required this.onTap,
-    this.userModel,
+    this.nikName = '',
+    this.avatar = '',
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String avatar = '';
-    String name = '';
-    if (userModel != null) {
-      avatar = userModel.avatar;
-      name = userModel.nikeName;
-    }
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -75,7 +71,7 @@ class ProfileHeaderView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      nikName,
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFFE46E5C),

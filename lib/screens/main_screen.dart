@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/babies/babies_screen.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
@@ -257,7 +259,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Future getImage(int type) async {
-    var image = await ImagePicker.pickImage(
+    ImagePicker imagePicker = ImagePicker();
+    var image = await imagePicker.getImage(
       source: type == 0 ? ImageSource.gallery : ImageSource.camera,
     );
 
@@ -266,7 +269,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         context: context,
         screen: EditPictureScreen(
           bloc: mainScreenBloc,
-          image: image,
+          image: File(image.path),
         ),
       );
     }
