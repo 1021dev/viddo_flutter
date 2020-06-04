@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,7 +15,7 @@ class InitProfileScreen extends ProfileScreenEvent {}
 
 @immutable
 class PickImageFile extends ProfileScreenEvent {
-  List<PickedFile> pickedFiles;
+  List<File> pickedFiles = [];
   PickImageFile(
     this.pickedFiles,
   );

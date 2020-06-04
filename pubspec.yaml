@@ -58,7 +58,8 @@ dependencies:
   amazon_s3_cognito: ^0.2.4
   uuid: 2.0.4
   path: ^1.7.0
-
+  aws_s3: ^0.1.1+hotfix.5
+  flutter_inappwebview: 3.3.0+3
 dev_dependencies:
   build_runner: ^1.10.0
   json_serializable: ^3.3.0
