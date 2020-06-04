@@ -40,8 +40,10 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       String gender = sharedPreferences.getString(Constants.GENDER) ?? '';
       String location = sharedPreferences.getString(Constants.LOCATION) ?? '';
       int birthday = sharedPreferences.getInt(Constants.BIRTHDAY) ?? '';
+      String email = sharedPreferences.getString(Constants.EMAIL) ?? '';
       yield state.copyWith(
         username: username,
+        email: email,
         avatar: avatar,
         gender: gender,
         location: location,
@@ -56,6 +58,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
   Stream<ProfileScreenState> _getAccountInfo(UserProfile event) async* {
     try {
       UserModel userModel = await _apiService.getUserProfile();
+      String email = userModel.email ?? '';
       String username = userModel.nikeName ?? '';
       String avatar = userModel.avatar ?? '';
       String gender = userModel.gender ?? '';
@@ -64,6 +67,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       yield state.copyWith(
         userModel: userModel,
         username: username,
+        email: email,
         avatar: avatar,
         gender: gender,
         location: location,
@@ -102,6 +106,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       );
       if (success) {
         yield* _initLoad();
+        yield UpdateProfileSuccess();
       } else {
         yield ProfileScreenFailure(error: 'error');
       }

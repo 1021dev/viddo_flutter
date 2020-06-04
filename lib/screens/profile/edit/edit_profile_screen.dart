@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../../../utils/navigation.dart';
 import '../../../utils/widget_utils.dart';
@@ -42,29 +45,39 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, ProfileScreenState state) async {},
+      listener: (BuildContext context, ProfileScreenState state) async {
+        if (state is UpdateProfileSuccess) {
+        } else if (state is ProfileScreenFailure) {
+          WidgetUtils.showErrorDialog(context, state.error);
+        }
+      },
       child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
-          return Scaffold(
-            appBar: new AppBar(
-              title: Text('Profile'),
-              backgroundColor: Colors.white,
-              elevation: 0,
-              textTheme: TextTheme(
-                title: TextStyle(
-                  color: Color(0xFF7861B7),
-                  fontSize: 18.0,
-                  fontFamily: 'Roboto',
+          return ModalProgressHUD(
+            child: Scaffold(
+              appBar: new AppBar(
+                title: Text('Profile'),
+                backgroundColor: Colors.white,
+                elevation: 0,
+                textTheme: TextTheme(
+                  title: TextStyle(
+                    color: Color(0xFF7861B7),
+                    fontSize: 18.0,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                iconTheme: IconThemeData(
+                  color: Color(0xFFFFA685),
+                  size: 12,
                 ),
               ),
-              iconTheme: IconThemeData(
-                color: Color(0xFFFFA685),
-                size: 12,
-              ),
+              key: scaffoldKey,
+              body: _getBody(state),
             ),
-            key: scaffoldKey,
-            body: _getBody(state),
+            inAsyncCall: state.isLoading,
+            dismissible: false,
+            color: Colors.black,
           );
         },
       ),
@@ -75,12 +88,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     return SafeArea(
       key: formKey,
       child: Container(
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              color: Color(0xFFF0F0F0),
-              height: 10,
+            Padding(
+              padding: EdgeInsets.only(top: 10),
             ),
             _listView(state),
           ],
@@ -118,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Change Profile Photo',
         image: avatar != '' ? avatar : 'assets/icons/icon_place_holder.png',
-        height: 55,
+        height: 45,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -154,19 +167,21 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Name',
         value: nikName,
-        height: 55,
+        height: 45,
         color: nikName != '' ? Color(0xFFFFA685) : Color(0x808476AB),
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: ChangeNameScreen(),
+            screen: ChangeNameScreen(
+              screenBloc: widget.bloc,
+            ),
           );
         },
       ),
       EditProfileSettingTile(
         title: 'Gender',
         value: gender,
-        height: 55,
+        height: 45,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -206,7 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Birthdate',
         value: birthDateString,
-        height: 55,
+        height: 45,
         function: () async => await showModalBottomSheet(
           context: context,
           isDismissible: false,
@@ -243,7 +258,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             Navigator.of(context).pop();
 
                             widget.bloc.add(
-                              UpdateUserProfile({'birthDay': birthday}),
+                              UpdateUserProfile({
+                                'birthDay': birthday.millisecondsSinceEpoch
+                              }),
                             );
                           },
                         )
@@ -272,7 +289,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       EditProfileSettingTile(
         title: 'Location',
         value: area,
-        height: 55,
+        height: 45,
         function: () {
           Navigation.toScreen(
             context: context,
@@ -296,7 +313,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           return Divider(
             height: 0,
             thickness: 1,
-            color: Colors.black12,
+            color: Color(0xFFF4F4F4),
             indent: 12,
             endIndent: 12,
           );
@@ -312,11 +329,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
 
     if (image != null) {
-      List<PickedFile> files = [];
-      files.add(image);
-      setState(() {
-        widget.bloc.add(PickImageFile(files));
-      });
+      List<File> files = [];
+      files.add(new File(image.path));
+      widget.bloc.add(PickImageFile(files));
     }
   }
 

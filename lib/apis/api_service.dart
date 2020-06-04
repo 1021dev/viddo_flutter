@@ -1,16 +1,18 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
+import 'package:amazon_s3_cognito/aws_region.dart';
+import 'package:aws_s3/aws_s3.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:Viiddo/models/login_model.dart';
 import 'package:Viiddo/models/response_model.dart';
 import 'package:Viiddo/models/user_model.dart';
 import 'package:Viiddo/utils/constants.dart';
-import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
-import 'package:amazon_s3_cognito/aws_region.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,6 +111,7 @@ class ApiService {
               Constants.OBJECT_ID, loginModel.user.objectId);
           if (loginModel.user != null) {
             UserModel userModel = loginModel.user;
+            sharedPreferences.setString(Constants.EMAIL, userModel.email ?? '');
             sharedPreferences.setString(
                 Constants.USERNAME, userModel.nikeName ?? '');
             sharedPreferences.setString(
@@ -162,6 +165,7 @@ class ApiService {
               Constants.OBJECT_ID, loginModel.user.objectId);
           if (loginModel.user != null) {
             UserModel userModel = loginModel.user;
+            sharedPreferences.setString(Constants.EMAIL, userModel.email ?? '');
             sharedPreferences.setString(
                 Constants.USERNAME, userModel.nikeName ?? '');
             sharedPreferences.setString(
@@ -232,6 +236,7 @@ class ApiService {
         if (responseModel.content != null) {
           UserModel userModel = UserModel.fromJson(responseModel.content);
           if (userModel != null) {
+            sharedPreferences.setString(Constants.EMAIL, userModel.email ?? '');
             sharedPreferences.setString(
                 Constants.USERNAME, userModel.nikeName ?? '');
             sharedPreferences.setString(
@@ -326,23 +331,46 @@ class ApiService {
   }
 
   Future<List<String>> uploadProfileImage(
-    List<PickedFile> imageFiles,
+    List<File> imageFiles,
   ) async {
     try {
       List<String> urls = [];
-      for (int i; i < imageFiles.length; i++) {
+      for (int i = 0; i < imageFiles.length; i++) {
         String uuid = Uuid().v1();
         String path = imageFiles[i].path;
         String extension = p.extension(path);
 
+//        String result;
+//        AwsS3 awsS3 = AwsS3(
+//            awsFolderPath: 'imgbaby/Posts',
+//            file: imageFiles[i],
+//            fileNameWithExt: '${uuid}_$i.$extension',
+//            poolId: Constants.cognitoPoolId,
+//            region: Regions.US_EAST_2,
+//            bucketName: Constants.bucket);
+//        try {
+//          try {
+//            result = await awsS3.uploadFile;
+//            debugPrint("Result :'$result'.");
+//          } on PlatformException {
+//            debugPrint("Result :'$result'.");
+//          }
+//        } on PlatformException catch (e) {
+//          debugPrint("Failed :'${e.message}'.");
+//        }
+
         String uploadedImageUrl = await AmazonS3Cognito.upload(
             imageFiles[i].path,
-            'imgbaby/Posts',
+            Constants.bucket,
             Constants.cognitoPoolId,
             '${uuid}_$i.$extension',
-            AwsRegion.US_EAST_1,
-            AwsRegion.AP_SOUTHEAST_1);
-        urls.add(uploadedImageUrl);
+            AwsRegion.US_EAST_2,
+            AwsRegion.US_EAST_2);
+        String url =
+            'https://d1qaud6fcxefsz.cloudfront.net/Posts/${uuid}_$i.$extension';
+        if (uploadedImageUrl != null) {
+          urls.add(url);
+        }
       }
       return urls;
     } on DioError catch (e, s) {

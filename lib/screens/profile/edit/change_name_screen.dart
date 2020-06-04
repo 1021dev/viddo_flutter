@@ -1,11 +1,20 @@
+import 'package:Viiddo/blocs/profile/profile.dart';
+import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../../../themes.dart';
 
 class ChangeNameScreen extends StatefulWidget {
-  ChangeNameScreen();
+  ProfileScreenBloc screenBloc;
+
+  ChangeNameScreen({
+    this.screenBloc,
+  });
 
   @override
   _ChangeNameScreenState createState() => _ChangeNameScreenState();
@@ -20,7 +29,7 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
 
   @override
   void initState() {
-    nameController.text = '';
+    nameController.text = widget.screenBloc.state.username;
     super.initState();
   }
 
@@ -30,25 +39,46 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-        title: Text('Change name'),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        textTheme: TextTheme(
-          title: TextStyle(
-            color: Color(0xFF7861B7),
-            fontSize: 18.0,
-            fontFamily: 'Roboto',
-          ),
-        ),
-        iconTheme: IconThemeData(
-          color: Color(0xFFFFA685),
-          size: 12,
-        ),
+    return BlocListener(
+      bloc: widget.screenBloc,
+      listener: (BuildContext context, ProfileScreenState state) async {
+        if (state is UpdateProfileSuccess) {
+          Navigator.of(context).pop();
+        } else if (state is ProfileScreenFailure) {
+          WidgetUtils.showErrorDialog(context, state.error);
+        }
+      },
+      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+        bloc: widget.screenBloc,
+        builder: (BuildContext context, state) {
+          return ModalProgressHUD(
+            child: Scaffold(
+              appBar: new AppBar(
+                title: Text('Change name'),
+                backgroundColor: Colors.white,
+                elevation: 0,
+                textTheme: TextTheme(
+                  title: TextStyle(
+                    color: Color(0xFF7861B7),
+                    fontSize: 18.0,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                iconTheme: IconThemeData(
+                  color: Color(0xFFFFA685),
+                  size: 12,
+                ),
+              ),
+              key: scaffoldKey,
+              body: _getBody(),
+            ),
+            inAsyncCall: state.isLoading,
+            dismissible: false,
+            opacity: 0.3,
+            color: Colors.black,
+          );
+        },
       ),
-      key: scaffoldKey,
-      body: _getBody(),
     );
   }
 
@@ -114,7 +144,20 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         )),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (nameController.text.isEmpty) {
+                        WidgetUtils.showErrorDialog(
+                            context, 'Nikename cannot be empty');
+                        return;
+                      }
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+                      widget.screenBloc.add(
+                        UpdateUserProfile({'nikeName': nameController.text}),
+                      );
+                    },
                   ),
                 ),
               ),
