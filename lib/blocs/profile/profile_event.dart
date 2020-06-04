@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class ProfileScreenEvent extends Equatable {
   ProfileScreenEvent();
@@ -9,15 +11,36 @@ abstract class ProfileScreenEvent extends Equatable {
 
 class InitProfileScreen extends ProfileScreenEvent {}
 
-class UserProfile extends ProfileScreenEvent {
-  UserProfile();
+@immutable
+class PickImageFile extends ProfileScreenEvent {
+  List<PickedFile> pickedFiles;
+  PickImageFile(
+    this.pickedFiles,
+  );
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        this.pickedFiles,
+      ];
 }
 
+class UserProfile extends ProfileScreenEvent {}
+
+class UpdateBirthDay extends ProfileScreenEvent {
+  final DateTime birthday;
+  UpdateBirthDay(
+    this.birthday,
+  );
+
+  @override
+  List<Object> get props => [
+        this.birthday,
+      ];
+}
+
+@immutable
 class UpdateUserProfile extends ProfileScreenEvent {
-  dynamic map;
+  final dynamic map;
   UpdateUserProfile(
     this.map,
   );

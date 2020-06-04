@@ -17,17 +17,21 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
   @override
   Stream<ProfileScreenState> mapEventToState(ProfileScreenEvent event) async* {
     if (event is InitProfileScreen) {
-      yield* _initLoad(event);
+      yield* _initLoad();
     } else if (event is UserProfile) {
       yield* _getAccountInfo(event);
     } else if (event is VerificationCode) {
       yield* _sendVerification(event);
     } else if (event is UpdateUserProfile) {
       yield* _updateProfile(event);
+    } else if (event is PickImageFile) {
+      yield* _pickImageFile(event);
+    } else if (event is UpdateBirthDay) {
+      yield state.copyWith(birthday: event.birthday.millisecondsSinceEpoch);
     }
   }
 
-  Stream<ProfileScreenState> _initLoad(InitProfileScreen event) async* {
+  Stream<ProfileScreenState> _initLoad() async* {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -38,6 +42,10 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       int birthday = sharedPreferences.getInt(Constants.BIRTHDAY) ?? '';
       yield state.copyWith(
         username: username,
+        avatar: avatar,
+        gender: gender,
+        location: location,
+        birthday: birthday,
       );
     } catch (error) {
       yield ProfileScreenFailure(error: error);
@@ -48,8 +56,18 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
   Stream<ProfileScreenState> _getAccountInfo(UserProfile event) async* {
     try {
       UserModel userModel = await _apiService.getUserProfile();
+      String username = userModel.nikeName ?? '';
+      String avatar = userModel.avatar ?? '';
+      String gender = userModel.gender ?? '';
+      String location = userModel.area ?? '';
+      int birthday = userModel.birthDay ?? '';
       yield state.copyWith(
         userModel: userModel,
+        username: username,
+        avatar: avatar,
+        gender: gender,
+        location: location,
+        birthday: birthday,
       );
     } catch (error) {
       yield ProfileScreenFailure(error: error);
@@ -83,7 +101,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
         event.map,
       );
       if (success) {
-        yield UpdateProfileSuccess();
+        yield* _initLoad();
       } else {
         yield ProfileScreenFailure(error: 'error');
       }
@@ -91,6 +109,24 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       yield ProfileScreenFailure(error: error);
     } finally {
       yield state.copyWith(isLoading: false);
+    }
+  }
+
+  Stream<ProfileScreenState> _pickImageFile(PickImageFile event) async* {
+    try {
+      yield state.copyWith(isUploading: true);
+      List<String> urls =
+          await _apiService.uploadProfileImage(event.pickedFiles);
+      String avatar = '';
+      if (urls.length > 0) {
+        avatar = urls.first;
+      }
+      yield state.copyWith(
+          uploadedFiles: urls, isUploading: false, avatar: avatar);
+    } catch (error) {
+      yield ProfileScreenFailure(error: error);
+    } finally {
+      yield state.copyWith(isUploading: false);
     }
   }
 }
