@@ -9,6 +9,7 @@ import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   FocusNode emailFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
@@ -461,7 +463,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               width: 24.0,
               height: 24.0,
             ),
-            onPressed: () {},
+            onPressed: () {
+              _loginFacebook();
+            },
           ),
         ],
       ),
@@ -500,6 +504,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
     );
+  }
+
+  Future<Null> _loginFacebook() async {
+    final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accessToken = result.accessToken;
+        print('''
+         Logged in!
+         
+         Token: ${accessToken.token}
+         User id: ${accessToken.userId}
+         Expires: ${accessToken.expires}
+         Permissions: ${accessToken.permissions}
+         Declined permissions: ${accessToken.declinedPermissions}
+         ''');
+        screenBloc.add(FacebookRegisterEvent(accessToken));
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print('Login cancelled by the user.');
+        break;
+      case FacebookLoginStatus.error:
+        print('Something went wrong with the login process.\n'
+            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        break;
+    }
   }
 
   @override

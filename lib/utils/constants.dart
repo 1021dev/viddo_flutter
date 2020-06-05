@@ -17,6 +17,7 @@ class Constants {
   static const String OBJECT_ID = 'objectId';
   static const String FACEBOOK_LOGIN = 'isFacebookLogin';
   static const String EMAIL = 'email';
+  static const String IS_VERI_CAL = 'isVerical';
   static const String SHOW_WELCOME = 'isShowWelcome';
 
   static const String USERNAME = 'nikName';

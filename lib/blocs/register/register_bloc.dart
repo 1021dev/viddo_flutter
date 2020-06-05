@@ -20,7 +20,7 @@ class RegisterScreenBloc
       RegisterScreenEvent event) async* {
     if (event is Register) {
       yield* _register(event);
-    } else if (event is FacebookLoginEvent) {
+    } else if (event is FacebookRegisterEvent) {
       yield* _facebookLogin(event);
     }
   }
@@ -45,7 +45,8 @@ class RegisterScreenBloc
     }
   }
 
-  Stream<RegisterScreenState> _facebookLogin(FacebookLoginEvent event) async* {
+  Stream<RegisterScreenState> _facebookLogin(
+      FacebookRegisterEvent event) async* {
     yield state.copyWith(isLoading: true);
     try {
       var profile = await _apiService.getFacebookProfile(event.accessToken);

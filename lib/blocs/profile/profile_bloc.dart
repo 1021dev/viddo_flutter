@@ -39,8 +39,10 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       String avatar = sharedPreferences.getString(Constants.AVATAR) ?? '';
       String gender = sharedPreferences.getString(Constants.GENDER) ?? '';
       String location = sharedPreferences.getString(Constants.LOCATION) ?? '';
-      int birthday = sharedPreferences.getInt(Constants.BIRTHDAY) ?? '';
+      int birthday = sharedPreferences.getInt(Constants.BIRTHDAY) ?? 0;
       String email = sharedPreferences.getString(Constants.EMAIL) ?? '';
+      bool isVerical =
+          sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
       yield state.copyWith(
         username: username,
         email: email,
@@ -48,6 +50,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
         gender: gender,
         location: location,
         birthday: birthday,
+        verifical: isVerical,
       );
     } catch (error) {
       yield ProfileScreenFailure(error: error);
@@ -63,7 +66,8 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       String avatar = userModel.avatar ?? '';
       String gender = userModel.gender ?? '';
       String location = userModel.area ?? '';
-      int birthday = userModel.birthDay ?? '';
+      int birthday = userModel.birthDay ?? 0;
+      bool isVerical = userModel.vertical ?? false;
       yield state.copyWith(
         userModel: userModel,
         username: username,
@@ -72,6 +76,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
         gender: gender,
         location: location,
         birthday: birthday,
+        verifical: isVerical,
       );
     } catch (error) {
       yield ProfileScreenFailure(error: error);
