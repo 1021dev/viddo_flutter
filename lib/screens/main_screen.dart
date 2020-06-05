@@ -11,6 +11,7 @@ import 'package:Viiddo/screens/profile/profile_screen.dart';
 import 'package:Viiddo/screens/profile/welcome_view.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/navigation.dart';
+import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:Viiddo/widgets/bottom_selector.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -110,11 +111,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         ),
                         tooltip: 'Next page',
                         onPressed: () {
-                          Navigation.toScreen(
-                              context: context,
-                              screen: BabiesScreen(
-                                bloc: mainScreenBloc,
-                              ));
+                          SharedPreferences.getInstance()
+                              .then((SharedPreferences sp) {
+                            sharedPreferences = sp;
+                            bool isVerical =
+                                sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                            if (isVerical) {
+                              Navigation.toScreen(
+                                  context: context,
+                                  screen: BabiesScreen(
+                                    bloc: mainScreenBloc,
+                                  ));
+                            } else {
+                              WidgetUtils.showErrorDialog(
+                                  context, 'Please verify your email first.');
+                            }
+                          });
                         },
                       )
                     : Container(),
@@ -127,11 +139,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           ),
                           tooltip: 'Next page',
                           onPressed: () {
-                            Navigation.toScreen(
-                              context: context,
-                              screen: NotificationsScreen(
-                                bloc: mainScreenBloc,
-                              ),
+                            SharedPreferences.getInstance().then(
+                              (SharedPreferences sp) {
+                                sharedPreferences = sp;
+                                bool isVerical =
+                                    sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                                if (isVerical) {
+                                  Navigation.toScreen(
+                                    context: context,
+                                    screen: NotificationsScreen(
+                                      bloc: mainScreenBloc,
+                                    ),
+                                  );
+                                } else {
+                                  WidgetUtils.showErrorDialog(context,
+                                      'Please verify your email first.');
+                                }
+                              },
                             );
                           },
                         )
@@ -205,54 +229,65 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         _selectedIndex = index;
       });
     } else {
-      showGeneralDialog(
-        barrierLabel: "Label",
-        barrierDismissible: true,
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionDuration: Duration(milliseconds: 235),
-        context: context,
-        pageBuilder: (context, anim1, anim2) {
-          return Align(
-            alignment: Alignment.bottomCenter,
-            child: BottomSelector(
-              closeFunction: () {
-                Navigator.pop(context, 'close');
-              },
-              libraryFunction: () {
-                Navigator.pop(context, 'library');
-                getImage(0);
-              },
-              cameraFunction: () {
-                Navigator.pop(context, 'camera');
-                getImage(1);
-              },
-              growthFunction: () {
-                Navigator.pop(context, 'growth');
-                Navigation.toScreen(
-                  context: context,
-                  screen: GrowthScreen(
-                    bloc: mainScreenBloc,
+      SharedPreferences.getInstance().then(
+        (SharedPreferences sp) {
+          sharedPreferences = sp;
+          bool isVerical = sp.getBool(Constants.IS_VERI_CAL) ?? false;
+          if (isVerical) {
+            showGeneralDialog(
+              barrierLabel: "Label",
+              barrierDismissible: true,
+              barrierColor: Colors.black.withOpacity(0.5),
+              transitionDuration: Duration(milliseconds: 235),
+              context: context,
+              pageBuilder: (context, anim1, anim2) {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: BottomSelector(
+                    closeFunction: () {
+                      Navigator.pop(context, 'close');
+                    },
+                    libraryFunction: () {
+                      Navigator.pop(context, 'library');
+                      getImage(0);
+                    },
+                    cameraFunction: () {
+                      Navigator.pop(context, 'camera');
+                      getImage(1);
+                    },
+                    growthFunction: () {
+                      Navigator.pop(context, 'growth');
+                      Navigation.toScreen(
+                        context: context,
+                        screen: GrowthScreen(
+                          bloc: mainScreenBloc,
+                        ),
+                      );
+                    },
+                    vaccinesFunction: () {
+                      Navigator.pop(context, 'vaccines');
+                      Navigation.toScreen(
+                        context: context,
+                        screen: VaccinesScreen(
+                          bloc: mainScreenBloc,
+                        ),
+                      );
+                    },
                   ),
                 );
               },
-              vaccinesFunction: () {
-                Navigator.pop(context, 'vaccines');
-                Navigation.toScreen(
-                  context: context,
-                  screen: VaccinesScreen(
-                    bloc: mainScreenBloc,
-                  ),
+              transitionBuilder: (context, anim1, anim2, child) {
+                return SlideTransition(
+                  position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                      .animate(anim1),
+                  child: child,
                 );
               },
-            ),
-          );
-        },
-        transitionBuilder: (context, anim1, anim2, child) {
-          return SlideTransition(
-            position:
-                Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
-            child: child,
-          );
+            );
+          } else {
+            WidgetUtils.showErrorDialog(
+                context, 'Please verify your email first.');
+          }
         },
       );
     }

@@ -56,6 +56,22 @@ class ApiService {
               Constants.OBJECT_ID, loginModel.user.objectId);
           sharedPreferences.setBool(Constants.FACEBOOK_LOGIN, false);
           sharedPreferences.setString(Constants.EMAIL, loginModel.user.email);
+          if (loginModel.user != null) {
+            UserModel userModel = loginModel.user;
+            sharedPreferences.setString(Constants.EMAIL, userModel.email ?? '');
+            sharedPreferences.setString(
+                Constants.USERNAME, userModel.nikeName ?? '');
+            sharedPreferences.setString(
+                Constants.AVATAR, userModel.avatar ?? '');
+            sharedPreferences.setString(Constants.GENDER, userModel.gender);
+            sharedPreferences.setString(
+                Constants.LOCATION, userModel.area ?? '');
+            sharedPreferences.setInt(
+                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
+          }
+
           return true;
         }
       }
@@ -121,6 +137,8 @@ class ApiService {
                 Constants.LOCATION, userModel.area ?? '');
             sharedPreferences.setInt(
                 Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
 
           return true;
@@ -175,6 +193,8 @@ class ApiService {
                 Constants.LOCATION, userModel.area ?? '');
             sharedPreferences.setInt(
                 Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
 
           return true;
@@ -246,6 +266,8 @@ class ApiService {
                 Constants.LOCATION, userModel.area ?? '');
             sharedPreferences.setInt(
                 Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
 
           return userModel;
@@ -319,6 +341,8 @@ class ApiService {
                 Constants.LOCATION, userModel.area ?? '');
             sharedPreferences.setInt(
                 Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
           return true;
         }
@@ -330,6 +354,7 @@ class ApiService {
     }
   }
 
+  // UploadA
   Future<List<String>> uploadProfileImage(
     List<File> imageFiles,
   ) async {
@@ -373,6 +398,90 @@ class ApiService {
         }
       }
       return urls;
+    } on DioError catch (e, s) {
+      print('updateProfile error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> getFriendsByBaby(
+    dynamic map,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap(map);
+      Response response = await _client.postForm(
+        '${url}user/editMyProfile',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('updateProfile: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.content != null) {
+          UserModel userModel = UserModel.fromJson(responseModel.content);
+          if (userModel != null) {
+            SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+            sharedPreferences.setString(
+                Constants.USERNAME, userModel.nikeName ?? '');
+            sharedPreferences.setString(
+                Constants.AVATAR, userModel.avatar ?? '');
+            sharedPreferences.setString(Constants.GENDER, userModel.gender);
+            sharedPreferences.setString(
+                Constants.LOCATION, userModel.area ?? '');
+            sharedPreferences.setInt(
+                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+            sharedPreferences.setBool(
+                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
+          }
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('updateProfile error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> getBabyInfo(
+    dynamic map,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap(map);
+      Response response = await _client.postForm(
+        '${url}user/getBabyInfo',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('updateProfile: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.content != null) {
+          UserModel userModel = UserModel.fromJson(responseModel.content);
+          if (userModel != null) {
+            SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+            sharedPreferences.setString(
+                Constants.USERNAME, userModel.nikeName ?? '');
+            sharedPreferences.setString(
+                Constants.AVATAR, userModel.avatar ?? '');
+            sharedPreferences.setString(Constants.GENDER, userModel.gender);
+            sharedPreferences.setString(
+                Constants.LOCATION, userModel.area ?? '');
+            sharedPreferences.setInt(
+                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+          }
+          return true;
+        }
+      }
+      return false;
     } on DioError catch (e, s) {
       print('updateProfile error: $e, $s');
       return Future.error(e);

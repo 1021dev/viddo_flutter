@@ -28,10 +28,10 @@ class Register extends RegisterScreenEvent {
 }
 
 // ignore: must_be_immutable
-class FacebookLoginEvent extends RegisterScreenEvent {
+class FacebookRegisterEvent extends RegisterScreenEvent {
   final FacebookAccessToken accessToken;
 
-  FacebookLoginEvent(this.accessToken);
+  FacebookRegisterEvent(this.accessToken);
 
   @override
   List<Object> get props => [accessToken];
