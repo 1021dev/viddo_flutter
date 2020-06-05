@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../themes.dart';
 
 class BabyInfoScreen extends StatefulWidget {
-  final MainScreenBloc bloc;
+  final HomeScreenBloc bloc;
   int index = 0;
 
   BabyInfoScreen({
@@ -44,10 +44,10 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {
+      listener: (BuildContext context, HomeScreenState state) async {
         FocusScope.of(context).requestFocus(nameFocus);
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -75,7 +75,7 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(HomeScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {

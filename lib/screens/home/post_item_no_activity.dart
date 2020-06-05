@@ -1,14 +1,15 @@
+import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class PostNoActivityItem extends StatelessWidget {
   final Function function;
-  final int index;
+  final DynamicContent content;
   const PostNoActivityItem({
     Key key,
     this.function,
-    this.index,
+    this.content,
   }) : super(key: key);
 
   @override

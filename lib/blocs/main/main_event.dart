@@ -6,3 +6,5 @@ abstract class MainScreenEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class UnreadMessage extends MainScreenEvent {}

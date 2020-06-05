@@ -25,6 +25,12 @@ class Constants {
   static const String BIRTHDAY = 'birthday';
   static const String LOCATION = 'area';
   static const String GENDER = 'gender';
+  static const String IS_REFRESH = 'isRefresh';
+
+  static const String BABY_ID = 'babyId';
+  static const String BABY_ICON = 'babyIcon';
+  static const String IS_CREATOR = 'isCreator';
+  static const String IS_BIRTH = 'isBirth';
 
   static const String termsURL = 'https://www.viiddo.com/terms';
   static const String privacyURL = 'https://www.viiddo.com/privacy';

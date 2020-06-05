@@ -10,11 +10,13 @@ import 'package:Viiddo/screens/profile/settings/profile_setting_tile.dart';
 import 'package:Viiddo/screens/profile/settings/report_problem_screen.dart';
 import 'package:Viiddo/screens/profile/settings/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
+import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../themes.dart';
 import '../../utils/navigation.dart';
@@ -36,7 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen>
   Timer _timer;
   int _start = 10;
   bool _sentCode = false;
+  bool isVerified = true;
 
+  SharedPreferences sharedPreferences;
   List<ProfileSettingModel> listViewItems(BuildContext context) {
     return [
       ProfileSettingModel(
@@ -110,6 +114,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   void initState() {
     screenBloc.add(InitProfileScreen());
     screenBloc.add(UserProfile());
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      sharedPreferences = sp;
+      bool isShowWelcome = sp.getBool(Constants.IS_VERI_CAL) ?? false;
+    });
+
     super.initState();
   }
 
@@ -139,9 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _getBody(ProfileScreenState state) {
-    bool isVerified = false;
-    if (state.userModel != null) {
-      isVerified = state.userModel.vertical;
+    if (sharedPreferences != null) {
+      isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL);
     }
     return SafeArea(
       key: formKey,
