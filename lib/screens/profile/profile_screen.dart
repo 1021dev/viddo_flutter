@@ -121,7 +121,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: screenBloc,
-      listener: (BuildContext context, ProfileScreenState state) async {},
+      listener: (BuildContext context, ProfileScreenState state) async {
+        if (state is VerificationSuccess) {
+          _hadleVerification();
+        }
+      },
       child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
@@ -171,8 +175,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                       sentCode: _sentCode,
                       onTap: () {
                         if (!_sentCode) {
-                          _hadleVerification();
-                          startTimer();
+                          screenBloc.add(
+                            VerificationCode(
+                              state.email,
+                              'REGISTER',
+                            ),
+                          );
                         }
                       },
                     ),
@@ -216,6 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Future<void> _hadleVerification() async {
+    startTimer();
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
