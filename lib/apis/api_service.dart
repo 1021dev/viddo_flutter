@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:Viiddo/models/baby_list_model.dart';
+import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/models/friend_list_model.dart';
+import 'package:Viiddo/models/page_response_model.dart';
+import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
 import 'package:amazon_s3_cognito/aws_region.dart';
 import 'package:aws_s3/aws_s3.dart';
@@ -46,6 +51,9 @@ class ApiService {
       print('accountLogin: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           LoginModel loginModel = LoginModel.fromJson(responseModel.content);
 
@@ -71,7 +79,6 @@ class ApiService {
             sharedPreferences.setBool(
                 Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
-
           return true;
         }
       }
@@ -118,6 +125,9 @@ class ApiService {
       print('facebookLogin: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           LoginModel loginModel = LoginModel.fromJson(responseModel.content);
           SharedPreferences sharedPreferences =
@@ -174,6 +184,9 @@ class ApiService {
       print('accountRegister: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           LoginModel loginModel = LoginModel.fromJson(responseModel.content);
           SharedPreferences sharedPreferences =
@@ -225,6 +238,9 @@ class ApiService {
       print('updatePassword: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           return true;
         }
@@ -248,6 +264,9 @@ class ApiService {
       print('getUserProfile: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         if (responseModel.status == 1000) {
@@ -300,6 +319,9 @@ class ApiService {
       print('updatePassword: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           return true;
         }
@@ -327,6 +349,9 @@ class ApiService {
       print('updateProfile: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
           UserModel userModel = UserModel.fromJson(responseModel.content);
           if (userModel != null) {
@@ -404,54 +429,43 @@ class ApiService {
     }
   }
 
-  Future<bool> getFriendsByBaby(
-    dynamic map,
+  Future<FriendListModel> getFriendsByBaby(
+    int objectId,
   ) async {
     try {
-      FormData formData = FormData.fromMap(map);
+      FormData formData = FormData.fromMap({'objectId': objectId});
       Response response = await _client.postForm(
-        '${url}user/editMyProfile',
+        '${url}user/getFriendsByBaby',
         body: formData,
         headers: {
           'content-type': 'multipart/form-data',
           'accept': '*/*',
         },
       );
-      print('updateProfile: {$response}');
+      print('getFriendsByBaby: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
-          UserModel userModel = UserModel.fromJson(responseModel.content);
-          if (userModel != null) {
-            SharedPreferences sharedPreferences =
-                await SharedPreferences.getInstance();
-            sharedPreferences.setString(
-                Constants.USERNAME, userModel.nikeName ?? '');
-            sharedPreferences.setString(
-                Constants.AVATAR, userModel.avatar ?? '');
-            sharedPreferences.setString(Constants.GENDER, userModel.gender);
-            sharedPreferences.setString(
-                Constants.LOCATION, userModel.area ?? '');
-            sharedPreferences.setInt(
-                Constants.BIRTHDAY, userModel.birthDay ?? 0);
-            sharedPreferences.setBool(
-                Constants.IS_VERI_CAL, userModel.vertical ?? 0);
-          }
-          return true;
+          FriendListModel friendListModel =
+              FriendListModel.fromJson(responseModel.content);
+          return friendListModel;
         }
       }
-      return false;
+      return null;
     } on DioError catch (e, s) {
-      print('updateProfile error: $e, $s');
+      print('getFriendsByBaby error: $e, $s');
       return Future.error(e);
     }
   }
 
-  Future<bool> getBabyInfo(
-    dynamic map,
+  Future<BabyModel> getBabyInfo(
+    int objectId,
   ) async {
     try {
-      FormData formData = FormData.fromMap(map);
+      FormData formData = FormData.fromMap({'objectId': objectId});
       Response response = await _client.postForm(
         '${url}user/getBabyInfo',
         body: formData,
@@ -460,30 +474,173 @@ class ApiService {
           'accept': '*/*',
         },
       );
-      print('updateProfile: {$response}');
+      print('getBabyInfo: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
         if (responseModel.content != null) {
-          UserModel userModel = UserModel.fromJson(responseModel.content);
-          if (userModel != null) {
+          BabyModel babyModel = BabyModel.fromJson(responseModel.content);
+          if (babyModel != null) {
             SharedPreferences sharedPreferences =
                 await SharedPreferences.getInstance();
-            sharedPreferences.setString(
-                Constants.USERNAME, userModel.nikeName ?? '');
-            sharedPreferences.setString(
-                Constants.AVATAR, userModel.avatar ?? '');
-            sharedPreferences.setString(Constants.GENDER, userModel.gender);
-            sharedPreferences.setString(
-                Constants.LOCATION, userModel.area ?? '');
             sharedPreferences.setInt(
-                Constants.BIRTHDAY, userModel.birthDay ?? 0);
+                Constants.BABY_ID, babyModel.objectId ?? 0);
+            sharedPreferences.setString(
+                Constants.BABY_ICON, babyModel.avatar ?? '');
+            sharedPreferences.setBool(
+                Constants.IS_CREATOR, babyModel.isCreator ?? false);
+            sharedPreferences.setBool(
+                Constants.IS_BIRTH, babyModel.isBirth ?? false);
           }
-          return true;
+          return babyModel;
         }
       }
-      return false;
+      return null;
     } on DioError catch (e, s) {
-      print('updateProfile error: $e, $s');
+      print('getBabyInfo error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<BabyListModel> getMyBabyList(
+    int page,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({'page': page});
+      Response response = await _client.postForm(
+        '${url}user/getMyBabys',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getMyBabyList: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          BabyListModel babyListModel =
+              BabyListModel.fromJson(responseModel.content);
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          int objectId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+          if (objectId == 0 && babyListModel.content.length > 0) {
+            sharedPreferences.setInt(
+                Constants.BABY_ID, babyListModel.content.first.objectId ?? 0);
+            sharedPreferences.setString(
+                Constants.BABY_ICON, babyListModel.content.first.avatar ?? '');
+            sharedPreferences.setBool(Constants.IS_CREATOR,
+                babyListModel.content.first.isCreator ?? false);
+            sharedPreferences.setBool(Constants.IS_BIRTH,
+                babyListModel.content.first.isBirth ?? false);
+          }
+
+          return babyListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getMyBabyList error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<PageResponseModel> getMomentByBaby(
+    int babyId,
+    int page,
+    bool tag,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': babyId,
+        'page': page,
+        'tag': tag,
+      });
+      Response response = await _client.postForm(
+        '${url}information/getMomentsByBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getBabyInfo: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          PageResponseModel pageResponseModel =
+              PageResponseModel.fromJson(responseModel.content);
+          if (pageResponseModel.content != null) {
+            return pageResponseModel;
+          }
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getBabyInfo error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> getRefreshInformation() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}information/refresh',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getRefreshInformation: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          bool isRefresh = responseModel.content['refresh'] ?? false;
+          return isRefresh;
+        }
+      }
+      return Future.error('Error');
+    } on DioError catch (e, s) {
+      print('getRefreshInformation error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<UnreadMessageModel> getUnreadMessages() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}common/unreadMessage',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getUnreadMessages: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          UnreadMessageModel unreadMessageModel =
+              UnreadMessageModel.fromJson(responseModel.content);
+          return unreadMessageModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getRefreshInformation error: $e, $s');
       return Future.error(e);
     }
   }

@@ -82,9 +82,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         bloc: mainScreenBloc,
         builder: (BuildContext context, state) {
           tabs = [
-            HomeScreen(
-              bloc: mainScreenBloc,
-            ),
+            HomeScreen(),
             Container(),
             ProfileScreen(),
           ];
@@ -139,23 +137,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           ),
                           tooltip: 'Next page',
                           onPressed: () {
-                            SharedPreferences.getInstance().then(
-                              (SharedPreferences sp) {
-                                sharedPreferences = sp;
-                                bool isVerical =
-                                    sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                                if (isVerical) {
-                                  Navigation.toScreen(
-                                    context: context,
-                                    screen: NotificationsScreen(
-                                      bloc: mainScreenBloc,
-                                    ),
-                                  );
-                                } else {
-                                  WidgetUtils.showErrorDialog(context,
-                                      'Please verify your email first.');
-                                }
-                              },
+                            Navigation.toScreen(
+                              context: context,
+                              screen: NotificationsScreen(
+                                bloc: mainScreenBloc,
+                              ),
                             );
                           },
                         )

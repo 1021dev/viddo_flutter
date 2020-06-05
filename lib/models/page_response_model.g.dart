@@ -1,18 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'stickers_response_model.dart';
+part of 'page_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-StickersResponseModel _$StickersResponseModelFromJson(
-    Map<String, dynamic> json) {
-  return StickersResponseModel(
-    content: (json['content'] as List)
-        ?.map((e) =>
-            e == null ? null : StickerModel.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+PageResponseModel _$PageResponseModelFromJson(Map<String, dynamic> json) {
+  return PageResponseModel(
+    content: json['content'] as List,
     page: json['page'] == null
         ? null
         : PageModel.fromJson(json['page'] as Map<String, dynamic>),
@@ -22,8 +18,7 @@ StickersResponseModel _$StickersResponseModelFromJson(
   );
 }
 
-Map<String, dynamic> _$StickersResponseModelToJson(
-        StickersResponseModel instance) =>
+Map<String, dynamic> _$PageResponseModelToJson(PageResponseModel instance) =>
     <String, dynamic>{
       'content': instance.content,
       'page': instance.page,
