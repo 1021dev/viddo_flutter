@@ -1,18 +1,17 @@
 import 'package:Viiddo/apis/jsonable.dart';
 import 'package:Viiddo/models/page_model.dart';
-import 'package:Viiddo/models/sticker_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-part 'stickers_response_model.g.dart';
+part 'page_response_model.g.dart';
 
 @JsonSerializable(nullable: true)
-class StickersResponseModel extends Jsonable {
-  List<StickerModel> content;
+class PageResponseModel extends Jsonable {
+  List<dynamic> content;
   PageModel page;
   int totalPage;
   int size;
   int totalElements;
 
-  StickersResponseModel({
+  PageResponseModel({
     this.content,
     this.page,
     this.totalPage,
@@ -22,25 +21,25 @@ class StickersResponseModel extends Jsonable {
 
   @override
   fromJson(Map<String, dynamic> json) {
-    return _$StickersResponseModelFromJson(json);
+    return _$PageResponseModelFromJson(json);
   }
 
   @override
   Map toJson() {
-    return _$StickersResponseModelToJson(this);
+    return _$PageResponseModelToJson(this);
   }
 
-  factory StickersResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$StickersResponseModelFromJson(json);
+  factory PageResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$PageResponseModelFromJson(json);
 
-  StickersResponseModel copyWith({
-    List<StickerModel> content,
+  PageResponseModel copyWith({
+    List<dynamic> content,
     PageModel page,
     int totalPage,
     int size,
     int totalElements,
   }) {
-    return StickersResponseModel(
+    return PageResponseModel(
       content: content ?? this.content,
       page: page ?? this.page,
       totalPage: totalPage ?? this.totalPage,

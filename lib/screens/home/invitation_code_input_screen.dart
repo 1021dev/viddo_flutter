@@ -1,18 +1,15 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../../themes.dart';
 
 class InvitationCodeInputScreen extends StatefulWidget {
-  final MainScreenBloc bloc;
+  final HomeScreenBloc bloc;
 
   InvitationCodeInputScreen({
     this.bloc,
@@ -44,10 +41,10 @@ class _InvitationCodeInputScreenState extends State<InvitationCodeInputScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {
+      listener: (BuildContext context, HomeScreenState state) async {
         FocusScope.of(context).requestFocus(nameFocus);
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -75,7 +72,7 @@ class _InvitationCodeInputScreenState extends State<InvitationCodeInputScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(HomeScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
