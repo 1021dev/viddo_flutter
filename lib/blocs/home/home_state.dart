@@ -83,5 +83,5 @@ class HomeScreenFailure extends HomeScreenState {
   HomeScreenFailure({@required this.error}) : super();
 
   @override
-  String toString() => 'MainScreenFailure { error: $error }';
+  String toString() => 'HomeScreenFailure { error: $error }';
 }

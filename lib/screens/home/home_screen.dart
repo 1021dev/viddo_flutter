@@ -13,8 +13,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen();
+  MainScreenBloc bloc;
 
+  HomeScreen({
+    this.bloc,
+  });
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -47,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen>
     });
 
     startTimer();
-    screenBloc.add(HomeInitEvent());
     super.initState();
   }
 
@@ -58,10 +60,10 @@ class _HomeScreenState extends State<HomeScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: screenBloc,
-      listener: (BuildContext context, HomeScreenState state) async {},
-      child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
-        bloc: screenBloc,
+      bloc: widget.bloc,
+      listener: (BuildContext context, MainScreenState state) async {},
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+        bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
             key: scaffoldKey,
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _getBody(HomeScreenState state) {
+  Widget _getBody(MainScreenState state) {
     return SafeArea(
       key: formKey,
       child: Container(
@@ -157,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildPostList(HomeScreenState state) {
+  Widget _buildPostList(MainScreenState state) {
     dataCount = state.dataArr != null ? state.dataArr.length : 0;
     print('Data Count: => ${state.dataArr}');
     return Container(
@@ -253,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
-            screenBloc.add(HomeScreenRefresh());
+            widget.bloc.add(MainScreenRefresh());
             time -= 1;
           }
         }
