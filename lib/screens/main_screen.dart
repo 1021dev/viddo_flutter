@@ -70,6 +70,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
     });
 
+    mainScreenBloc.add(MainScreenInitEvent());
+
     super.initState();
   }
 
@@ -82,7 +84,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         bloc: mainScreenBloc,
         builder: (BuildContext context, state) {
           tabs = [
-            HomeScreen(),
+            HomeScreen(bloc: mainScreenBloc,),
             Container(),
             ProfileScreen(),
           ];
