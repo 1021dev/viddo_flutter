@@ -11,7 +11,6 @@ import 'package:Viiddo/screens/profile/settings/report_problem_screen.dart';
 import 'package:Viiddo/screens/profile/settings/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
 import 'package:Viiddo/utils/constants.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -20,7 +19,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../themes.dart';
 import '../../utils/navigation.dart';
-import '../../utils/widget_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen();
@@ -149,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _getBody(ProfileScreenState state) {
     if (sharedPreferences != null) {
-      isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL);
+      isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
     }
     return SafeArea(
       key: formKey,

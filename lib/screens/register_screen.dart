@@ -1,8 +1,5 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/blocs/login/login_bloc.dart';
-import 'package:Viiddo/blocs/login/login_state.dart';
 import 'package:Viiddo/blocs/register/register.dart';
-import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/email_validator.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
@@ -10,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main_screen.dart';

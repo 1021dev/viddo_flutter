@@ -1,15 +1,11 @@
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/home/invite/invite_someone_screen.dart';
-import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
-import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
-import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../../../utils/navigation.dart';
 import '../../../utils/widget_utils.dart';
