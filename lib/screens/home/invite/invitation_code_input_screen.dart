@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../themes.dart';
+import '../../../themes.dart';
 
 class InvitationCodeInputScreen extends StatefulWidget {
   final HomeScreenBloc bloc;

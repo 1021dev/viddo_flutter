@@ -48,22 +48,19 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       add(GetDataWithHeader(true));
 
-      if (isRefresh) {
-        add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
-        add(GetFriendByBaby(babyId));
-//        getFriendByBaby(babyId);
-        sharedPreferences.setBool(Constants.IS_REFRESH, false);
-      }
+//      if (isRefresh) {
+//        add(GetDataWithHeader(true));
+////        getDataWithHeader(true);
+//        add(GetFriendByBaby(babyId));
+////        getFriendByBaby(babyId);
+//        sharedPreferences.setBool(Constants.IS_REFRESH, false);
+//      }
       if (babyId == 0) {
         add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
       } else {
         add(GetBabyInfo(babyId));
-//        getBabyInfo(babyId);
       }
-      if (!state.frameBaby) {
-//        getUnreadMessages();
+      if (!(state.frameBaby ?? false)) {
         try {
           UnreadMessageModel model = await _apiService.getUnreadMessages();
           yield state.copyWith(unreadMessageModel: model);
@@ -114,9 +111,9 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         tag,
       );
       List<DynamicContent> dataArr = [];
-      if (state.dataArr != null) {
-        dataArr.addAll(state.dataArr);
-      }
+//      if (state.dataArr != null) {
+//        dataArr.addAll(state.dataArr);
+//      }
       if (pageResponseModel.content != null) {
         for (int i = 0; i < pageResponseModel.content.length; i++) {
           DynamicContent content =
@@ -126,36 +123,34 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
           }
         }
       }
-      yield state.copyWith(dataArr: dataArr);
+      print('data => $dataArr');
+      yield state.copyWith(isLoading: false, dataArr: dataArr);
     } catch (error) {
       yield HomeScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isLoading: false);
     }
   }
 
   Stream<HomeScreenState> getDataWithHeader(bool isHeader) async* {
     try {
-      if (!state.frameBaby) {
-//        getUnreadMessages();
-        try {
-          UnreadMessageModel model = await _apiService.getUnreadMessages();
-          yield state.copyWith(unreadMessageModel: model);
-        } catch (error) {
-          yield state.copyWith(unreadMessageModel: null);
-          print(error.toString());
-        } finally {}
+      if (!(state.frameBaby ?? false)) {
+        UnreadMessageModel model = await _apiService.getUnreadMessages();
+        yield state.copyWith(unreadMessageModel: model);
       }
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       if (babyId != 0) {
         if (isHeader) {
-          if (state.frameBaby) {
+          if (state.frameBaby ?? false) {
             add(GetBabyInfo(state.frameBaby ? state.babyId : babyId));
           }
         }
-        add(GetMomentByBaby(babyId, state.page, state.tag));
+        add(GetMomentByBaby(
+          babyId,
+          state.page ?? 0,
+          state.tag ?? false,
+        ));
       } else {
         try {
           BabyListModel model = await _apiService.getMyBabyList(state.page);
@@ -182,7 +177,6 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       bool isRefresh = await _apiService.getRefreshInformation();
       if (isRefresh) {
         add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
       }
     } catch (error) {
       print(error.toString());

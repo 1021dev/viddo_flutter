@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen>
   Timer refreshTimer;
   bool isLogin = true;
   int dataCount = 0;
+  bool isVerical = true;
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
@@ -41,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen>
       sharedPreferences = sp;
       setState(() {
         isLogin = (sp.getString(Constants.TOKEN) ?? '').length > 0;
+        isVerical = sp.getBool(Constants.IS_VERI_CAL) ?? false;
       });
     });
 
@@ -71,13 +73,15 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _getBody(HomeScreenState state) {
-    bool isPost = true;
-
     return SafeArea(
       key: formKey,
       child: Container(
-        child: isPost
-            ? _buildPostList(state)
+        child: isVerical
+            ? state.dataArr != null && state.dataArr.length == 0
+                ? Container(
+                    child: Image.asset('assets/icons/no_data.png'),
+                  )
+                : _buildPostList(state)
             : Center(
                 child: GestureDetector(
                   child: Column(
@@ -155,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildPostList(HomeScreenState state) {
     dataCount = state.dataArr != null ? state.dataArr.length : 0;
-    
+    print('Data Count: => ${state.dataArr}');
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -200,6 +204,10 @@ class _HomeScreenState extends State<HomeScreen>
           itemBuilder: (context, index) {
             return PostNoActivityItem(
               content: state.dataArr[index],
+              onTapDetail: () {},
+              onTapLike: () {},
+              onTapComment: () {},
+              onTapShare: () {},
             );
           },
         ),
@@ -241,17 +249,15 @@ class _HomeScreenState extends State<HomeScreen>
     const oneSec = const Duration(seconds: 1);
     refreshTimer = new Timer.periodic(
       oneSec,
-      (Timer timer) => setState(
-        () {
-          if (time <= 0) {
-            time = 20;
-            if (dataCount > 0 && isLogin) {
-              screenBloc.add(HomeScreenRefresh());
-            }
+      (Timer timer) => () {
+        if (time <= 0) {
+          time = 20;
+          if (dataCount > 0 && isLogin) {
+            screenBloc.add(HomeScreenRefresh());
+            time -= 1;
           }
-          time -= 1;
-        },
-      ),
+        }
+      },
     );
   }
 }
