@@ -2,7 +2,6 @@ import 'package:Viiddo/apis/jsonable.dart';
 import 'package:Viiddo/models/friend_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'baby_model.dart';
 part 'friend_list_model.g.dart';
 
 @JsonSerializable(nullable: true)

@@ -5,14 +5,27 @@ import 'package:meta/meta.dart';
 class LoginScreenState {
   final bool isLoading;
 
-  LoginScreenState({this.isLoading = false});
+  LoginScreenState({
+    this.isLoading = false,
+  });
 
-  LoginScreenState copyWith({bool isLoading}) {
-    return LoginScreenState(isLoading: isLoading ?? this.isLoading);
+  LoginScreenState copyWith({
+    bool isLoading,
+  }) {
+    return LoginScreenState(
+      isLoading: isLoading ?? this.isLoading,
+    );
   }
 }
 
-class LoginSuccess extends LoginScreenState {}
+class LoginSuccess extends LoginScreenState {
+  final bool isVerical;
+
+  LoginSuccess({@required this.isVerical}) : super();
+
+  @override
+  String toString() => 'LoginSuccess { isVerical: $isVerical }';
+}
 
 class LoginScreenFailure extends LoginScreenState {
   final String error;

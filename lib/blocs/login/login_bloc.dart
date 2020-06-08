@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:Viiddo/apis/api_service.dart';
+import 'package:Viiddo/models/login_model.dart';
 import 'package:bloc/bloc.dart';
 
 import 'login_event.dart';
@@ -23,17 +25,18 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
   Stream<LoginScreenState> _login(Login event) async* {
     yield state.copyWith(isLoading: true);
     try {
-      bool isLogin =
+      LoginModel loginModel =
           await _apiService.accountLogin(event.username, event.password);
-      if (isLogin) {
-        yield LoginSuccess();
+      if (loginModel != null) {
+        state.copyWith(isLoading: false);
+        yield LoginSuccess(isVerical: loginModel.user.vertical);
       } else {
+        yield state.copyWith(isLoading: false);
         yield LoginScreenFailure(error: 'error');
       }
     } catch (error) {
+      state.copyWith(isLoading: false);
       yield LoginScreenFailure(error: error.toString());
-    } finally {
-      yield state.copyWith(isLoading: false);
     }
   }
 
@@ -43,21 +46,22 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
       var profile = await _apiService.getFacebookProfile(event.accessToken);
       String avatar = profile['picture']['data']['url'];
       String nikName = profile['name'];
-      bool isLogin = await _apiService.facebookLogin(
+      LoginModel loginModel = await _apiService.facebookLogin(
         'Facebook',
         nikName,
         '${event.accessToken.userId}',
         avatar,
       );
-      if (isLogin) {
-        yield LoginSuccess();
+      if (loginModel != null) {
+        state.copyWith(isLoading: false);
+        yield LoginSuccess(isVerical: loginModel.user.vertical);
       } else {
+        yield state.copyWith(isLoading: false);
         yield LoginScreenFailure(error: 'error');
       }
     } catch (error) {
-      yield LoginScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isLoading: false);
+      yield LoginScreenFailure(error: error);
     }
   }
 }

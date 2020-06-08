@@ -8,9 +8,6 @@ import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
 import 'package:amazon_s3_cognito/aws_region.dart';
-import 'package:aws_s3/aws_s3.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:Viiddo/models/login_model.dart';
 import 'package:Viiddo/models/response_model.dart';
@@ -31,7 +28,7 @@ class ApiService {
 
   String url = Env().baseUrl;
 
-  Future<bool> accountLogin(
+  Future<LoginModel> accountLogin(
     String email,
     String password,
   ) async {
@@ -79,10 +76,10 @@ class ApiService {
             sharedPreferences.setBool(
                 Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
-          return true;
+          return loginModel;
         }
       }
-      return false;
+      return null;
     } on DioError catch (e, s) {
       print('accountLogin error: $e, $s');
       return Future.error(e);
@@ -101,7 +98,7 @@ class ApiService {
     }
   }
 
-  Future<bool> facebookLogin(
+  Future<LoginModel> facebookLogin(
     String platform,
     String nikeName,
     String code,
@@ -151,10 +148,10 @@ class ApiService {
                 Constants.IS_VERI_CAL, userModel.vertical ?? 0);
           }
 
-          return true;
+          return loginModel;
         }
       }
-      return false;
+      return null;
     } on DioError catch (e, s) {
       print('facebookLogin error: $e, $s');
       return Future.error(e);
@@ -569,7 +566,7 @@ class ApiService {
           'accept': '*/*',
         },
       );
-      print('getBabyInfo: {$response}');
+      print('getMomentByBaby: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
         if (responseModel.status == 1000) {
@@ -585,7 +582,7 @@ class ApiService {
       }
       return null;
     } on DioError catch (e, s) {
-      print('getBabyInfo error: $e, $s');
+      print('getMomentByBaby error: $e, $s');
       return Future.error(e);
     }
   }
