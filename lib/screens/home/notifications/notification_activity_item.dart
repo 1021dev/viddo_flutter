@@ -1,16 +1,15 @@
-import 'package:Viiddo/models/profile_setting_model.dart';
+import 'package:Viiddo/models/activity_notification_model.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class NotificationActivityItem extends StatelessWidget {
   final Function function;
-  final int index;
+  final ActivityNotificationModel model;
   const NotificationActivityItem({
     Key key,
     this.function,
-    this.index,
+    this.model,
   }) : super(key: key);
 
   @override

@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -67,13 +66,16 @@ class _WebViewScreenState extends State<WebViewScreen>
         child: Column(
           children: <Widget>[
             (progress != 1.0)
-                ? LinearProgressIndicator(
+                ? SizedBox(
+                  height: 1.0,
+                  child: LinearProgressIndicator(
                     value: progress,
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Color(0xFFFFA685),
                     ),
-                  )
+                  ),
+                )
                 : null, // Should be removed while showing
             Expanded(
               child: Container(

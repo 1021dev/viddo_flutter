@@ -13,13 +13,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  final BuildContext homeContext;
+  const HomeScreen({Key key, this.homeContext}) : super(key: key);
 
-  HomeScreen({
-    this.bloc,
-  });
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState(homeContext);
 }
 
 class _HomeScreenState extends State<HomeScreen>
@@ -27,7 +25,10 @@ class _HomeScreenState extends State<HomeScreen>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  HomeScreenBloc screenBloc = HomeScreenBloc();
+  final BuildContext homeContext;
+
+  _HomeScreenState(this.homeContext);
+  HomeScreenBloc screenBloc;
 
   Timer refreshTimer;
   bool isLogin = true;
@@ -41,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
+    screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       setState(() {
@@ -59,22 +61,18 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
-        bloc: widget.bloc,
-        builder: (BuildContext context, state) {
-          return Scaffold(
-            key: scaffoldKey,
-            body: _getBody(state),
-          );
-        },
-      ),
+    return BlocBuilder<HomeScreenBloc, HomeScreenState>(
+      bloc: screenBloc,
+      builder: (BuildContext context, state) {
+        return Scaffold(
+          key: scaffoldKey,
+          body: _getBody(state),
+        );
+      },
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(HomeScreenState state) {
     return SafeArea(
       key: formKey,
       child: Container(
@@ -159,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildPostList(MainScreenState state) {
+  Widget _buildPostList(HomeScreenState state) {
     dataCount = state.dataArr != null ? state.dataArr.length : 0;
     print('Data Count: => ${state.dataArr}');
     return Container(
@@ -217,8 +215,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Future<Null> _handleRefresh(context) {
+  Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
+    // screenBloc.add(HomeScreenRefresh(completer));
     return completer.future;
   }
 
@@ -263,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
-            widget.bloc.add(MainScreenRefresh());
+            _handleRefresh;
             time -= 1;
           }
         }
