@@ -49,15 +49,19 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
 
-     if (isRefresh) {
-       add(GetDataWithHeader(true));
-       add(GetFriendByBaby(babyId));
-       sharedPreferences.setBool(Constants.IS_REFRESH, false);
-     }
+    //  if (isRefresh) {
+    //    add(GetDataWithHeader(true));
+    //    add(GetFriendByBaby(babyId));
+    //    sharedPreferences.setBool(Constants.IS_REFRESH, false);
+    //  }
       if (babyId == 0) {
         add(GetDataWithHeader(true));
       } else {
-        add(GetBabyInfo(babyId));
+        add(GetMomentByBaby(
+          babyId,
+          state.page,
+          state.tag,
+        ));
       }
       try {
         UnreadMessageModel model = await _apiService.getUnreadMessages();

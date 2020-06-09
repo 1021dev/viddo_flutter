@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:Viiddo/models/activity_notification_list_model.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
@@ -704,6 +705,36 @@ class ApiService {
     }
   }
 
+  Future<ActivityNotificationListModel> getActivityList(int page) async {
+    try {
+      FormData formData = FormData.fromMap({'page': page});
+      Response response = await _client.postForm(
+        '${url}common/activityList',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getActivityList: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          ActivityNotificationListModel activityNotificationListModel =
+              ActivityNotificationListModel.fromJson(responseModel.content);
+          return activityNotificationListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getActivityList error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
   Future<ResponseModel> makeMessageRead(int objectId, bool readAll) async {
     try {
       FormData formData = FormData.fromMap({'objectId': objectId, 'readAll': readAll});
@@ -726,6 +757,59 @@ class ApiService {
       return null;
     } on DioError catch (e, s) {
       print('makeMessageRead error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<ResponseModel> deleteMessage(String objectIds, bool deleteAll) async {
+    try {
+      FormData formData = FormData.fromMap({'objectIds': objectIds, 'deleteAll': deleteAll});
+      Response response = await _client.postForm(
+        '${url}common/deleteMessage',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('makeMessageRead: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        return responseModel;
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('makeMessageRead error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<UnreadMessageModel> getMessageUnreadCount() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}common/messageUnreadCount',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getMessageUnreadCount: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          UnreadMessageModel unreadMessageModel = UnreadMessageModel.fromJson(responseModel.content);
+          return unreadMessageModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getMessageUnreadCount error: $e, $s');
       return Future.error(e);
     }
   }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
 import 'package:Viiddo/screens/profile/baby/babies_screen.dart';
@@ -21,17 +22,20 @@ import '../../themes.dart';
 import '../../utils/navigation.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen();
+  final BuildContext homeContext;
+  const ProfileScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState(homeContext);
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  ProfileScreenBloc screenBloc = ProfileScreenBloc();
+  final BuildContext homeContext;
+
+  _ProfileScreenState(this.homeContext);
+  ProfileScreenBloc screenBloc;
 
   Timer _timer;
   int _start = 10;
@@ -68,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: BabiesScreen(
-              bloc: screenBloc,
+              homeContext: context,
             ),
           );
         },
@@ -110,6 +114,8 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
+    screenBloc = BlocProvider.of<ProfileScreenBloc>(homeContext);
+
     screenBloc.add(InitProfileScreen());
     screenBloc.add(UserProfile());
     SharedPreferences.getInstance().then((SharedPreferences sp) {
@@ -150,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
     }
     return SafeArea(
-      key: formKey,
+      key: scaffoldKey,
       child: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: 24),
         child: Container(

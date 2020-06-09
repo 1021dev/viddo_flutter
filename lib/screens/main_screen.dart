@@ -77,16 +77,29 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: mainScreenBloc,
-      listener: (BuildContext context, MainScreenState state) async {},
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MainScreenBloc>(
+          create: (context) => mainScreenBloc,
+        ),
+        BlocProvider<NotificationScreenBloc>(
+          create: (context) => NotificationScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+        BlocProvider<ProfileScreenBloc>(
+          create: (context) => ProfileScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+      ],
       child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: mainScreenBloc,
         builder: (BuildContext context, state) {
           tabs = [
-            HomeScreen(bloc: mainScreenBloc,),
+            HomeScreen(homeContext: context,),
             Container(),
-            ProfileScreen(),
+            ProfileScreen(homeContext: context,),
           ];
           return DefaultTabController(
             length: 2,
@@ -142,7 +155,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             Navigation.toScreen(
                               context: context,
                               screen: NotificationsScreen(
-                                bloc: mainScreenBloc,
+                                homeContext: context,
                               ),
                             );
                           },
