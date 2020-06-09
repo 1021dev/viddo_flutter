@@ -32,7 +32,6 @@ class MainScreenState {
     this.tag = false,
   });
 
-  @override
   List<Object> get props => [
       this.isLoading,
       this.babyModel,

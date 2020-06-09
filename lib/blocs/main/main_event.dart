@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 
 abstract class MainScreenEvent extends Equatable {
@@ -48,7 +50,14 @@ class GetMomentByBaby extends MainScreenEvent {
       ];
 }
 
-class MainScreenRefresh extends MainScreenEvent {}
+class MainScreenRefresh extends MainScreenEvent {
+  final Completer completer;
+  MainScreenRefresh(this.completer);
+
+  @override
+  List<Object> get props => [completer];
+
+}
 
 class GetDataWithHeader extends MainScreenEvent {
   final bool isHeader;
