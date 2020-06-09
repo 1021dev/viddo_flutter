@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
+import 'package:Viiddo/models/message_list_model.dart';
+import 'package:Viiddo/models/message_model.dart';
 import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
@@ -641,4 +643,91 @@ class ApiService {
       return Future.error(e);
     }
   }
+
+  Future<MessageModel> getSystemMessageDetails(int objectId) async {
+    try {
+      FormData formData = FormData.fromMap({'objectId': objectId});
+      Response response = await _client.postForm(
+        '${url}common/getSystemMsgDetails',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getSystemMessageDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          MessageModel messageModel =
+              MessageModel.fromJson(responseModel.content);
+          return messageModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getSystemMessageDetails error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<MessageListModel> getSystemessage(int page) async {
+    try {
+      FormData formData = FormData.fromMap({'page': page});
+      Response response = await _client.postForm(
+        '${url}common/getSystemMsg',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getSystemessage: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          MessageListModel messageListModel =
+              MessageListModel.fromJson(responseModel.content);
+          return messageListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getSystemessage error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<ResponseModel> makeMessageRead(int objectId, bool readAll) async {
+    try {
+      FormData formData = FormData.fromMap({'objectId': objectId, 'readAll': readAll});
+      Response response = await _client.postForm(
+        '${url}common/isReadMessage',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('makeMessageRead: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        return responseModel;
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('makeMessageRead error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
 }

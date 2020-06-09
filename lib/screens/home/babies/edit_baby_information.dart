@@ -1,5 +1,4 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';

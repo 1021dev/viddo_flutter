@@ -48,7 +48,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await SharedPreferences.getInstance();
       bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
-      add(GetDataWithHeader(true));
 
      if (isRefresh) {
        add(GetDataWithHeader(true));
@@ -140,8 +139,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await SharedPreferences.getInstance();
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       if (babyId != 0) {
-        if (isHeader) {
-        }
         add(GetMomentByBaby(
           babyId,
           state.page,

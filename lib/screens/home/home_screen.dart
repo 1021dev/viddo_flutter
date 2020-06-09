@@ -223,9 +223,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _onRefresh() async {
-    // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
@@ -235,7 +233,17 @@ class _HomeScreenState extends State<HomeScreen>
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-    _refreshController.loadComplete();
+     _refreshController.loadComplete();
+  }
+
+  void _loadFailed() async {
+    if (mounted) setState(() {});
+     _refreshController.loadComplete();
+  }
+
+  void _loadNodata() async {
+    if (mounted) setState(() {});
+     _refreshController.loadComplete();
   }
 
   @override
