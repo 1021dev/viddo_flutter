@@ -4,13 +4,20 @@ import 'package:Viiddo/apis/api_service.dart';
 import 'package:Viiddo/models/user_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../bloc.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
   ApiService _apiService = ApiService();
+
+  final MainScreenBloc mainScreenBloc;
+  ProfileScreenBloc({@required this.mainScreenBloc});
+
+
   @override
   ProfileScreenState get initialState => ProfileScreenState();
 

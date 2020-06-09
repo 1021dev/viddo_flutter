@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/semantics.dart';
 
 abstract class MainScreenEvent extends Equatable {
   MainScreenEvent();

@@ -32,6 +32,7 @@ class Constants {
   static const String IS_CREATOR = 'isCreator';
   static const String IS_BIRTH = 'isBirth';
 
+  static const String welcomeURL = 'https://www.viiddo.com/welcome';
   static const String termsURL = 'https://www.viiddo.com/terms';
   static const String privacyURL = 'https://www.viiddo.com/privacy';
 }
