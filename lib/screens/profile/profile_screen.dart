@@ -114,10 +114,12 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
-    screenBloc = BlocProvider.of<ProfileScreenBloc>(homeContext);
+    if (screenBloc == null) {
+      screenBloc = BlocProvider.of<ProfileScreenBloc>(homeContext);
 
-    screenBloc.add(InitProfileScreen());
-    screenBloc.add(UserProfile());
+      screenBloc.add(InitProfileScreen());
+      screenBloc.add(UserProfile());
+    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       bool isShowWelcome = sp.getBool(Constants.IS_VERI_CAL) ?? false;
@@ -156,7 +158,6 @@ class _ProfileScreenState extends State<ProfileScreen>
       isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
     }
     return SafeArea(
-      key: scaffoldKey,
       child: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: 24),
         child: Container(

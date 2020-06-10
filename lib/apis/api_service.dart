@@ -11,6 +11,9 @@ import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
 import 'package:amazon_s3_cognito/aws_region.dart';
+import 'package:aws_s3/aws_s3.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:Viiddo/models/login_model.dart';
 import 'package:Viiddo/models/response_model.dart';
@@ -390,35 +393,35 @@ class ApiService {
         String path = imageFiles[i].path;
         String extension = p.extension(path);
 
-//        String result;
-//        AwsS3 awsS3 = AwsS3(
-//            awsFolderPath: 'imgbaby/Posts',
-//            file: imageFiles[i],
-//            fileNameWithExt: '${uuid}_$i.$extension',
-//            poolId: Constants.cognitoPoolId,
-//            region: Regions.US_EAST_2,
-//            bucketName: Constants.bucket);
-//        try {
-//          try {
-//            result = await awsS3.uploadFile;
-//            debugPrint("Result :'$result'.");
-//          } on PlatformException {
-//            debugPrint("Result :'$result'.");
-//          }
-//        } on PlatformException catch (e) {
-//          debugPrint("Failed :'${e.message}'.");
-//        }
+       String result;
+       AwsS3 awsS3 = AwsS3(
+           awsFolderPath: 'Posts',
+           file: imageFiles[i],
+           fileNameWithExt: '${uuid}_$i$extension',
+           poolId: Constants.cognitoPoolId,
+           region: Regions.US_EAST_2,
+           bucketName: Constants.bucket);
+       try {
+         try {
+           result = await awsS3.uploadFile;
+           debugPrint("Result :'$result'.");
+         } on PlatformException {
+           debugPrint("Result :'$result'.");
+         }
+       } on PlatformException catch (e) {
+         debugPrint("Failed :'${e.message}'.");
+       }
 
-        String uploadedImageUrl = await AmazonS3Cognito.upload(
-            imageFiles[i].path,
-            Constants.bucket,
-            Constants.cognitoPoolId,
-            '${uuid}_$i.$extension',
-            AwsRegion.US_EAST_2,
-            AwsRegion.US_EAST_2);
+        // String uploadedImageUrl = await AmazonS3Cognito.upload(
+        //     imageFiles[i].path,
+        //     Constants.bucket,
+        //     Constants.cognitoPoolId,
+        //     '${uuid}_$i.$extension',
+        //     AwsRegion.US_EAST_2,
+        //     AwsRegion.US_EAST_2);
         String url =
-            'https://d1qaud6fcxefsz.cloudfront.net/Posts/${uuid}_$i.$extension';
-        if (uploadedImageUrl != null) {
+            'https://d1qaud6fcxefsz.cloudfront.net/Posts/${uuid}_$i$extension';
+        if (result != null) {
           urls.add(url);
         }
       }

@@ -23,12 +23,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  HomeScreenBloc screenBloc;
 
   final BuildContext homeContext;
 
   _HomeScreenState(this.homeContext);
-  HomeScreenBloc screenBloc;
 
   Timer refreshTimer;
   bool isLogin = true;
@@ -37,12 +36,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
-    initialRefresh: true,
+    initialRefresh: false,
   );
 
   @override
   void initState() {
-    screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
+    if (screenBloc == null) {
+      screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
+      screenBloc.add(GetMomentByBaby(0, 0, false));
+    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       setState(() {
@@ -61,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenBloc, HomeScreenState>(
+    return BlocBuilder(
       bloc: screenBloc,
       builder: (BuildContext context, state) {
         return Scaffold(
@@ -74,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _getBody(HomeScreenState state) {
     return SafeArea(
-      key: formKey,
       child: Container(
         child: isVerical
             ? state.dataArr != null && state.dataArr.length == 0
@@ -222,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 1000));
+    // await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -249,11 +250,14 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     if (refreshTimer != null) {
       refreshTimer.cancel();
+      refreshTimer = null;
     }
+    // screenBloc.close();
     super.dispose();
   }
 
   void startTimer() {
+    if (refreshTimer != null) return;
     int time = 20;
     const oneSec = const Duration(seconds: 1);
     refreshTimer = new Timer.periodic(
@@ -262,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
-            _handleRefresh;
+            _handleRefresh();
             time -= 1;
           }
         }
