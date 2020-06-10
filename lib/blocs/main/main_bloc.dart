@@ -29,12 +29,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* getBabyInfo(event.objectId);
     } else if (event is GetFriendByBaby) {
       yield* getFriendByBaby(event.objectId);
-    } else if (event is GetMomentByBaby) {
-      yield* getMomentByBaby(
-        event.objectId,
-        event.page,
-        event.tag,
-      );
     } else if (event is GetDataWithHeader) {
       yield* getDataWithHeader(event.isHeader);
     } else if (event is MainScreenRefresh) {
@@ -49,19 +43,20 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
 
-    //  if (isRefresh) {
-    //    add(GetDataWithHeader(true));
-    //    add(GetFriendByBaby(babyId));
-    //    sharedPreferences.setBool(Constants.IS_REFRESH, false);
-    //  }
+     if (isRefresh) {
+       add(GetDataWithHeader(true));
+      //  add(GetFriendByBaby(babyId));
+       sharedPreferences.setBool(Constants.IS_REFRESH, false);
+     }
       if (babyId == 0) {
         add(GetDataWithHeader(true));
       } else {
-        add(GetMomentByBaby(
-          babyId,
-          state.page,
-          state.tag,
-        ));
+        add(GetBabyInfo(babyId));
+        // add(GetMomentByBaby(
+        //   babyId,
+        //   state.page,
+        //   state.tag,
+        // ));
       }
       try {
         UnreadMessageModel model = await _apiService.getUnreadMessages();
@@ -105,35 +100,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     } finally {}
   }
 
-  Stream<MainScreenState> getMomentByBaby(
-      int objectId, int page, bool tag) async* {
-    yield state.copyWith(isLoading: true);
-    try {
-      PageResponseModel pageResponseModel = await _apiService.getMomentByBaby(
-        objectId,
-        page,
-        tag,
-      );
-      List<DynamicContent> dataArr = [];
-     if (state.dataArr != null) {
-       dataArr.addAll(state.dataArr);
-     }
-      if (pageResponseModel.content != null) {
-        for (int i = 0; i < pageResponseModel.content.length; i++) {
-          DynamicContent content =
-              DynamicContent.fromJson(pageResponseModel.content[i]);
-          if (content != null) {
-            dataArr.add(content);
-          }
-        }
-      }
-      print('data => $dataArr');
-      yield state.copyWith(isLoading: false, dataArr: dataArr);
-    } catch (error) {
-      yield MainScreenFailure(error: error);
-      yield state.copyWith(isLoading: false);
-    }
-  }
 
   Stream<MainScreenState> getDataWithHeader(bool isHeader) async* {
     try {
@@ -143,11 +109,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await SharedPreferences.getInstance();
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       if (babyId != 0) {
-        add(GetMomentByBaby(
-          babyId,
-          state.page,
-          state.tag,
-        ));
+        add(GetBabyInfo(babyId));
+        // add(GetMomentByBaby(
+        //   babyId,
+        //   state.page,
+        //   state.tag,
+        // ));
       } else {
         try {
           BabyListModel model = await _apiService.getMyBabyList(state.page);

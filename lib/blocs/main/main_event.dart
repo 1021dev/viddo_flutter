@@ -32,25 +32,6 @@ class GetBabyInfo extends MainScreenEvent {
   List<Object> get props => [objectId];
 }
 
-class GetMomentByBaby extends MainScreenEvent {
-  final int objectId;
-  final int page;
-  final bool tag;
-
-  GetMomentByBaby(
-    this.objectId,
-    this.page,
-    this.tag,
-  );
-
-  @override
-  List<Object> get props => [
-        objectId,
-        page,
-        tag,
-      ];
-}
-
 class MainScreenRefresh extends MainScreenEvent {
   final Completer completer;
   MainScreenRefresh(this.completer);
