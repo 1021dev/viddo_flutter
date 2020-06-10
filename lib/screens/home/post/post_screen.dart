@@ -407,7 +407,7 @@ class _PostScreenState extends State<PostScreen>
                               Row(
                                 children: <Widget>[
                                   Image.asset(
-                                    'assets/icons/tag_baby.png',
+                                    'assets/icons/ic_tag_baby.png',
                                     width: 20,
                                     height: 20,
                                     color: Color(0xFF8476AB),

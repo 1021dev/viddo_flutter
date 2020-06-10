@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes.dart';
 
@@ -109,8 +110,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                               fontFamily: 'Roboto',
                             )),
                         onPressed: () {
-                          Navigation.toScreenAndCleanBackStack(
+                          SharedPreferences.getInstance().then((sp) {
+                            sp.setString(Constants.TOKEN, '');
+                            Navigation.toScreenAndCleanBackStack(
                               context: context, screen: LoginScreen());
+                          });
                         },
                       ),
                     ),

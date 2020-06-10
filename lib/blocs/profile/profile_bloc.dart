@@ -140,6 +140,9 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       }
       yield state.copyWith(
           uploadedFiles: urls, isUploading: false, avatar: avatar);
+      if(avatar != '') {
+        add(UpdateUserProfile({'avatar': avatar}));
+      }
     } catch (error) {
       yield ProfileScreenFailure(error: error);
     } finally {

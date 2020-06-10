@@ -10,7 +10,7 @@ class Constants {
   static String cognitoPoolId =
       'us-east-2:c7128890-214d-48f4-807c-3275e8501928';
   static String cognitoRegion = 'us-east-2';
-  static String bucket = 'imgbaby-imgbaby';
+  static String bucket = 'imgbaby';
 
   // Paramenters
   static const String TOKEN = 'token';
