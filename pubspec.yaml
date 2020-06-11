@@ -78,6 +78,10 @@ dev_dependencies:
   ff_annotation_route: any
   photo_manager: 0.5.3+1
   toast: ^0.1.5
+  chewie: ^0.9.5
+  video_player: 0.10.11+1
+  flutter_simple_video_player: ^0.0.9
+
 flutter_icons:
   android: true
   ios: true
