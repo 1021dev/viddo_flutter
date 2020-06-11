@@ -50,7 +50,7 @@ class PostNoActivityItem extends StatelessWidget {
     if (content.albums != null) {
       itemCount = content.albums.length;
       if (itemCount > 1) {
-        width = width / 2 - 8;
+        width = width / 2 - 4;
         height = width;
         gridCount = 2;
       }
@@ -75,8 +75,8 @@ class PostNoActivityItem extends StatelessWidget {
           childAspectRatio: gridCount == 1 ? 1.25 : 1,
           addAutomaticKeepAlives: true,
           physics: NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
           children: List.generate(
             itemCount,
             (index) {
