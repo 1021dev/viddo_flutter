@@ -37,6 +37,6 @@ class Constants {
   static const String privacyURL = 'https://www.viiddo.com/privacy';
 }
 
-enum Gender { M, FM }
+enum Gender { M, F }
 
 enum MessageStatus { NORMAL, INVITE, GUIDE }
