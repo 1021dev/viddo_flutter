@@ -40,3 +40,115 @@ class Constants {
 enum Gender { M, F }
 
 enum MessageStatus { NORMAL, INVITE, GUIDE }
+const List<String> routeNames = <String>[
+  'viiddo://picswiper',
+  'viiddo://mainpage',
+  // 'viiddo//customimage',
+  // 'viiddo//image',
+  // 'viiddo//imageeditor',
+  // 'viiddo//loadingprogress',
+  // 'viiddo//mainpage',
+  // 'viiddo//paintimage',
+  // 'viiddo//photoview',
+  // 'viiddo//picswiper',
+  // 'viiddo//zoomimage'
+];
+class Routes {
+  const Routes._();
+
+  /// "show how to build loading more WaterfallFlow with ExtendedImage."
+  ///
+  /// [name] : viiddo//WaterfallFlowDemo
+  ///
+  /// [routeName] : WaterfallFlow
+  ///
+  /// [description] : "show how to build loading more WaterfallFlow with ExtendedImage."
+  static const String fluttercandiesWaterfallFlowDemo =
+      'viiddo://WaterfallFlowDemo';
+
+  /// "show image with loading,failed,animation state"
+  ///
+  /// [name] : viiddo//customimage
+  ///
+  /// [routeName] : custom image load state
+  ///
+  /// [description] : "show image with loading,failed,animation state"
+  static const String fluttercandiesCustomimage =
+      'viiddo://customimage';
+
+  /// "cache image,save to photo Library,image border,shape,borderRadius"
+  ///
+  /// [name] : viiddo//image
+  ///
+  /// [routeName] : image
+  ///
+  /// [description] : "cache image,save to photo Library,image border,shape,borderRadius"
+  static const String fluttercandiesImage = 'viiddo://image';
+
+  /// "crop,rotate and flip with image editor"
+  ///
+  /// [name] : viiddo//imageeditor
+  ///
+  /// [routeName] : image editor
+  ///
+  /// [description] : "crop,rotate and flip with image editor"
+  static const String fluttercandiesImageeditor =
+      'viiddo://imageeditor';
+
+  /// "show how to make loading progress for network image"
+  ///
+  /// [name] : viiddo//loadingprogress
+  ///
+  /// [routeName] : loading progress
+  ///
+  /// [description] : "show how to make loading progress for network image"
+  static const String fluttercandiesLoadingprogress =
+      'viiddo://loadingprogress';
+
+  /// MainPage
+  ///
+  /// [name] : viiddo//mainpage
+  ///
+  /// [routeName] : MainPage
+  static const String fluttercandiesMainpage = 'viiddo//mainpage';
+
+  /// "show how to paint any thing before/after image is painted"
+  ///
+  /// [name] : viiddo//paintimage
+  ///
+  /// [routeName] : paint image
+  ///
+  /// [description] : "show how to paint any thing before/after image is painted"
+  static const String fluttercandiesPaintimage = 'viiddo://paintimage';
+
+  /// "show how to zoom/pan image in page view like WeChat"
+  ///
+  /// [name] : viiddo//photoview
+  ///
+  /// [routeName] : photo view
+  ///
+  /// [description] : "show how to zoom/pan image in page view like WeChat"
+  static const String fluttercandiesPhotoview = 'viiddo://photoview';
+
+  /// PicSwiper
+  ///
+  /// [name] : viiddo://picswiper
+  ///
+  /// [routeName] : PicSwiper
+  ///
+  /// [arguments] : [index, pics, tuChongItem]
+  ///
+  /// [showStatusBar] : false
+  ///
+  /// [pageRouteType] : PageRouteType.transparent
+  static const String fluttercandiesPicswiper = 'viiddo://picswiper';
+
+  /// "show how to zoom/pan image"
+  ///
+  /// [name] : viiddo//zoomimage
+  ///
+  /// [routeName] : image zoom
+  ///
+  /// [description] : "show how to zoom/pan image"
+  static const String fluttercandiesZoomimage = 'viiddo://zoomimage';
+}

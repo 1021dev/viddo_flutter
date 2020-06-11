@@ -7,7 +7,6 @@ import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
 import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
 import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,7 +108,7 @@ class _BabiesScreenState extends State<BabiesScreen>
                       onTap: () {
                         Navigation.toScreen(
                           context: context,
-                          screen: AddBabyScreen(),
+                          screen: AddBabyScreen(bloc: widget.bloc,),
                         );
                       },
                       child: Column(
@@ -134,7 +133,7 @@ class _BabiesScreenState extends State<BabiesScreen>
                       onTap: () {
                         Navigation.toScreen(
                           context: context,
-                          screen: InvitationCodeInputScreen(),
+                          screen: InvitationCodeInputScreen(bloc: widget.bloc,),
                         );
                       },
                       child: Column(
