@@ -11,15 +11,12 @@ import 'package:flutter/rendering.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 
-const String attachContent =
-    '''[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It's my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]''';
-
 typedef DoubleClickAnimationListener = void Function();
 
 @FFRoute(
-    name: 'fluttercandies://picswiper',
+    name: 'viiddo://picswiper',
     routeName: 'PicSwiper',
-    argumentNames: <String>['index', 'pics', 'tuChongItem'],
+    argumentNames: <String>['index', 'pics', 'list'],
     showStatusBar: false,
     pageRouteType: PageRouteType.transparent)
 
@@ -27,9 +24,11 @@ class PicSwiper extends StatefulWidget {
   const PicSwiper({
     this.index,
     this.pics,
+    this.list,
   });
   final int index;
   final List<String> pics;
+  final List<String> list;
   @override
   _PicSwiperState createState() => _PicSwiperState();
 }
@@ -95,9 +94,9 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
         /// make sure your page is transparent background
         color: Colors.transparent,
-        shadowColor: Colors.transparent,
+        shadowColor: Colors.black,
         child: Stack(
-          fit: StackFit.expand,
+          alignment: Alignment.center,
           children: <Widget>[
             ExtendedImageGesturePageView.builder(
               controller: PageController(
@@ -112,7 +111,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
                   heroBuilderForSlidingPage: (Widget result) {
-                    if (index < min(9, widget.pics.length)) {
+                    if (index < min(6, widget.pics.length)) {
                       return Hero(
                         tag: item,
                         child: result,
@@ -302,22 +301,23 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   return Container();
                 }
 
-                return Positioned(
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child:
-                      MySwiperPlugin(widget.pics, _currentIndex, rebuildIndex),
-                );
+                return MySwiperPlugin(widget.pics, _currentIndex, rebuildIndex);
               },
               initialData: true,
               stream: rebuildSwiper.stream,
             )
           ],
-        ));
+        )
+      );
 
     result = ExtendedImageSlidePage(
       key: slidePagekey,
+      slidePageBackgroundHandler: (offset, pageSize) {
+        double opacity = 0.0;
+        opacity = offset.distance /
+            (Offset(pageSize.width, pageSize.height).distance / 2.0);
+        return Colors.black87.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
+      },
       child: result,
       slideAxis: SlideAxis.both,
       slideType: SlideType.onlyImage,
@@ -436,52 +436,57 @@ class MySwiperPlugin extends StatelessWidget {
     return StreamBuilder<int>(
       builder: (BuildContext context, AsyncSnapshot<int> data) {
         return DefaultTextStyle(
-          style: TextStyle(color: Colors.blue),
-          child: Container(
-            height: 50.0,
-            width: double.infinity,
-            color: Colors.grey.withOpacity(0.2),
-            child: Row(
+          style: TextStyle(color: Colors.white),
+          child: SafeArea(
+            child: Stack(
               children: <Widget>[
                 Container(
-                  width: 10.0,
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: 60,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      backgroundBlendMode: BlendMode.darken,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black54,
+                    ),
+                    child: Text(
+                      '${data.data + 1} / ${pics.length}',
+                    ),
+                  ),
                 ),
-                Text(
-                  '${data.data + 1}',
-                ),
-                Text(
-                  ' / ${pics.length}',
-                ),
-                const SizedBox(
-                  width: 10.0,
-                ),
-                Expanded(
-                    child: Text( '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16.0, color: Colors.blue))),
-                const SizedBox(
-                  width: 10.0,
-                ),
-                // if (!kIsWeb)
-                  GestureDetector(
+                GestureDetector(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 16, bottom: 16),
+                    alignment: Alignment.bottomLeft,
                     child: Container(
-                      padding: const EdgeInsets.only(right: 10.0),
                       alignment: Alignment.center,
+                      width: 60,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        backgroundBlendMode: BlendMode.darken,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.black54,
+                      ),
                       child: Text(
                         'Save',
-                        style: TextStyle(fontSize: 16.0, color: Colors.blue),
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Roboto-Bold',),
                       ),
                     ),
-                    onTap: () {
-                      saveNetworkImageToPhoto(pics[index])
-                          .then((bool done) {
-                        // showToast(done ? 'save succeed' : 'save failed',
-                        //     position:
-                        //         ToastPosition(align: Alignment.topCenter));
-                      });
-                    },
                   ),
+                  onTap: () {
+                    saveNetworkImageToPhoto(pics[index])
+                        .then((bool done) {
+                      // showToast(done ? 'save succeed' : 'save failed',
+                      //     position:
+                      //         ToastPosition(align: Alignment.topCenter));
+                    });
+                  },
+                ),
+
               ],
             ),
           ),
@@ -523,202 +528,3 @@ class ImageDetailInfo {
     }
   }
 }
-
-// class ImageDetail extends StatelessWidget {
-//   const ImageDetail(
-//     this.info,
-//     this.index,
-//     this.albumn,
-//   );
-//   final ImageDetailInfo info;
-//   final int index;
-//   final List<String> albumn;
-//   @override
-//   Widget build(BuildContext context) {
-//     String content = '';
-//         // tuChongItem.content ?? (tuChongItem.excerpt ?? tuChongItem.title);
-//     content += attachContent * 2;
-//     final Widget result = Container(
-//       // constraints: BoxConstraints(minHeight: 25.0),
-//       key: info.key,
-//       margin: const EdgeInsets.only(
-//         left: 5,
-//         right: 5,
-//       ),
-//       padding: const EdgeInsets.all(20.0),
-//       child: Stack(
-//         overflow: Overflow.visible,
-//         children: <Widget>[
-//           Column(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: <Widget>[
-//               buildTagsWidget(
-//                 tuChongItem,
-//                 maxNum: tuChongItem.tags.length,
-//               ),
-//               const SizedBox(
-//                 height: 15.0,
-//               ),
-//               ExtendedText(
-//                 content,
-//                 onSpecialTextTap: (dynamic parameter) {
-//                   if (parameter.toString().startsWith('\$')) {
-//                     launch('https://github.com/fluttercandies');
-//                   } else if (parameter.toString().startsWith('@')) {
-//                     launch('mailto:zmtzawqlp@live.com');
-//                   }
-//                 },
-//                 specialTextSpanBuilder: MySpecialTextSpanBuilder(),
-//                 //overflow: ExtendedTextOverflow.ellipsis,
-//                 style: TextStyle(fontSize: 14, color: Colors.grey),
-//                 maxLines: 10,
-//                 overFlowTextSpan: kIsWeb
-//                     ? null
-//                     : OverFlowTextSpan(
-//                         children: <TextSpan>[
-//                           const TextSpan(text: '  \u2026  '),
-//                           TextSpan(
-//                               text: 'more detail',
-//                               style: TextStyle(
-//                                 color: Colors.blue,
-//                               ),
-//                               recognizer: TapGestureRecognizer()
-//                                 ..onTap = () {
-//                                   launch(
-//                                       'https://github.com/fluttercandies/extended_text');
-//                                 })
-//                         ],
-//                       ),
-//                 selectionEnabled: true,
-//                 textSelectionControls:
-//                     MyExtendedMaterialTextSelectionControls(),
-//               ),
-//               const SizedBox(
-//                 height: 20.0,
-//               ),
-//               const Divider(height: 1),
-//               const SizedBox(
-//                 height: 20.0,
-//               ),
-//               buildBottomWidget(
-//                 tuChongItem,
-//                 showAvatar: true,
-//               ),
-//             ],
-//           ),
-//           Positioned(
-//             top: -30.0,
-//             left: -15.0,
-//             child: FloatText(
-//               '${(index + 1).toString().padLeft(tuChongItem.images.length.toString().length, '0')}/${tuChongItem.images.length}',
-//             ),
-//           ),
-//           Positioned(
-//             top: -30.0,
-//             right: -15.0,
-//             child: FloatText(
-//               '${info.imageInfo.image.width} * ${info.imageInfo.image.height}',
-//             ),
-//           ),
-//           Positioned(
-//               top: -33.0,
-//               right: 0,
-//               left: 0,
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: <Widget>[
-//                   Icon(
-//                     Icons.star,
-//                     color: Colors.yellow,
-//                   ),
-//                   Icon(
-//                     Icons.star,
-//                     color: Colors.yellow,
-//                   ),
-//                   Icon(
-//                     Icons.star,
-//                     color: Colors.yellow,
-//                   ),
-//                   Icon(
-//                     Icons.star,
-//                     color: Colors.yellow,
-//                   ),
-//                   Icon(
-//                     Icons.star,
-//                     color: Colors.yellow,
-//                   ),
-//                 ],
-//               )),
-//         ],
-//       ),
-//       decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: const BorderRadius.only(
-//             topLeft: Radius.circular(20),
-//             topRight: Radius.circular(20),
-//           ),
-//           border: Border.all(
-//             color: Colors.grey,
-//           ),
-//           boxShadow: <BoxShadow>[
-//             BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
-//           ]),
-//     );
-
-//     return ExtendedTextSelectionPointerHandler(
-//       //default behavior
-//       // child: result,
-//       //custom your behavior
-//       builder: (List<ExtendedTextSelectionState> states) {
-//         return GestureDetector(
-//           onTap: () {
-//             //do not pop page
-//           },
-//           child: Listener(
-//             child: result,
-//             behavior: HitTestBehavior.translucent,
-//             onPointerDown: (PointerDownEvent value) {
-//               for (final ExtendedTextSelectionState state in states) {
-//                 if (!state.containsPosition(value.position)) {
-//                   //clear other selection
-//                   state.clearSelection();
-//                 }
-//               }
-//             },
-//             onPointerMove: (PointerMoveEvent value) {
-//               //clear other selection
-//               for (final ExtendedTextSelectionState state in states) {
-//                 state.clearSelection();
-//               }
-//             },
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
-// class FloatText extends StatelessWidget {
-//   const FloatText(this.text);
-//   final String text;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(3.0),
-//       decoration: BoxDecoration(
-//         color: Colors.red.withOpacity(0.6),
-//         border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-//         borderRadius: const BorderRadius.all(
-//           Radius.circular(5.0),
-//         ),
-//       ),
-//       child: Text(
-//         text,
-//         textAlign: TextAlign.center,
-//         style: const TextStyle(color: Colors.white),
-//       ),
-//     );
-//   }
-// }
