@@ -23,10 +23,13 @@ import 'baby/babies_visible_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final BuildContext homeContext;
-  const ProfileScreen({Key key, this.homeContext}) : super(key: key);
+  // const ProfileScreen({Key key, this.homeContext}) : super(key: key);
+  final GlobalKey<NavigatorState> navKey;
+
+  const ProfileScreen({@required this.navKey, @required this.homeContext});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(homeContext);
+  _ProfileScreenState createState() => _ProfileScreenState(this.homeContext);
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
@@ -144,9 +147,22 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
-          return Scaffold(
-            key: scaffoldKey,
-            body: _getBody(state),
+          return CupertinoTabView(
+            navigatorKey: widget.navKey,
+            builder: (BuildContext context) {
+              return CupertinoPageScaffold(
+                navigationBar: CupertinoNavigationBar(
+                  middle: Text(
+                    'Profile', 
+                    style: TextStyle(
+                      color: Color(0xFFFFA685),
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ),
+                child: _getBody(state),
+              );
+            },
           );
         },
       ),

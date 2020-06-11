@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/babies/babies_screen.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
-import 'package:Viiddo/screens/home/notifications/notifications_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
@@ -21,7 +19,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
-import '../themes.dart';
 
 
 @FFRoute(
@@ -52,24 +49,26 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   MainScreenBloc mainScreenBloc = MainScreenBloc();
-  TabController tabController;
   int _selectedIndex = 0;
-  List<Widget> tabs = [];
-  List<String> titles = ['Home', '', 'Profile'];
+  int _previousIndex = 0;
   int loginDate = 0;
   SharedPreferences sharedPreferences;
   final PageStorageBucket bucket = PageStorageBucket();
 
+  final GlobalKey<NavigatorState> homeTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> profileTabNavKey = GlobalKey<NavigatorState>();
+  final CupertinoTabController _tabController = CupertinoTabController();
+  Widget _pretabPage;
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
     _selectedIndex = widget.selectedPage;
-    tabController = TabController(length: 2, vsync: this);
+    // tabController = TabController(length: 2, vsync: this);
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
@@ -115,181 +114,110 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ],
       child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: mainScreenBloc,
-        builder: (BuildContext context, state) {
-          tabs = [
-            HomeScreen(key: PageStorageKey('Home'), homeContext: context,),
-            Container(),
-            ProfileScreen(key: PageStorageKey('Profile'), homeContext: context,),
-          ];
-
-          String babyAvatar = state.babyModel != null ? state.babyModel.avatar ?? '' : '';
-          bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
-          return DefaultTabController(
-            length: 2,
-            child: new Scaffold(
-              appBar: new AppBar(
-                title: _selectedIndex == 0
-                    ? ImageIcon(
-                        AssetImage('assets/icons/ic_logo_viiddo.png'),
-                        size: 72,
-                      )
-                    : Text(
-                        titles[_selectedIndex],
-                        style: TextStyle(color: Color(0xFF7861B7)),
-                      ),
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: false,
-                leading: _selectedIndex == 0
-                    ? GestureDetector(
-                        child: Center(
-                          child: Container(
-                            width: babyAvatar.length > 0 ? 30.0 : 24.0,
-                            height: babyAvatar.length > 0 ? 30.0 : 24.0,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                fit: BoxFit.cover,
-                                image: babyAvatar != '' ?
-                                    FadeInImage.assetNetwork(
-                                      placeholder: 'assets/icons/ic_tag_baby.png',
-                                      image: babyAvatar,
-                                      width: 24,
-                                      height: 24,
-                                    ).image:
-                                      AssetImage('assets/icons/ic_tag_baby.png')
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            SharedPreferences.getInstance()
-                                .then((SharedPreferences sp) {
-                              sharedPreferences = sp;
-                              bool isVerical =
-                                  sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                              if (isVerical) {
-                                Navigation.toScreen(
-                                    context: context,
-                                    screen: BabiesScreen(
-                                      bloc: mainScreenBloc,
-                                    ));
-                              } else {
-                                WidgetUtils.showErrorDialog(
-                                    context, 'Please verify your email first.');
-                              }
-                            }
-                          );
-                        },
-                      )
-                    : Container(),
-                actions: <Widget>[
-                  _selectedIndex == 0
-                    ? Stack(
-                        alignment: Alignment.center,
-                          children: <Widget>[
-                            IconButton(
-                            icon: ImageIcon(
-                              AssetImage('assets/icons/notifications.png'),
-                              size: 24,
-                            ),
-                            tooltip: 'Next page',
-                            onPressed: () {
-                              Navigation.toScreen(
-                                context: context,
-                                screen: NotificationsScreen(
-                                  homeContext: context,
-                                ),
-                              );
-                            },
-                          ),
-                          hasUnread ? 
-                            Container(
-                              width: 24,
-                              height: 24,
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.red,
-                                ),
-                              )
-                            ) : Container(),
-                        ],
-                      )
-                    : Container(),
-                ],
-                elevation: 0,
-                textTheme: TextTheme(
-                  title: TextStyle(
-                    color: Color(0xFFFFA685),
-                    fontSize: 20.0,
-                  ),
-                ),
-                iconTheme: IconThemeData(
-                  color: Color(0xFFFFA685),
-                ),
-              ),
-              body: PageStorage(
-                bucket: bucket,
-                child: tabs[_selectedIndex],
-              ),
-              bottomNavigationBar: BottomNavigationBar(
-                showSelectedLabels: false, // <-- HERE
-                showUnselectedLabels: false, // <-- AND HERE
-                items: [
-                  BottomNavigationBarItem(
-                      icon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_off.png'),
-                        color: Color(0xFFFFA685),
-                      ),
-                      activeIcon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_on.png'),
-                        color: Color(0xFFFFA685),
-                      ),
-                      title: Text('Home')),
-                  BottomNavigationBarItem(
-                    icon: ImageIcon(
-                      AssetImage("assets/icons/tab_add_off.png"),
-                      color: Color(0xFFFFA685),
-                    ),
-                    title: Text('Profile'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_off.png"),
-                      color: Color(0xFFFFA685),
-                    ),
-                    activeIcon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_on.png"),
-                      color: Color(0xFFFFA685),
-                    ),
-                    title: Text('Profile'),
-                  ),
-                ],
-                currentIndex: _selectedIndex,
-                backgroundColor: lightTheme.primaryColor,
-                selectedItemColor: Colors.white,
-                unselectedItemColor: Colors.grey,
-                onTap: (index) {
-                  _onItemTapped(index);
-                },
-              ),
-            ),
+        builder: (BuildContext context, MainScreenState state) {
+          _tabController.index = _selectedIndex;
+          return CupertinoTabScaffold(
+              controller: _tabController,
+              tabBar: _createTabBar(),
+              tabBuilder: (BuildContext context, int index) {
+                Widget tabPage;
+                switch (index) {
+                  case 0:
+                    tabPage = HomeScreen(
+                      navKey: homeTabNavKey,
+                      homeContext: context,
+                    );
+                    _pretabPage = tabPage;
+                    break;
+                  case 1:
+                    tabPage = null;
+                    break;
+                  case 2:
+                    tabPage = ProfileScreen(
+                      navKey: profileTabNavKey,
+                      homeContext: context,
+                    );
+                    _pretabPage = tabPage;
+                    break;
+                }
+                return Material(
+                  type: MaterialType.transparency,
+                  child: tabPage,
+                );
+              },
           );
         },
       ),
     );
   }
+  GlobalKey<NavigatorState> _currentNavigatorKey() {
+    switch (_tabController.index) {
+      case 0:
+        return homeTabNavKey;
+        break;
+
+      case 2:
+        return profileTabNavKey;
+        break;
+    }
+    return null;
+  }
+
+  CupertinoTabBar _createTabBar() {
+    return CupertinoTabBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/icons/tab_home_off.png'),
+              color: Color(0xFFFFA685),
+              size: 24,
+            ),
+            activeIcon: ImageIcon(
+              AssetImage('assets/icons/tab_home_on.png'),
+              color: Color(0xFFFFA685),
+            size: 24,
+            ),
+          ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(
+            AssetImage("assets/icons/tab_add_off.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(
+            AssetImage("assets/icons/tab_profile_off.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+          activeIcon: ImageIcon(
+            AssetImage("assets/icons/tab_profile_on.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+        ),
+      ],
+      onTap: (index) {
+        _onItemTapped(index);
+      },
+    );
+  }
 
   void _onItemTapped(int index) {
     if (index != 1) {
+      if (index == 0) {
+            mainScreenBloc.add(MainScreenInitEvent());
+      }
       setState(() {
         _selectedIndex = index;
+        _previousIndex = index;
       });
     } else {
+      setState(() {
+        _selectedIndex = _previousIndex;
+        _tabController.index = _selectedIndex;
+      });
       SharedPreferences.getInstance().then(
         (SharedPreferences sp) {
           sharedPreferences = sp;

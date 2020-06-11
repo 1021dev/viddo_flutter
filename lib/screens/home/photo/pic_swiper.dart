@@ -103,7 +103,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    if (isVideo) {
+    if (!isVideo) {
       rebuildIndex.close();
       rebuildSwiper.close();
       rebuildDetail.close();
@@ -204,7 +204,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           }
         },
       );
-
+      return result;
 
     } else {
       final Size size = MediaQuery.of(context).size;
