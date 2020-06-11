@@ -10,8 +10,7 @@ import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 
 class AddBabyScreen extends StatefulWidget {
-  HomeScreenBloc bloc;
-
+  final MainScreenBloc bloc;
   AddBabyScreen({
     Key key,
     this.bloc,
@@ -44,8 +43,8 @@ class _AddBabyScreenState extends State<AddBabyScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, HomeScreenState state) async {},
-      child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+      listener: (BuildContext context, MainScreenState state) async {},
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -74,7 +73,7 @@ class _AddBabyScreenState extends State<AddBabyScreen>
     );
   }
 
-  Widget _getBody(HomeScreenState state) {
+  Widget _getBody(MainScreenState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
@@ -139,7 +138,7 @@ class _AddBabyScreenState extends State<AddBabyScreen>
     }
   }
 
-  Widget _babyButton(HomeScreenState state, int index) {
+  Widget _babyButton(MainScreenState state, int index) {
     return GestureDetector(
       child: Container(
         child: SizedBox.expand(

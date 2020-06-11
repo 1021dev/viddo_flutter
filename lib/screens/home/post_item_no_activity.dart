@@ -1,11 +1,11 @@
 import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/dynamic_tag.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:transparent_image/transparent_image.dart';
 
 import 'photo/crop_image.dart';
 
@@ -55,7 +55,16 @@ class PostNoActivityItem extends StatelessWidget {
         gridCount = 2;
       }
     }
-
+    List<String> photoList = [];
+    for (int i = 0; i < content.albums.length; i ++) {
+      String url = content.albums[i];
+      if (url.contains('video') || url.split('.').last == 'm3u8') {
+        String placeHolderUrl = 'http://image.mux.com/${(((url.split('/')).last).split('.')).first}/thumbnail.jpg';
+        photoList.add(placeHolderUrl);
+      } else {
+        photoList.add(url);
+      }
+    }
     final pictureView = Padding(
       padding: EdgeInsets.all(12),
       child: Container(
@@ -71,12 +80,11 @@ class PostNoActivityItem extends StatelessWidget {
           children: List.generate(
             itemCount,
             (index) {
-              String url = content.albums[index];
-              if (url.contains('video') || url.split('.').last == 'm3u8') {
-                String placeHolderUrl = 'http://image.mux.com/${(((url.split('/')).last).split('.')).first}/thumbnail.jpg';
-                return _postView(placeHolderUrl, width, height, true, index, onTapView);
+              String url = photoList[index];
+              if (url.contains('http://image.mux.com/')) {
+                return _postView(url, width, height, true, content.albums[index], index, onTapView, photoList);
               } else {
-                return _postView(url, width, height, false, index, onTapView);
+                return _postView(url, width, height, false, '', index, onTapView, photoList);
               }
             },
           ),
@@ -348,7 +356,7 @@ class PostNoActivityItem extends StatelessWidget {
     );
   }
 
-  Widget _postView(String picture, double width, double height, bool isVideo, int index, Function onTap) {
+  Widget _postView(String picture, double width, double height, bool isVideo, String videoUrl, int index, Function onTap, List<String> photoList) {
     // return GestureDetector(
     //   onTap: () {onTap(index);},
     //   child: 
@@ -365,8 +373,9 @@ class PostNoActivityItem extends StatelessWidget {
             ),
             child: CropImage(
               index: index,
-              albumn: content.albums,
-              knowImageSize: false,
+              albumn: photoList,
+              isVideo: isVideo,
+              list: content.albums,
             ),
           ),
           isVideo ? IconButton(
@@ -375,7 +384,7 @@ class PostNoActivityItem extends StatelessWidget {
                 color: Colors.white,
                 size: 36,
               ),
-            onPressed: null,
+            onPressed: () {onTap(index);},
           ) : Container(),
         ],
       // ),

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/post_item_no_activity.dart';
 import 'package:Viiddo/utils/constants.dart';
@@ -143,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen>
                           Navigation.toScreen(
                             context: context,
                             screen: AddBabyScreen(
-                              bloc: screenBloc,
+                              bloc: screenBloc.mainScreenBloc,
                             ),
                           );
                         } else {

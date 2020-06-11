@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/screens/home/babies/change_baby_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -174,7 +175,7 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: ChangeNameScreen(),
+            screen: ChangeBabyNameScreen(screenBloc: widget.bloc, babyModel: widget.baby,),
           );
         },
       ),

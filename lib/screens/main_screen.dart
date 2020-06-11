@@ -9,7 +9,7 @@ import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
 import 'package:Viiddo/screens/profile/welcome_view.dart';
-import 'package:Viiddo/utils/constants.dart';
+import 'package:Viiddo/utils/constants.dart' as constants;
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:Viiddo/widgets/bottom_selector.dart';
@@ -19,8 +19,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 import '../themes.dart';
+import 'home/photo/crop_image.dart';
+
+
+@FFRoute(
+  name: 'viiddo://mainpage',
+  routeName: 'MainPage',
+)
 
 class OverflowMenuItem {
   final String title;
@@ -55,9 +63,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int loginDate = 0;
   SharedPreferences sharedPreferences;
   final PageStorageBucket bucket = PageStorageBucket();
+  final List<RouteResult> routes = <RouteResult>[];
+  final List<String> routeNames=<String>[];
 
   @override
   void initState() {
+    routeNames.addAll(constants.routeNames);
+    routeNames.remove('viiddo://picswiper');
+    routeNames.remove('viiddo://mainpage');
+    routes.addAll(routeNames
+        .map<RouteResult>((String name) => getRouteResult(name: name)));
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -66,9 +81,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
-      bool isShowWelcome = sp.getBool(Constants.SHOW_WELCOME) ?? false;
+      bool isShowWelcome = sp.getBool(constants.Constants.SHOW_WELCOME) ?? false;
       if (isShowWelcome) {
-        sharedPreferences.setBool(Constants.SHOW_WELCOME, false);
+        sharedPreferences.setBool(constants.Constants.SHOW_WELCOME, false);
         showWelcome();
       }
     });
@@ -160,7 +175,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 .then((SharedPreferences sp) {
                               sharedPreferences = sp;
                               bool isVerical =
-                                  sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                                  sp.getBool(constants.Constants.IS_VERI_CAL) ?? false;
                               if (isVerical) {
                                 Navigation.toScreen(
                                     context: context,
@@ -286,7 +301,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       SharedPreferences.getInstance().then(
         (SharedPreferences sp) {
           sharedPreferences = sp;
-          bool isVerical = sp.getBool(Constants.IS_VERI_CAL) ?? false;
+          bool isVerical = sp.getBool(constants.Constants.IS_VERI_CAL) ?? false;
           if (isVerical) {
             showGeneralDialog(
               barrierLabel: "Label",

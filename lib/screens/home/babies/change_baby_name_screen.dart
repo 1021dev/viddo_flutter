@@ -1,4 +1,5 @@
-import 'package:Viiddo/blocs/profile/profile.dart';
+import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,18 +9,20 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../../../themes.dart';
 
-class ChangeNameScreen extends StatefulWidget {
-  ProfileScreenBloc screenBloc;
-
-  ChangeNameScreen({
+// ignore: must_be_immutable
+class ChangeBabyNameScreen extends StatefulWidget {
+  MainScreenBloc screenBloc;
+  BabyModel babyModel;
+  ChangeBabyNameScreen({
     this.screenBloc,
+    this.babyModel,
   });
 
   @override
   _ChangeNameScreenState createState() => _ChangeNameScreenState();
 }
 
-class _ChangeNameScreenState extends State<ChangeNameScreen>
+class _ChangeNameScreenState extends State<ChangeBabyNameScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -28,7 +31,7 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
 
   @override
   void initState() {
-    nameController.text = widget.screenBloc.state.username;
+    nameController.text = widget.babyModel.name;
     super.initState();
   }
 
@@ -40,14 +43,14 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.screenBloc,
-      listener: (BuildContext context, ProfileScreenState state) async {
-        if (state is UpdateProfileSuccess) {
+      listener: (BuildContext context, MainScreenState state) async {
+        if (state is UpdateBabyProfileSuccess) {
           Navigator.of(context).pop();
-        } else if (state is ProfileScreenFailure) {
+        } else if (state is MainScreenFailure) {
           WidgetUtils.showErrorDialog(context, state.error);
         }
       },
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: widget.screenBloc,
         builder: (BuildContext context, state) {
           return ModalProgressHUD(
@@ -154,7 +157,7 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                         currentFocus.unfocus();
                       }
                       widget.screenBloc.add(
-                        UpdateUserProfile({'nikeName': nameController.text}),
+                        UpdateBabyProfile(widget.babyModel.objectId, {'nikeName': nameController.text}),
                       );
                     },
                   ),
