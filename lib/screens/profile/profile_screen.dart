@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
-import 'package:Viiddo/screens/profile/baby/babies_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_screen.dart';
 import 'package:Viiddo/screens/profile/family/family_screen.dart';
 import 'package:Viiddo/screens/profile/profile_header.dart';
@@ -20,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../themes.dart';
 import '../../utils/navigation.dart';
+import 'baby/babies_visible_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final BuildContext homeContext;
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: BabiesScreen(
+            screen: BabiesVisibleScreen(
               homeContext: context,
             ),
           );

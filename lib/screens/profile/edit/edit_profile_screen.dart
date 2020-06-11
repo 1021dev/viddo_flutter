@@ -107,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     String nikName = state.username != '' ? state.username : 'Enter name';
     String gender = state.gender == 'M'
         ? 'Male'
-        : (state.gender == 'FM' ? 'Female' : 'Select Gender');
+        : (state.gender == 'F' ? 'Female' : 'Select Gender');
     String area = state.location != '' ? state.location : 'Select region';
     String birthDateString = '';
     birthday = state.birthday != 0
@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       birthDateString = formatDate(
         birthday,
         [
-          mm,
+          m,
           '/',
           dd,
           '/',
@@ -203,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     onPressed: () {
                       Navigator.pop(context, 'Female');
                       widget.bloc.add(
-                        UpdateUserProfile({'gender': 'FM'}),
+                        UpdateUserProfile({'gender': 'F'}),
                       );
                     },
                   )

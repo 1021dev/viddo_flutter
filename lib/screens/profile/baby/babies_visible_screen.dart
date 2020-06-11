@@ -8,22 +8,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/widget_utils.dart';
 
-class BabiesScreen extends StatefulWidget {
+class BabiesVisibleScreen extends StatefulWidget {
   final BuildContext homeContext;
-  const BabiesScreen({Key key, this.homeContext}) : super(key: key);
+  const BabiesVisibleScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _BabiesScreenState createState() => _BabiesScreenState(this.homeContext);
+  _BabiesVisibleScreenState createState() => _BabiesVisibleScreenState(this.homeContext);
 }
 
-class _BabiesScreenState extends State<BabiesScreen>
+class _BabiesVisibleScreenState extends State<BabiesVisibleScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   BabyScreenBloc screenBloc;
   final BuildContext homeContext;
 
-  _BabiesScreenState(this.homeContext);
+  _BabiesVisibleScreenState(this.homeContext);
 
   @override
   void initState() {

@@ -62,7 +62,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
     } catch (error) {
       yield ProfileScreenFailure(error: error);
       yield state.copyWith(isLoading: false);
-    } finally {}
+    }
   }
 
   Stream<ProfileScreenState> _getAccountInfo(UserProfile event) async* {
@@ -88,7 +88,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
     } catch (error) {
       yield ProfileScreenFailure(error: error);
       yield state.copyWith(isLoading: false);
-    } finally {}
+    }
   }
 
   Stream<ProfileScreenState> _sendVerification(VerificationCode event) async* {
@@ -105,7 +105,6 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       }
     } catch (error) {
       yield ProfileScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isLoading: false);
     }
   }
@@ -124,7 +123,6 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       }
     } catch (error) {
       yield ProfileScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isLoading: false);
     }
   }
@@ -145,7 +143,6 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       }
     } catch (error) {
       yield ProfileScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isUploading: false);
     }
   }

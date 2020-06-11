@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/post_item_no_activity.dart';
 import 'package:Viiddo/utils/constants.dart';
@@ -206,9 +207,15 @@ class _HomeScreenState extends State<HomeScreen>
             return PostNoActivityItem(
               content: state.dataArr[index],
               onTapDetail: () {},
-              onTapLike: () {},
+              onTapLike: () {
+                screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
+              },
               onTapComment: () {},
               onTapShare: () {},
+              onTapView: (int i) {
+                // DynamicContent content = state.dataArr[index];
+                // open(context, i, content.albums);
+              },
             );
           },
         ),

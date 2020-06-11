@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:Viiddo/apis/api_service.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
-import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
-import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
@@ -25,6 +24,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* init();
     } else if (event is UnreadMessage) {
       yield* getUnreadMessages(event);
+    } else if (event is GetBabyListModel) {
+      yield* getBabyListM0del(event.page);
     } else if (event is GetBabyInfo) {
       yield* getBabyInfo(event.objectId);
     } else if (event is GetFriendByBaby) {
@@ -33,6 +34,15 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* getDataWithHeader(event.isHeader);
     } else if (event is MainScreenRefresh) {
       yield* getDataWithHeader(true);
+    } else if (event is UpdateBabyBirthDay) {
+      yield* _updateBabyProfile({
+        'birthDay': event.birthday,
+        'objectId': event.babyId,
+      });
+    } else if (event is UpdateBabyProfile) {
+      yield* _updateBabyProfile(event.map);
+    } else if (event is PickBabyProfileImage) {
+      yield* _pickBabyProfileImageFile(event.babyId, event.files);
     }
   }
 
@@ -116,12 +126,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         //   state.tag,
         // ));
       } else {
-        try {
-          BabyListModel model = await _apiService.getMyBabyList(state.page);
-          yield state.copyWith(babyListModel: model);
-        } catch (error) {
-          yield MainScreenFailure(error: error);
-        } finally {}
+        add(GetBabyListModel(0));
       }
     } catch (error) {} finally {}
   }
@@ -135,6 +140,52 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     } catch (error) {
       print(error.toString());
     } finally {}
+  }
+
+
+  Stream<MainScreenState> getBabyListM0del(int page) async* {
+    try {
+      BabyListModel model = await _apiService.getMyBabyList(page);
+      yield state.copyWith(babyListModel: model);
+    } catch (error) {
+      yield MainScreenFailure(error: error);
+    }
+  }
+
+
+  Stream<MainScreenState> _updateBabyProfile(Map<String, dynamic> map) async* {
+    yield state.copyWith(isLoading: true);
+    try {
+      bool success = await _apiService.updateProfile(
+        map,
+      );
+      if (success) {
+        add(GetBabyInfo(map['objectId']));
+      } else {
+        yield UpdateBabyProfileFailure(error: 'error');
+      }
+    } catch (error) {
+      yield UpdateBabyProfileFailure(error: error.toString());
+    }
+  }
+
+  Stream<MainScreenState> _pickBabyProfileImageFile(int babyId, List<File> pickedFiles) async* {
+    try {
+      yield state.copyWith(isUploading: true);
+      List<String> urls =
+          await _apiService.uploadProfileImage(pickedFiles);
+      String avatar = '';
+      if (urls.length > 0) {
+        avatar = urls.first;
+      }
+      yield state.copyWith(isUploading: false);
+      if(avatar != '') {
+        add(UpdateBabyProfile(babyId, {'avatar': avatar, 'objectId': babyId}));
+      }
+    } catch (error) {
+      yield UpdateBabyProfileFailure(error: error.toString());
+      yield state.copyWith(isUploading: false);
+    }
   }
 
 }
