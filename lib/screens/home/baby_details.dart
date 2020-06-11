@@ -12,27 +12,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'babies/babies_screen.dart';
-import 'notifications/notifications_screen.dart';
-
-class HomeScreen extends StatefulWidget {
+class BabyDetailsScreen extends StatefulWidget {
   final BuildContext homeContext;
-  // const HomeScreen({Key key, this.homeContext}) : super(key: key);
-  // final MainScreenBloc mainScreenBloc;
-  final GlobalKey<NavigatorState> navKey;
-
-  const HomeScreen({@required this.navKey, this.homeContext});
+  const BabyDetailsScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(this.homeContext);
+  _BabyDetailsScreenState createState() => _BabyDetailsScreenState(homeContext);
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BabyDetailsScreenState extends State<BabyDetailsScreen>
+    with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  MainScreenBloc screenBloc;
+
   final BuildContext homeContext;
 
-  _HomeScreenState(this.homeContext);
-  HomeScreenBloc screenBloc;
+  _BabyDetailsScreenState(this.homeContext);
 
   Timer refreshTimer;
   bool isLogin = true;
@@ -41,16 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
-    initialRefresh: true,
+    initialRefresh: false,
   );
 
   @override
   void initState() {
-    if (screenBloc == null) {
-      screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
-
-      screenBloc.add(GetMomentByBaby(0,0,true));
-    }
+    // if (screenBloc == null) {
+    //   screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
+    //   screenBloc.add(GetMomentByBaby(0, 0, false));
+    // }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       setState(() {
@@ -63,133 +57,34 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  // @override
-  // bool get wantKeepAlive => true;
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenBloc, HomeScreenState>(
+    return BlocBuilder(
       bloc: screenBloc,
-      builder: (BuildContext context, HomeScreenState state) {
-        return CupertinoTabView(
-          builder: (BuildContext context) {
-            String babyAvatar = state.babyModel != null ? state.babyModel.avatar ?? '' : '';
-            bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
-
-            return Scaffold(
-              appBar: CupertinoNavigationBar(
-                leading: CupertinoButton(
-                  padding: EdgeInsets.all(0),
-                  child: SizedBox(
-                    height: 44,
-                    width: 44,
-                    child: Center(
-                      child: Container(
-                        width: babyAvatar.length > 0 ? 30.0 : 24.0,
-                        height: babyAvatar.length > 0 ? 30.0 : 24.0,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            fit: BoxFit.cover,
-                            image: babyAvatar != '' ?
-                                FadeInImage.assetNetwork(
-                                  placeholder: 'assets/icons/ic_tag_baby.png',
-                                  image: babyAvatar,
-                                  width: 24,
-                                  height: 24,
-                                ).image:
-                                  AssetImage('assets/icons/ic_tag_baby.png')
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      SharedPreferences.getInstance()
-                          .then((SharedPreferences sp) {
-                        sharedPreferences = sp;
-                        bool isVerical =
-                            sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                        if (isVerical) {
-                          Navigator.of(context, rootNavigator: true).push<void>(
-                            CupertinoPageRoute(
-                              // fullscreenDialog: true,
-                              builder: (context) => BabiesScreen(
-                                      bloc: screenBloc.mainScreenBloc
-                                    )
-
-                            ),
-                          );
-
-                          // Navigation.toScreen(
-                          //     context: context,
-                          //     screen: BabiesScreen(
-                          //       bloc: widget.mainScreenBloc
-                          //     ));
-                        } else {
-                          WidgetUtils.showErrorDialog(
-                              context, 'Please verify your email first.');
-                        }
-                      }
-                    );
-                  },
-                ),
-                middle: SizedBox(child:Image.asset('assets/icons/ic_logo_viiddo.png'), width: 72, height: 35,),
-                trailing: CupertinoButton(
-                  padding: EdgeInsets.all(0),
-                  child: SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: Stack(
-                    alignment: Alignment.center,
-                      children: <Widget>[
-                        ImageIcon(
-                          AssetImage('assets/icons/notifications.png'),
-                          color: Color(0xFFFFA685),
-                          size: 24,
-                        ),
-                        hasUnread ? 
-                          Container(
-                            width: 24,
-                            height: 24,
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.red,
-                              ),
-                            )
-                          ) : Container(),
-                      ],
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).push<void>(
-                      CupertinoPageRoute(
-                        // fullscreenDialog: true,
-                        builder: (context) => NotificationsScreen(
-                                mainScreenBloc: screenBloc.mainScreenBloc,
-                              )
-
-                      ),
-                    );
-
-                    // Navigation.toScreen(
-                    //   context: context,
-                    //   screen: NotificationsScreen(
-                    //     homeContext: context,
-                    //   ),
-                    // );
-                  },
-                ),
+      builder: (BuildContext context, state) {
+        return Scaffold(
+          appBar: new AppBar(
+            title: state.babyModel.name ?? '',
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            textTheme: TextTheme(
+              title: TextStyle(
+                color: Color(0xFF7861B7),
+                fontSize: 18.0,
+                fontFamily: 'Roboto',
               ),
-              body: _getBody(state),
-            );
-          },
+            ),
+            iconTheme: IconThemeData(
+              color: Color(0xFFFFA685),
+              size: 12,
+            ),
+          ),
+          key: scaffoldKey,
+          body: _getBody(state),
         );
       },
     );
@@ -263,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigation.toScreen(
                             context: context,
                             screen: AddBabyScreen(
-                              bloc: screenBloc.mainScreenBloc,
+                              bloc: screenBloc,
                             ),
                           );
                         } else {
@@ -328,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
               content: state.dataArr[index],
               onTapDetail: () {},
               onTapLike: () {
-                screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
+                // screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
               },
               onTapComment: () {},
               onTapShare: () {},
@@ -345,12 +240,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
-    // screenBloc.add(HomeScreenRe(completer));
+    // screenBloc.add(HomeScreenRefresh(completer));
     return completer.future;
   }
 
   void _onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 1000));
+    // await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -360,17 +255,17 @@ class _HomeScreenState extends State<HomeScreen> {
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+     _refreshController.loadComplete();
   }
 
   void _loadFailed() async {
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+     _refreshController.loadComplete();
   }
 
   void _loadNodata() async {
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+     _refreshController.loadComplete();
   }
 
   @override

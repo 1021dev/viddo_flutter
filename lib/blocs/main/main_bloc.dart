@@ -4,7 +4,10 @@ import 'dart:io';
 import 'package:Viiddo/apis/api_service.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/models/dynamic_content.dart';
+import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
+import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
@@ -43,7 +46,22 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* _updateBabyProfile(event.map);
     } else if (event is PickBabyProfileImage) {
       yield* _pickBabyProfileImageFile(event.babyId, event.files);
+    // } else if (event is GetMomentByBaby) {
+    //   SharedPreferences sharedPreferences =
+    //       await SharedPreferences.getInstance();
+    //   int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+
+    //   yield* getMomentByBaby(
+    //     babyId,
+    //     event.page,
+    //     event.tag,
+    //   );
+    // } else if (event is LikeEvent) {
+    //   yield* _likeMoment(event.objectId, event.isLike, event.index);
+    // } else if (event is CommentEvent) {
+    //   yield* _postComment(event.objectId, event.parentId, event.replyUserId, event.content);
     }
+
   }
 
   Stream<MainScreenState> init() async* {
@@ -52,32 +70,32 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await SharedPreferences.getInstance();
       bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+          // add(GetMomentByBaby(
+          //   babyId,
+          //   state.page,
+          //   state.tag,
+          // ));
 
-     if (isRefresh) {
-       add(GetDataWithHeader(true));
-      //  add(GetFriendByBaby(babyId));
-       sharedPreferences.setBool(Constants.IS_REFRESH, false);
-     }
-      if (babyId == 0) {
-        add(GetDataWithHeader(true));
-      } else {
-        add(GetBabyInfo(babyId));
-        // add(GetMomentByBaby(
-        //   babyId,
-        //   state.page,
-        //   state.tag,
-        // ));
-      }
-      try {
-        UnreadMessageModel model = await _apiService.getUnreadMessages();
-        yield state.copyWith(unreadMessageModel: model);
-      } catch (error) {
-        yield state.copyWith(unreadMessageModel: null);
-        print(error.toString());
-      } finally {}
+      // if (isRefresh) {
+      //   add(GetDataWithHeader(true));
+      //   //  add(GetFriendByBaby(babyId));
+      //   sharedPreferences.setBool(Constants.IS_REFRESH, false);
+      // } else {
+      //   if (babyId == 0) {
+      //     add(GetDataWithHeader(true));
+      //   } else {
+      //     // add(GetBabyInfo(babyId));
+      //     add(GetMomentByBaby(
+      //       babyId,
+      //       state.page,
+      //       state.tag,
+      //     ));
+      //   }
+      // }
+      add(UnreadMessage());
     } catch (error) {
       yield MainScreenFailure(error: error);
-    } finally {}
+    } 
   }
 
 
@@ -107,28 +125,27 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield state.copyWith(friendListModel: model);
     } catch (error) {
       yield MainScreenFailure(error: error);
-    } finally {}
+    }
   }
 
 
   Stream<MainScreenState> getDataWithHeader(bool isHeader) async* {
     try {
-      UnreadMessageModel model = await _apiService.getUnreadMessages();
-      yield state.copyWith(unreadMessageModel: model);
+      add(UnreadMessage());
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       if (babyId != 0) {
-        add(GetBabyInfo(babyId));
+        // add(GetBabyInfo(babyId));
         // add(GetMomentByBaby(
         //   babyId,
         //   state.page,
         //   state.tag,
         // ));
       } else {
-        add(GetBabyListModel(0));
+        // add(GetBabyListModel(0));
       }
-    } catch (error) {} finally {}
+    } catch (error) {} 
   }
 
   Stream<MainScreenState> getRefreshInformation() async* {
@@ -139,7 +156,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       }
     } catch (error) {
       print(error.toString());
-    } finally {}
+    } 
   }
 
 
@@ -187,5 +204,75 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield state.copyWith(isUploading: false);
     }
   }
+
+  // Stream<MainScreenState> getMomentByBaby(
+  //   int objectId, int page, bool tag) async* {
+  //   yield state.copyWith(isLoading: true);
+  //   try {
+  //     PageResponseModel pageResponseModel = await _apiService.getMomentByBaby(
+  //       objectId,
+  //       page,
+  //       tag,
+  //     );
+  //     List<DynamicContent> dataArr = [];
+  //     if (state.dataArr != null && page != 0) {
+  //       dataArr.addAll(state.dataArr);
+  //     }
+  //     if (pageResponseModel.content != null) {
+  //       for (int i = 0; i < pageResponseModel.content.length; i++) {
+  //         DynamicContent content =
+  //             DynamicContent.fromJson(pageResponseModel.content[i]);
+  //         if (content != null) {
+  //           dataArr.add(content);
+  //         }
+  //       }
+  //     }
+  //     print('data => $dataArr');
+  //     yield state.copyWith(isLoading: false, dataArr: dataArr);
+  //   } catch (error) {
+  //     yield MainScreenFailure(error: error);
+  //     yield state.copyWith(isLoading: false);
+  //   }
+  // }
+
+
+  // Stream<MainScreenState> _likeMoment(int objectId, bool isLike, int index) async* {
+  //   try {
+  //     SharedPreferences sharedPreferences =
+  //         await SharedPreferences.getInstance();
+  //     List<DynamicContent> dataArr = state.dataArr;
+  //     DynamicContent dynamicContent = dataArr[index];
+  //     dynamicContent.isLike = !dynamicContent.isLike;
+  //     List<DynamicCreator> likeList = dynamicContent.likeList;
+  //       String name = sharedPreferences.getString(Constants.USERNAME) ?? '';
+  //       String avatar = sharedPreferences.getString(Constants.AVATAR) ?? '';
+  //       int id = sharedPreferences.getInt(Constants.OBJECT_ID) ?? 0;
+  //     if (dynamicContent.isLike) {
+  //       likeList.add(DynamicCreator(name: name, avatar: avatar, objectId: id, nickName: name));
+  //     } else {
+  //       likeList = likeList.where( (user) {
+  //         return user.objectId != id;
+  //       }).toList();
+  //     }
+  //     dynamicContent.likeList = likeList;
+  //     dataArr[index] = dynamicContent;
+  //     yield state.copyWith(dataArr: dataArr);
+  //     bool isLiked =
+  //         await _apiService.updateLike(objectId, isLike);
+  //         print('isLiked => $isLiked');
+  //   } catch (error) {
+  //     print('error => $error');
+  //   }
+  // }
+
+  // Stream<MainScreenState> _postComment(int objectId, int parentId, int replyUserId, String content) async* {
+  //   try {
+  //     bool success =
+  //         await _apiService.postComment(objectId, parentId, replyUserId, content);
+  //         print('post comment success => $success');
+  //   } catch (error) {
+  //     print('error => $error');
+  //   }
+  // }
 
 }
