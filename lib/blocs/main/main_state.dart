@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 @immutable
 class MainScreenState {
   final bool isLoading;
+  final bool isUploading;
 
   final UnreadMessageModel unreadMessageModel;
   final BabyModel babyModel;
@@ -22,6 +23,7 @@ class MainScreenState {
 
   MainScreenState({
     this.isLoading = false,
+    this.isUploading = false,
     this.unreadMessageModel,
     this.babyListModel,
     this.babyModel,
@@ -47,6 +49,7 @@ class MainScreenState {
 
   MainScreenState copyWith({
     bool isLoading,
+    bool isUploading,
     UnreadMessageModel unreadMessageModel,
     BabyModel babyModel,
     FriendListModel friendListModel,
@@ -58,6 +61,7 @@ class MainScreenState {
   }) {
     return MainScreenState(
       isLoading: isLoading ?? this.isLoading,
+      isUploading: isUploading ?? this.isUploading,
       unreadMessageModel: unreadMessageModel ?? this.unreadMessageModel,
       babyModel: babyModel ?? this.babyModel,
       friendListModel: friendListModel ?? this.friendListModel,
@@ -82,3 +86,14 @@ class MainScreenFailure extends MainScreenState {
 }
 
 class MainScreenLogout extends MainScreenState {}
+
+class UpdateBabyProfileSuccess extends MainScreenState {}
+
+class UpdateBabyProfileFailure extends MainScreenState {
+  final String error;
+
+  UpdateBabyProfileFailure({@required this.error}) : super();
+
+  @override
+  String toString() => 'UpdateBabyProfileFailure { error: $error }';
+}

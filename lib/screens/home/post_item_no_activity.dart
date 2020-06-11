@@ -7,11 +7,14 @@ import 'package:flutter/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:transparent_image/transparent_image.dart';
 
+import 'photo/crop_image.dart';
+
 class PostNoActivityItem extends StatelessWidget {
   final Function onTapDetail;
   final Function onTapComment;
   final Function onTapLike;
   final Function onTapShare;
+  final Function onTapView;
   final DynamicContent content;
   const PostNoActivityItem({
     Key key,
@@ -19,6 +22,7 @@ class PostNoActivityItem extends StatelessWidget {
     this.onTapComment,
     this.onTapLike,
     this.onTapShare,
+    this.onTapView,
     this.content,
   }) : super(key: key);
 
@@ -70,9 +74,9 @@ class PostNoActivityItem extends StatelessWidget {
               String url = content.albums[index];
               if (url.contains('video') || url.split('.').last == 'm3u8') {
                 String placeHolderUrl = 'http://image.mux.com/${(((url.split('/')).last).split('.')).first}/thumbnail.jpg';
-                return _postView(placeHolderUrl, width, height, true, () {});
+                return _postView(placeHolderUrl, width, height, true, index, onTapView);
               } else {
-                return _postView(url, width, height, false, () {});
+                return _postView(url, width, height, false, index, onTapView);
               }
             },
           ),
@@ -344,25 +348,25 @@ class PostNoActivityItem extends StatelessWidget {
     );
   }
 
-  Widget _postView(String picture, double width, double height, bool isVideo, Function onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
+  Widget _postView(String picture, double width, double height, bool isVideo, int index, Function onTap) {
+    // return GestureDetector(
+    //   onTap: () {onTap(index);},
+    //   child: 
+      return Stack(
         alignment: Alignment.center,
         children: <Widget>[
           Container(
             height: height,
             width: width,
-            decoration: new BoxDecoration(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(5),
-              image: new DecorationImage(
-                fit: BoxFit.cover,
-                image: FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: picture,
-                ).image,
-              ),
+            ),
+            child: CropImage(
+              index: index,
+              albumn: content.albums,
+              knowImageSize: false,
             ),
           ),
           isVideo ? IconButton(
@@ -374,7 +378,7 @@ class PostNoActivityItem extends StatelessWidget {
             onPressed: null,
           ) : Container(),
         ],
-      ),
+      // ),
     );
   }
 

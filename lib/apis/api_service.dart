@@ -817,4 +817,110 @@ class ApiService {
     }
   }
 
+  Future<bool> updateBabyInformation(
+    dynamic map,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap(map);
+      Response response = await _client.postForm(
+        '${url}user/editBabyInfo',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('updateBabyInformation: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          // UserModel userModel = UserModel.fromJson(responseModel.content);
+          // if (userModel != null) {
+          //   SharedPreferences sharedPreferences =
+          //       await SharedPreferences.getInstance();
+          //   sharedPreferences.setString(
+          //       Constants.USERNAME, userModel.nikeName ?? '');
+          //   sharedPreferences.setString(
+          //       Constants.AVATAR, userModel.avatar ?? '');
+          //   sharedPreferences.setString(Constants.GENDER, userModel.gender);
+          //   sharedPreferences.setString(
+          //       Constants.LOCATION, userModel.area ?? '');
+          //   sharedPreferences.setInt(
+          //       Constants.BIRTHDAY, userModel.birthDay ?? 0);
+          //   sharedPreferences.setBool(
+          //       Constants.IS_VERI_CAL, userModel.vertical ?? 0);
+          // }
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('updateBabyInformation error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> updateLike(
+    int objectId, bool isLike,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({'objectId': objectId, 'isLike': isLike});
+      Response response = await _client.postForm(
+        '${url}information/isLikeMoment',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('isLikeMoment: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status == 200) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('isLikeMoment error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> postComment(
+    int objectId, int parentId, int replyUserId, String content,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({'objectId': objectId, 'parentId': parentId, 'replyUserId': replyUserId, 'content': content});
+      Response response = await _client.postForm(
+        '${url}information/postComment',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('isLikeMoment: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status == 200) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('isLikeMoment error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
 }

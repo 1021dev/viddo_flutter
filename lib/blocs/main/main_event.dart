@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
 abstract class MainScreenEvent extends Equatable {
@@ -32,6 +34,15 @@ class GetBabyInfo extends MainScreenEvent {
   List<Object> get props => [objectId];
 }
 
+class GetBabyListModel extends MainScreenEvent {
+  final int page;
+
+  GetBabyListModel(this.page);
+
+  @override
+  List<Object> get props => [page];
+}
+
 class MainScreenRefresh extends MainScreenEvent {
   final Completer completer;
   MainScreenRefresh(this.completer);
@@ -49,3 +60,51 @@ class GetDataWithHeader extends MainScreenEvent {
   @override
   List<Object> get props => [isHeader];
 }
+
+class UpdateBabyBirthDay extends MainScreenEvent {
+  final int babyId;
+  final int birthday;
+  UpdateBabyBirthDay(
+    this.babyId,
+    this.birthday
+  );
+
+  @override
+  List<Object> get props => [
+        this.babyId,
+        this.birthday,
+      ];
+}
+
+@immutable
+class UpdateBabyProfile extends MainScreenEvent {
+  final int babyId;
+  final dynamic map;
+  UpdateBabyProfile(
+    this.babyId,
+    this.map,
+  );
+
+  @override
+  List<Object> get props => [
+        this.babyId,
+        this.map,
+      ];
+}
+
+@immutable
+class PickBabyProfileImage extends MainScreenEvent {
+  final int babyId;
+  final List<File> files;
+  PickBabyProfileImage(
+    this.babyId,
+    this.files,
+  );
+
+  @override
+  List<Object> get props => [
+        this.babyId,
+        this.files,
+      ];
+}
+
