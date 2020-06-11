@@ -36,7 +36,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       yield* _likeMoment(event.objectId, event.isLike, event.index);
     } else if (event is CommentEvent) {
       yield* _postComment(event.objectId, event.parentId, event.replyUserId, event.content);
-   }
+    }
   }
 
   Stream<HomeScreenState> getMomentByBaby(
@@ -49,9 +49,9 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         tag,
       );
       List<DynamicContent> dataArr = [];
-     if (state.dataArr != null && page != 0) {
-       dataArr.addAll(state.dataArr);
-     }
+      if (state.dataArr != null && page != 0) {
+        dataArr.addAll(state.dataArr);
+      }
       if (pageResponseModel.content != null) {
         for (int i = 0; i < pageResponseModel.content.length; i++) {
           DynamicContent content =

@@ -16,18 +16,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grouped_list/grouped_list.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  final BuildContext homeContext;
-  const NotificationsScreen({Key key, this.homeContext}) : super(key: key);
+  final MainScreenBloc mainScreenBloc;
+  const NotificationsScreen({Key key, this.mainScreenBloc}) : super(key: key);
 
   @override
-  _NotificationsScreenState createState() => _NotificationsScreenState(homeContext);
+  _NotificationsScreenState createState() => _NotificationsScreenState();
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> with SingleTickerProviderStateMixin {
   NotificationScreenBloc screenBloc;
-  final BuildContext homeContext;
-
-  _NotificationsScreenState(this.homeContext);
   TabController _tabController;
 
   int _selectedIndex = 0;
@@ -35,7 +32,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
 
   @override
   void initState() {
-    screenBloc = BlocProvider.of<NotificationScreenBloc>(homeContext);
+    screenBloc = NotificationScreenBloc(mainScreenBloc: widget.mainScreenBloc);
     screenBloc.add(GetActivityListEvent(0));
     screenBloc.add(GetMessageListEvent(0));
 

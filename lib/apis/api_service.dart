@@ -9,8 +9,6 @@ import 'package:Viiddo/models/message_list_model.dart';
 import 'package:Viiddo/models/message_model.dart';
 import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
-import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
-import 'package:amazon_s3_cognito/aws_region.dart';
 import 'package:aws_s3/aws_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
