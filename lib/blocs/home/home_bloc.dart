@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Viiddo/apis/api_service.dart';
+import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/page_response_model.dart';
@@ -50,6 +51,24 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       yield* _getMomentDetails(event.objectId, event.babyId);
     } else if (event is ClearMomentDetailEvent) {
       yield state.copyWith(dynamicDetails: null);
+    } else if (event is HomeScreenRefresh) {
+        mainScreenBloc.add(GetDataWithHeader(true));
+        int babyId = 0;
+        if (state.babyId == 0) {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+        } else {
+          babyId = state.babyId;
+        }
+        yield* getMomentByBaby(
+          babyId,
+          0,
+          false,
+        );
+        yield* getBabyInfo(
+          babyId,
+        );
     }
   }
 
@@ -71,6 +90,23 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         mainScreenBloc.add(GetDataWithHeader(true));
       } else {
         add(GetMomentByBaby(babyId, state.page ?? 0, false));
+      }
+    } catch (error) {
+      yield HomeScreenFailure(error: error);
+    }
+  }
+
+  Stream<HomeScreenState> getBabyInfo(int objectId) async* {
+    try {
+      if (objectId == 0) {
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+        BabyModel model = await _apiService.getBabyInfo(babyId);
+        yield state.copyWith(babyModel: model);
+      } else {
+        BabyModel model = await _apiService.getBabyInfo(objectId);
+        yield state.copyWith(babyModel: model);
       }
     } catch (error) {
       yield HomeScreenFailure(error: error);

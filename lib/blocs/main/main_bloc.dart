@@ -4,10 +4,7 @@ import 'dart:io';
 import 'package:Viiddo/apis/api_service.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
-import 'package:Viiddo/models/dynamic_content.dart';
-import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
-import 'package:Viiddo/models/page_response_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
@@ -28,7 +25,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     } else if (event is UnreadMessage) {
       yield* getUnreadMessages(event);
     } else if (event is GetBabyListModel) {
-      yield* getBabyListM0del(event.page);
+      yield* getBabyListModel(event.page);
     } else if (event is GetBabyInfo) {
       yield* getBabyInfo(event.objectId);
     } else if (event is GetFriendByBaby) {
@@ -46,6 +43,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* _updateBabyProfile(event.map);
     } else if (event is PickBabyProfileImage) {
       yield* _pickBabyProfileImageFile(event.babyId, event.files);
+    } else if (event is SelectBabyEvent) {
+      yield* _selectBaby(event.babyId);
     // } else if (event is GetMomentByBaby) {
     //   SharedPreferences sharedPreferences =
     //       await SharedPreferences.getInstance();
@@ -70,28 +69,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await SharedPreferences.getInstance();
       bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
-          // add(GetMomentByBaby(
-          //   babyId,
-          //   state.page,
-          //   state.tag,
-          // ));
-
-      // if (isRefresh) {
-      //   add(GetDataWithHeader(true));
-      //   //  add(GetFriendByBaby(babyId));
-      //   sharedPreferences.setBool(Constants.IS_REFRESH, false);
-      // } else {
-      //   if (babyId == 0) {
-      //     add(GetDataWithHeader(true));
-      //   } else {
-      //     // add(GetBabyInfo(babyId));
-      //     add(GetMomentByBaby(
-      //       babyId,
-      //       state.page,
-      //       state.tag,
-      //     ));
-      //   }
-      // }
+      if (babyId == 0) {
+        add(GetBabyListModel(0));
+      }
       add(UnreadMessage());
     } catch (error) {
       yield MainScreenFailure(error: error);
@@ -112,8 +92,16 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
 
   Stream<MainScreenState> getBabyInfo(int objectId) async* {
     try {
-      BabyModel model = await _apiService.getBabyInfo(objectId);
-      yield state.copyWith(babyModel: model);
+      if (objectId == 0) {
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+        BabyModel model = await _apiService.getBabyInfo(babyId);
+        yield state.copyWith(babyModel: model);
+      } else {
+        BabyModel model = await _apiService.getBabyInfo(objectId);
+        yield state.copyWith(babyModel: model);
+      }
     } catch (error) {
       yield MainScreenFailure(error: error);
     }
@@ -160,15 +148,17 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   }
 
 
-  Stream<MainScreenState> getBabyListM0del(int page) async* {
+  Stream<MainScreenState> getBabyListModel(int page) async* {
     try {
       BabyListModel model = await _apiService.getMyBabyList(page);
+      if (model.content.length > 0) {
+        add(GetBabyInfo(0));
+      }
       yield state.copyWith(babyListModel: model);
     } catch (error) {
       yield MainScreenFailure(error: error);
     }
   }
-
 
   Stream<MainScreenState> _updateBabyProfile(Map<String, dynamic> map) async* {
     yield state.copyWith(isLoading: true);
@@ -183,6 +173,16 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       }
     } catch (error) {
       yield UpdateBabyProfileFailure(error: error.toString());
+    }
+  }
+
+  Stream<MainScreenState> _selectBaby(int babyId) async* {
+    try {
+      SharedPreferences shared = await SharedPreferences.getInstance();
+      shared.setInt(Constants.BABY_ID, babyId);
+      yield state.copyWith(babyId: babyId);
+      add(GetBabyInfo(babyId));
+    } catch (error) {
     }
   }
 
