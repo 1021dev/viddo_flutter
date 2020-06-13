@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
+import 'package:Viiddo/screens/home/comments/comment_screen.dart';
 import 'package:Viiddo/screens/home/post_item_no_activity.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -17,11 +19,11 @@ import 'notifications/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final BuildContext homeContext;
-  // const HomeScreen({Key key, this.homeContext}) : super(key: key);
-  // final MainScreenBloc mainScreenBloc;
   final GlobalKey<NavigatorState> navKey;
+  final Function showDetail;
+  final Function showBaby;
 
-  const HomeScreen({@required this.navKey, this.homeContext});
+  const HomeScreen({@required this.navKey, this.homeContext, this.showDetail, this.showBaby});
 
   @override
   _HomeScreenState createState() => _HomeScreenState(this.homeContext);
@@ -49,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (screenBloc == null) {
       screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
 
-      screenBloc.add(GetMomentByBaby(0,0,true));
+      screenBloc.add(HomeScreenInitEvent());
     }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
@@ -72,124 +74,115 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<HomeScreenBloc, HomeScreenState>(
       bloc: screenBloc,
       builder: (BuildContext context, HomeScreenState state) {
-        return CupertinoTabView(
-          builder: (BuildContext context) {
-            String babyAvatar = state.babyModel != null ? state.babyModel.avatar ?? '' : '';
-            bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
+        String babyAvatar = state.babyAvatar ?? '';
+        bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
 
-            return Scaffold(
-              appBar: CupertinoNavigationBar(
-                leading: CupertinoButton(
-                  padding: EdgeInsets.all(0),
-                  child: SizedBox(
-                    height: 44,
-                    width: 44,
-                    child: Center(
-                      child: Container(
-                        width: babyAvatar.length > 0 ? 30.0 : 24.0,
-                        height: babyAvatar.length > 0 ? 30.0 : 24.0,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            fit: BoxFit.cover,
-                            image: babyAvatar != '' ?
-                                FadeInImage.assetNetwork(
-                                  placeholder: 'assets/icons/ic_tag_baby.png',
-                                  image: babyAvatar,
-                                  width: 24,
-                                  height: 24,
-                                ).image:
-                                  AssetImage('assets/icons/ic_tag_baby.png')
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      SharedPreferences.getInstance()
-                          .then((SharedPreferences sp) {
-                        sharedPreferences = sp;
-                        bool isVerical =
-                            sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                        if (isVerical) {
-                          Navigator.of(context, rootNavigator: true).push<void>(
-                            CupertinoPageRoute(
-                              // fullscreenDialog: true,
-                              builder: (context) => BabiesScreen(
-                                      bloc: screenBloc.mainScreenBloc
-                                    )
-
-                            ),
-                          );
-
-                          // Navigation.toScreen(
-                          //     context: context,
-                          //     screen: BabiesScreen(
-                          //       bloc: widget.mainScreenBloc
-                          //     ));
-                        } else {
-                          WidgetUtils.showErrorDialog(
-                              context, 'Please verify your email first.');
-                        }
-                      }
-                    );
-                  },
-                ),
-                middle: SizedBox(child:Image.asset('assets/icons/ic_logo_viiddo.png'), width: 72, height: 35,),
-                trailing: CupertinoButton(
-                  padding: EdgeInsets.all(0),
-                  child: SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: Stack(
-                    alignment: Alignment.center,
-                      children: <Widget>[
-                        ImageIcon(
-                          AssetImage('assets/icons/notifications.png'),
-                          color: Color(0xFFFFA685),
-                          size: 24,
-                        ),
-                        hasUnread ? 
-                          Container(
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            elevation: 0,
+            iconTheme: IconThemeData(
+              color: Color(0xFFFFA685),
+              size: 12,
+            ),
+            backgroundColor: Colors.white,
+            leading: CupertinoButton(
+              padding: EdgeInsets.all(0),
+              child: SizedBox(
+                height: 44,
+                width: 44,
+                child: Center(
+                  child: Container(
+                    width: babyAvatar.length > 0 ? 30.0 : 24.0,
+                    height: babyAvatar.length > 0 ? 30.0 : 24.0,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: new DecorationImage(
+                          fit: BoxFit.cover,
+                          image: babyAvatar != '' ?
+                          FadeInImage.assetNetwork(
+                            placeholder: 'assets/icons/ic_tag_baby.png',
+                            image: babyAvatar,
                             width: 24,
                             height: 24,
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.red,
-                              ),
-                            )
-                          ) : Container(),
-                      ],
+                          ).image:
+                          AssetImage('assets/icons/ic_tag_baby.png')
+                      ),
                     ),
                   ),
-                  onPressed: () {
+                ),
+              ),
+              onPressed: () {
+                SharedPreferences.getInstance()
+                    .then((SharedPreferences sp) {
+                  sharedPreferences = sp;
+                  bool isVerical =
+                      sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                  if (isVerical) {
                     Navigator.of(context, rootNavigator: true).push<void>(
                       CupertinoPageRoute(
                         // fullscreenDialog: true,
-                        builder: (context) => NotificationsScreen(
-                                mainScreenBloc: screenBloc.mainScreenBloc,
-                              )
-
+                          builder: (context) => BabiesScreen(
+                              bloc: screenBloc.mainScreenBloc
+                          )
                       ),
                     );
-
-                    // Navigation.toScreen(
-                    //   context: context,
-                    //   screen: NotificationsScreen(
-                    //     homeContext: context,
-                    //   ),
-                    // );
-                  },
+                  } else {
+                    WidgetUtils.showErrorDialog(
+                        context, 'Please verify your email first.');
+                  }
+                }
+                );
+              },
+            ),
+            title: SizedBox(child:Image.asset('assets/icons/ic_logo_viiddo.png'), width: 72, height: 35,),
+            actions: <Widget>[
+              CupertinoButton(
+                padding: EdgeInsets.all(0),
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      ImageIcon(
+                        AssetImage('assets/icons/notifications.png'),
+                        color: Color(0xFFFFA685),
+                        size: 24,
+                      ),
+                      hasUnread ?
+                      Container(
+                          width: 24,
+                          height: 24,
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.red,
+                            ),
+                          )
+                      ) : Container(),
+                    ],
+                  ),
                 ),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).push<void>(
+                    CupertinoPageRoute(
+                      // fullscreenDialog: true,
+                        builder: (context) => NotificationsScreen(
+                          mainScreenBloc: screenBloc.mainScreenBloc,
+                        )
+
+                    ),
+                  );
+                },
               ),
-              body: _getBody(state),
-            );
-          },
+            ],
+          ),
+          body: _getBody(state),
         );
       },
     );
@@ -200,81 +193,81 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         child: isVerical
             ? state.dataArr != null && state.dataArr.length == 0
-                ? Container(
-                    child: Image.asset('assets/icons/no_data.png'),
-                  )
-                : _buildPostList(state)
+            ? Container(
+          child: Image.asset('assets/icons/no_data.png'),
+        )
+            : _buildPostList(state)
             : Center(
-                child: GestureDetector(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset('assets/icons/ic_home_empty.png'),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 8,
+          child: GestureDetector(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/icons/ic_home_empty.png'),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: 'Add a baby ',
+                    style: TextStyle(
+                      color: Color(0xFFFFA685),
+                      fontFamily: 'Roboto-Bold',
+                      fontSize: 13,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' or ',
+                        style: TextStyle(
+                          color: Color(0xFF8476AB),
+                          fontFamily: 'Roboto-Light',
+                          fontSize: 13,
                         ),
                       ),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Add a baby ',
-                          style: TextStyle(
-                            color: Color(0xFFFFA685),
-                            fontFamily: 'Roboto-Bold',
-                            fontSize: 13,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: ' or ',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'enter invitation code',
-                              style: TextStyle(
-                                color: Color(0xFFFFA685),
-                                fontFamily: 'Roboto-Bold',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' to join a group',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                      TextSpan(
+                        text: 'enter invitation code',
+                        style: TextStyle(
+                          color: Color(0xFFFFA685),
+                          fontFamily: 'Roboto-Bold',
+                          fontSize: 13,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' to join a group',
+                        style: TextStyle(
+                          color: Color(0xFF8476AB),
+                          fontFamily: 'Roboto-Light',
+                          fontSize: 13,
                         ),
                       ),
                     ],
                   ),
-                  onTap: () {
-                    SharedPreferences.getInstance().then(
-                      (SharedPreferences sp) {
-                        bool isVerical =
-                            sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                        if (isVerical) {
-                          Navigation.toScreen(
-                            context: context,
-                            screen: AddBabyScreen(
-                              bloc: screenBloc.mainScreenBloc,
-                            ),
-                          );
-                        } else {
-                          WidgetUtils.showErrorDialog(
-                              context, 'Please verify your email first.');
-                        }
-                      },
-                    );
-                  },
                 ),
-              ),
+              ],
+            ),
+            onTap: () {
+              SharedPreferences.getInstance().then(
+                    (SharedPreferences sp) {
+                  bool isVerical =
+                      sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                  if (isVerical) {
+                    Navigation.toScreen(
+                      context: context,
+                      screen: AddBabyScreen(
+                        bloc: screenBloc.mainScreenBloc,
+                      ),
+                    );
+                  } else {
+                    WidgetUtils.showErrorDialog(
+                        context, 'Please verify your email first.');
+                  }
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -326,15 +319,33 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (context, index) {
             return PostNoActivityItem(
               content: state.dataArr[index],
-              onTapDetail: () {},
+              onTapDetail:(content) {
+                screenBloc.add(ClearMomentDetailEvent());
+                screenBloc.add(GetMomentDetailsEvent(content.objectId, content.baby.objectId));
+                Navigator.of(context, rootNavigator: true).push<void>(
+                  FadePageRoute(
+                      CommentScreen(
+                        screenBloc: screenBloc,
+                        content: content,
+                      )
+                  ),
+                );
+              },
               onTapLike: () {
                 screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
               },
               onTapComment: () {},
               onTapShare: () {},
-              onTapView: (int i) {
-                // DynamicContent content = state.dataArr[index];
-                // open(context, i, content.albums);
+              onTapView:(content) {
+                Navigator.of(context, rootNavigator: true).push<void>(
+                  FadePageRoute(
+                      BabyDetailsScreen(
+                        screenBloc: screenBloc,
+                        babyId: content.baby.objectId,
+                        babyName: content.baby.name,
+                      )
+                  ),
+                );
               },
             );
           },
@@ -360,17 +371,17 @@ class _HomeScreenState extends State<HomeScreen> {
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadFailed() async {
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadNodata() async {
     if (mounted) setState(() {});
-      _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   @override
@@ -389,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const oneSec = const Duration(seconds: 1);
     refreshTimer = new Timer.periodic(
       oneSec,
-      (Timer timer) => () {
+          (Timer timer) => () {
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {

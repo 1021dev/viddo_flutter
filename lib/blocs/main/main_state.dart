@@ -20,7 +20,6 @@ class MainScreenState {
   final int page;
   final bool tag;
 
-
   MainScreenState({
     this.isLoading = false,
     this.isUploading = false,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
@@ -17,27 +18,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 
-
-@FFRoute(
-  name: 'viiddo://mainpage',
-  routeName: 'MainPage',
-)
-
-class OverflowMenuItem {
-  final String title;
-  final Color textColor;
-  final VoidCallback onTap;
-
-  OverflowMenuItem({
-    this.title,
-    this.textColor = Colors.black,
-    this.onTap,
-  });
-}
-
+// ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
   int selectedPage;
 
@@ -61,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   final GlobalKey<NavigatorState> homeTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> profileTabNavKey = GlobalKey<NavigatorState>();
   final CupertinoTabController _tabController = CupertinoTabController();
-  Widget _pretabPage;
+
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
@@ -127,7 +110,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       navKey: homeTabNavKey,
                       homeContext: context,
                     );
-                    _pretabPage = tabPage;
                     break;
                   case 1:
                     tabPage = null;
@@ -137,7 +119,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       navKey: profileTabNavKey,
                       homeContext: context,
                     );
-                    _pretabPage = tabPage;
                     break;
                 }
                 return Material(
