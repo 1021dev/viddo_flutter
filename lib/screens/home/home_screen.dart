@@ -61,8 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
 
-    startTimer();
     super.initState();
+        startTimer();
+
   }
 
   // @override
@@ -193,9 +194,25 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         child: isVerical
             ? state.dataArr != null && state.dataArr.length == 0
-            ? Container(
-          child: Image.asset('assets/icons/no_data.png'),
-        )
+            ? Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/icons/no_post_yet.png'),
+                Padding(padding: EdgeInsets.only(top: 8),),
+                Text(
+                  'No Data',
+                  style: TextStyle(
+                    color: Color(0xFFC4C4C4),
+                    fontFamily: 'Roboto',
+                    fontSize: 18,
+                  ),
+                ),
+
+              ],
+              ),
+          )
             : _buildPostList(state)
             : Center(
           child: GestureDetector(
@@ -356,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
-    // screenBloc.add(HomeScreenRe(completer));
+    screenBloc.add(HomeScreenRefresh(completer));
     return completer.future;
   }
 
@@ -395,20 +412,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void startTimer() {
-    if (refreshTimer != null) return;
+    print('Timer Started');
+    if (refreshTimer != null && refreshTimer.isActive) return;
     int time = 20;
     const oneSec = const Duration(seconds: 1);
-    refreshTimer = new Timer.periodic(
-      oneSec,
-          (Timer timer) => () {
+    refreshTimer = Timer.periodic(oneSec, (timer) {
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
             _handleRefresh();
             time -= 1;
           }
+        } else {
+            time -= 1;
         }
-      },
-    );
+    });
   }
 }

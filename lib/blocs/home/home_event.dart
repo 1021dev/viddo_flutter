@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -83,5 +85,15 @@ class GetMomentDetailsEvent extends HomeScreenEvent {
 
 @immutable
 class ClearMomentDetailEvent extends HomeScreenEvent {}
+
+@immutable
+class HomeScreenRefresh extends HomeScreenEvent {
+  final Completer completer;
+  HomeScreenRefresh(this.completer);
+  @override
+  List<Object> get props => [
+        this.completer,
+      ];
+}
 
 

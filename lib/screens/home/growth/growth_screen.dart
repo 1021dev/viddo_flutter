@@ -246,7 +246,7 @@ class _GrowthScreenState extends State<GrowthScreen>
   Widget _weightChartBody(MainScreenState state) {
     return Container(
       alignment: Alignment.center,
-      child: Image.asset('assets/icons/no_data.png'),
+      child: Image.asset('assets/icons/no_post_yet.png'),
     );
   }
 

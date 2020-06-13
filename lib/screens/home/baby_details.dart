@@ -67,7 +67,7 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen> with SingleTicker
       child: Container(
           child: state.dataArr != null && state.dataArr.length == 0
               ? Container(
-            child: Image.asset('assets/icons/no_data.png'),
+            child: Image.asset('assets/icons/no_post_yet.png'),
           )
               : _buildPostList(state)
       ),

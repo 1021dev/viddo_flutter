@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 
 abstract class MainScreenEvent extends Equatable {
   MainScreenEvent();
@@ -49,6 +48,15 @@ class MainScreenRefresh extends MainScreenEvent {
 
   @override
   List<Object> get props => [completer];
+
+}
+
+class SelectBabyEvent extends MainScreenEvent {
+  final int babyId;
+  SelectBabyEvent(this.babyId);
+
+  @override
+  List<Object> get props => [babyId];
 
 }
 
