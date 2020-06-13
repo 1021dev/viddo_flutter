@@ -58,7 +58,6 @@ class BabyScreenState {
     int page,
     bool tag,
   }) {
-    print('state change: $dataArr');
     return BabyScreenState(
       isLoading: isLoading ?? this.isLoading,
       babyModel: babyModel ?? this.babyModel,

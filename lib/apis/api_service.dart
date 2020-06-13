@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:Viiddo/models/activity_notification_list_model.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
 import 'package:Viiddo/models/message_list_model.dart';
 import 'package:Viiddo/models/message_model.dart';
@@ -904,7 +905,7 @@ class ApiService {
           'accept': '*/*',
         },
       );
-      print('isLikeMoment: {$response}');
+      print('postComment: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
         if (responseModel.status == 1000) {
@@ -916,7 +917,43 @@ class ApiService {
       }
       return false;
     } on DioError catch (e, s) {
-      print('isLikeMoment error: $e, $s');
+      print('postComment error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<DynamicContent> getMomentDetails(
+    int objectId,
+    int babyId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'babyId': babyId,
+      });
+      Response response = await _client.postForm(
+        '${url}information/getMonmentDetails',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getMomentDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          DynamicContent dynamicContent =
+              DynamicContent.fromJson(responseModel.content);
+          return dynamicContent;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getMomentDetails error: $e, $s');
       return Future.error(e);
     }
   }

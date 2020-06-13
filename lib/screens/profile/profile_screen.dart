@@ -147,22 +147,24 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
-          return CupertinoTabView(
-            navigatorKey: widget.navKey,
-            builder: (BuildContext context) {
-              return CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(
-                  middle: Text(
-                    'Profile', 
-                    style: TextStyle(
-                      color: Color(0xFFFFA685),
-                      fontSize: 20.0,
-                    ),
-                  ),
+          return Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              iconTheme: IconThemeData(
+                color: Color(0xFFFFA685),
+                size: 12,
+              ),
+              elevation: 0,
+              backgroundColor: Colors.white,
+              title: Text(
+                'Profile', 
+                style: TextStyle(
+                  color: Color(0xFF8476AB),
+                  fontSize: 18,
                 ),
-                child: _getBody(state),
-              );
-            },
+              ),
+            ),
+            body: _getBody(state),
           );
         },
       ),

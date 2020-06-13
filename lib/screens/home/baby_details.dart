@@ -1,38 +1,28 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/post_item_no_activity.dart';
-import 'package:Viiddo/utils/constants.dart';
-import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class BabyDetailsScreen extends StatefulWidget {
-  final BuildContext homeContext;
-  const BabyDetailsScreen({Key key, this.homeContext}) : super(key: key);
+  final HomeScreenBloc screenBloc;
+  final String babyName;
+  final int babyId;
+  const BabyDetailsScreen({Key key, this.screenBloc, this.babyName, this.babyId,}): super(key: key);
 
   @override
-  _BabyDetailsScreenState createState() => _BabyDetailsScreenState(homeContext);
+  _BabyDetailsScreenState createState() => _BabyDetailsScreenState();
 }
 
-class _BabyDetailsScreenState extends State<BabyDetailsScreen>
-    with AutomaticKeepAliveClientMixin {
+class _BabyDetailsScreenState extends State<BabyDetailsScreen> with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  MainScreenBloc screenBloc;
 
-  final BuildContext homeContext;
-
-  _BabyDetailsScreenState(this.homeContext);
-
-  Timer refreshTimer;
-  bool isLogin = true;
   int dataCount = 0;
-  bool isVerical = true;
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
@@ -41,49 +31,31 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
 
   @override
   void initState() {
-    // if (screenBloc == null) {
-    //   screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
-    //   screenBloc.add(GetMomentByBaby(0, 0, false));
-    // }
-    SharedPreferences.getInstance().then((SharedPreferences sp) {
-      sharedPreferences = sp;
-      setState(() {
-        isLogin = (sp.getString(Constants.TOKEN) ?? '').length > 0;
-        isVerical = sp.getBool(Constants.IS_VERI_CAL) ?? false;
-      });
-    });
-
-    startTimer();
     super.initState();
   }
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: screenBloc,
-      builder: (BuildContext context, state) {
+    return BlocBuilder<HomeScreenBloc, HomeScreenState>(
+      bloc: widget.screenBloc,
+      builder: (BuildContext context, HomeScreenState state) {
         return Scaffold(
-          appBar: new AppBar(
-            title: state.babyModel.name ?? '',
-            backgroundColor: Colors.transparent,
+          key: scaffoldKey,
+          appBar: AppBar(
             elevation: 0,
-            textTheme: TextTheme(
-              title: TextStyle(
-                color: Color(0xFF7861B7),
-                fontSize: 18.0,
-                fontFamily: 'Roboto',
-              ),
-            ),
             iconTheme: IconThemeData(
               color: Color(0xFFFFA685),
               size: 12,
             ),
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: true,
+            title: Text(
+              widget.babyName,
+              style: TextStyle(
+                color: Color(0xFF8476AB),
+                fontSize: 18,
+              ),
+            ),
           ),
-          key: scaffoldKey,
           body: _getBody(state),
         );
       },
@@ -93,83 +65,11 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
   Widget _getBody(HomeScreenState state) {
     return SafeArea(
       child: Container(
-        child: isVerical
-            ? state.dataArr != null && state.dataArr.length == 0
-                ? Container(
-                    child: Image.asset('assets/icons/no_data.png'),
-                  )
-                : _buildPostList(state)
-            : Center(
-                child: GestureDetector(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset('assets/icons/ic_home_empty.png'),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 8,
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Add a baby ',
-                          style: TextStyle(
-                            color: Color(0xFFFFA685),
-                            fontFamily: 'Roboto-Bold',
-                            fontSize: 13,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: ' or ',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'enter invitation code',
-                              style: TextStyle(
-                                color: Color(0xFFFFA685),
-                                fontFamily: 'Roboto-Bold',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' to join a group',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    SharedPreferences.getInstance().then(
-                      (SharedPreferences sp) {
-                        bool isVerical =
-                            sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                        if (isVerical) {
-                          Navigation.toScreen(
-                            context: context,
-                            screen: AddBabyScreen(
-                              bloc: screenBloc,
-                            ),
-                          );
-                        } else {
-                          WidgetUtils.showErrorDialog(
-                              context, 'Please verify your email first.');
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
+          child: state.dataArr != null && state.dataArr.length == 0
+              ? Container(
+            child: Image.asset('assets/icons/no_data.png'),
+          )
+              : _buildPostList(state)
       ),
     );
   }
@@ -197,7 +97,7 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
           builder: (BuildContext context, LoadStatus mode) {
             Widget body;
             if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
+              body = Container();
             } else if (mode == LoadStatus.loading) {
               body = CupertinoActivityIndicator();
             } else if (mode == LoadStatus.failed) {
@@ -208,7 +108,6 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
               body = Text("No more Data");
             }
             return Container(
-              height: 55.0,
               child: Center(child: body),
             );
           },
@@ -223,7 +122,7 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
               content: state.dataArr[index],
               onTapDetail: () {},
               onTapLike: () {
-                // screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
+                widget.screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
               },
               onTapComment: () {},
               onTapShare: () {},
@@ -240,12 +139,12 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
 
   Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
-    // screenBloc.add(HomeScreenRefresh(completer));
+    // screenBloc.add(HomeScreenRe(completer));
     return completer.future;
   }
 
   void _onRefresh() async {
-    // await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -255,44 +154,23 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen>
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadFailed() async {
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadNodata() async {
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   @override
   void dispose() {
-    if (refreshTimer != null) {
-      refreshTimer.cancel();
-      refreshTimer = null;
-    }
     // screenBloc.close();
     super.dispose();
   }
 
-  void startTimer() {
-    if (refreshTimer != null) return;
-    int time = 20;
-    const oneSec = const Duration(seconds: 1);
-    refreshTimer = new Timer.periodic(
-      oneSec,
-      (Timer timer) => () {
-        if (time <= 0) {
-          time = 20;
-          if (dataCount > 0 && isLogin) {
-            _handleRefresh();
-            time -= 1;
-          }
-        }
-      },
-    );
-  }
 }

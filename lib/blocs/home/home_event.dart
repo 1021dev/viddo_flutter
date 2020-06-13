@@ -7,6 +7,7 @@ abstract class HomeScreenEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+class HomeScreenInitEvent extends HomeScreenEvent {}
 class GetMomentByBaby extends HomeScreenEvent {
   final int objectId;
   final int page;
@@ -49,12 +50,10 @@ class LikeEvent extends HomeScreenEvent {
 class CommentEvent extends HomeScreenEvent {
   final int objectId;
   final int parentId;
-  final int replyUserId;
   final String content;
   CommentEvent(
     this.objectId,
     this.parentId,
-    this.replyUserId,
     this.content,
   );
 
@@ -62,9 +61,27 @@ class CommentEvent extends HomeScreenEvent {
   List<Object> get props => [
         this.objectId,
         this.parentId,
-        this.replyUserId,
         this.content,
       ];
 }
+
+@immutable
+class GetMomentDetailsEvent extends HomeScreenEvent {
+  final int objectId;
+  final int babyId;
+  GetMomentDetailsEvent(
+    this.objectId,
+    this.babyId,
+  );
+
+  @override
+  List<Object> get props => [
+        this.objectId,
+        this.babyId,
+      ];
+}
+
+@immutable
+class ClearMomentDetailEvent extends HomeScreenEvent {}
 
 
