@@ -7,10 +7,12 @@ import 'package:flutter/widgets.dart';
 class BabiesItemTile extends StatelessWidget {
   final Function function;
   final BabyModel model;
+  final isSelected;
   const BabiesItemTile({
     Key key,
     this.function,
     this.model,
+    this.isSelected = false,
   }) : super(key: key);
 
   @override
@@ -120,18 +122,16 @@ class BabiesItemTile extends StatelessWidget {
       ),
     );
 
-    final inkWell = Positioned.fill(
-      child: new Material(
-        color: Colors.transparent,
-        child: new InkWell(
+    final inkWell = new InkWell(
           onTap: function,
           splashColor: Color(0xFFFFF5EF),
           highlightColor: Color(0xFFFFF5EF),
           hoverColor: Color(0xFFFFF5EF),
           focusColor: Color(0xFFFFF5EF),
-          child: makeListTile,
-        ),
-      ),
+          child: Container(
+            child: makeListTile,
+            color: isSelected ? Color(0xFFFFF5EF): Colors.white,
+          ),
     );
 
     return inkWell;
