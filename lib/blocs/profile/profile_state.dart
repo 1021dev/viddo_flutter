@@ -17,6 +17,7 @@ class ProfileScreenState {
   int birthday;
   bool verifical;
   List<String> uploadedFiles;
+
   ProfileScreenState({
     this.isLoading = false,
     this.isUploading = false,
@@ -31,6 +32,21 @@ class ProfileScreenState {
     this.uploadedFiles = const [],
   });
 
+  List<Object> get props => [
+      this.isLoading,
+      this.isUploading,
+      this.email,
+      this.userModel,
+      this.username,
+      this.avatar,
+      this.gender,
+      this.location,
+      this.birthday,
+      this.verifical,
+      this.uploadedFiles,
+    ];
+
+
   ProfileScreenState copyWith({
     bool isLoading,
     bool isUploading,
@@ -42,7 +58,6 @@ class ProfileScreenState {
     String location,
     int birthday,
     bool verifical,
-    List<PickedFile> imageFiles,
     List<String> uploadedFiles,
   }) {
     return ProfileScreenState(

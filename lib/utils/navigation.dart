@@ -6,7 +6,7 @@ class Navigation {
     @required BuildContext context,
     @required Widget screen,
   }) async {
-    return await Navigator.of(context).push(FadePageRoute(
+    return await Navigator.of(context, rootNavigator: true).push(FadePageRoute(
       screen,
     ));
   }
@@ -15,7 +15,7 @@ class Navigation {
     @required BuildContext context,
     @required Widget screen,
   }) async {
-    return await Navigator.of(context).pushAndRemoveUntil(
+    return await Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
       FadePageRoute(screen),
       (_) => false,
     );

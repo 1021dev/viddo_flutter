@@ -207,7 +207,7 @@ class PostNoActivityItem extends StatelessWidget {
                           image: babyAvatar != '' ? FadeInImage.assetNetwork(
                             placeholder: 'assets/icons/ic_baby_solid.png',
                             image: babyAvatar,
-                          ).image : AssetImage('assetes/icons/ic_baby_solid.png'),
+                          ).image : AssetImage('assets/icons/ic_baby_solid.png'),
                         ),
                       ),
                     ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:Viiddo/models/baby_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -52,11 +53,11 @@ class MainScreenRefresh extends MainScreenEvent {
 }
 
 class SelectBabyEvent extends MainScreenEvent {
-  final int babyId;
-  SelectBabyEvent(this.babyId);
+  final BabyModel babyModel;
+  SelectBabyEvent(this.babyModel);
 
   @override
-  List<Object> get props => [babyId];
+  List<Object> get props => [babyModel];
 
 }
 
@@ -116,64 +117,95 @@ class PickBabyProfileImage extends MainScreenEvent {
       ];
 }
 
-// class GetMomentByBaby extends MainScreenEvent {
-//   final int objectId;
-//   final int page;
-//   final bool tag;
+class GetMomentByBaby extends MainScreenEvent {
+  final int objectId;
+  final int page;
+  final bool tag;
 
-//   GetMomentByBaby(
-//     this.objectId,
-//     this.page,
-//     this.tag,
-//   );
+  GetMomentByBaby(
+    this.objectId,
+    this.page,
+    this.tag,
+  );
 
-//   @override
-//   List<Object> get props => [
-//         objectId,
-//         page,
-//         tag,
-//       ];
-// }
+  @override
+  List<Object> get props => [
+        objectId,
+        page,
+        tag,
+      ];
+}
 
-// @immutable
-// class LikeEvent extends MainScreenEvent {
-//   final int objectId;
-//   final bool isLike;
-//   final int index;
-//   LikeEvent(
-//     this.objectId,
-//     this.isLike,
-//     this.index,
-//   );
+@immutable
+class LikeEvent extends MainScreenEvent {
+  final int objectId;
+  final bool isLike;
+  final int index;
+  LikeEvent(
+    this.objectId,
+    this.isLike,
+    this.index,
+  );
 
-//   @override
-//   List<Object> get props => [
-//         this.objectId,
-//         this.isLike,
-//         this.index,
-//       ];
-// }
+  @override
+  List<Object> get props => [
+        this.objectId,
+        this.isLike,
+        this.index,
+      ];
+}
 
-// @immutable
-// class CommentEvent extends MainScreenEvent {
-//   final int objectId;
-//   final int parentId;
-//   final int replyUserId;
-//   final String content;
-//   CommentEvent(
-//     this.objectId,
-//     this.parentId,
-//     this.replyUserId,
-//     this.content,
-//   );
+@immutable
+class CommentEvent extends MainScreenEvent {
+  final int objectId;
+  final int parentId;
+  final String content;
+  CommentEvent(
+    this.objectId,
+    this.parentId,
+    this.content,
+  );
 
-//   @override
-//   List<Object> get props => [
-//         this.objectId,
-//         this.parentId,
-//         this.replyUserId,
-//         this.content,
-//       ];
-// }
+  @override
+  List<Object> get props => [
+        this.objectId,
+        this.parentId,
+        this.content,
+      ];
+}
 
+@immutable
+class GetMomentDetailsEvent extends MainScreenEvent {
+  final int objectId;
+  final int babyId;
+  GetMomentDetailsEvent(
+    this.objectId,
+    this.babyId,
+  );
 
+  @override
+  List<Object> get props => [
+        this.objectId,
+        this.babyId,
+      ];
+}
+
+@immutable
+class ClearMomentDetailEvent extends MainScreenEvent {}
+
+class SendVerificationCode extends MainScreenEvent {
+  String email;
+  String type;
+
+  SendVerificationCode(
+    this.email,
+    this.type,
+  );
+
+  @override
+  List<Object> get props => [
+        this.email,
+        this.type,
+      ];
+}
+class GetUserProfile extends MainScreenEvent {}
