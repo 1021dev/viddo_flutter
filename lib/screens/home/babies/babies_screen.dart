@@ -5,6 +5,7 @@ import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
 import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
 import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
@@ -185,12 +186,12 @@ class _BabiesScreenState extends State<BabiesScreen>
                       model: babyListModel[index],
                       isSelected: babyListModel[index].objectId == state.babyId,
                       function: () {
-                        widget.bloc.add(SelectBabyEvent(babyListModel[index].objectId));
+                        widget.bloc.add(SelectBabyEvent(babyListModel[index]));
                         Navigation.toScreen(
                           context: context,
-                          screen: EditBabyInformationScreen(
-                            bloc: widget.bloc,
-                            baby: babyListModel[index],
+                          screen: BabyDetailsScreen(
+                            screenBloc: widget.bloc,
+                            babyModel: babyListModel[index],
                           ),
                         );
                       },

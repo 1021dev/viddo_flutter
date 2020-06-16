@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/baby_details.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
@@ -18,6 +17,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'home/babies/babies_screen.dart';
+import 'home/notifications/notifications_screen.dart';
 
 
 // ignore: must_be_immutable
@@ -99,6 +101,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         bloc: mainScreenBloc,
         builder: (BuildContext context, MainScreenState state) {
           _tabController.index = _selectedIndex;
+          String babyAvatar = state.babyAvatar ?? '';
+          bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
+
           return CupertinoTabScaffold(
               controller: _tabController,
               tabBar: _createTabBar(),
@@ -108,7 +113,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   case 0:
                     tabPage = HomeScreen(
                       navKey: homeTabNavKey,
-                      homeContext: context,
+                      mainScreenBloc: mainScreenBloc,
                     );
                     break;
                   case 1:
@@ -117,13 +122,118 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   case 2:
                     tabPage = ProfileScreen(
                       navKey: profileTabNavKey,
-                      homeContext: context,
+                      mainScreenBloc: mainScreenBloc,
                     );
                     break;
                 }
-                return Material(
-                  type: MaterialType.transparency,
-                  child: tabPage,
+                return new Scaffold(
+                  appBar: new AppBar(
+                    title: _selectedIndex == 0
+                        ? ImageIcon(
+                            AssetImage('assets/icons/ic_logo_viiddo.png'),
+                            size: 72,
+                          )
+                        : Text(
+                            'Profile',
+                            style: TextStyle(color: Color(0xFF7861B7)),
+                          ),
+                    backgroundColor: Colors.white,
+                    automaticallyImplyLeading: false,
+                    leading: _selectedIndex == 0
+                        ? GestureDetector(
+                            child: Center(
+                              child: Container(
+                                width: babyAvatar.length > 0 ? 30.0 : 24.0,
+                                height: babyAvatar.length > 0 ? 30.0 : 24.0,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: new BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: babyAvatar != '' ?
+                                        FadeInImage.assetNetwork(
+                                          placeholder: 'assets/icons/ic_tag_baby.png',
+                                          image: babyAvatar,
+                                          width: 24,
+                                          height: 24,
+                                        ).image:
+                                          AssetImage('assets/icons/ic_tag_baby.png')
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                SharedPreferences.getInstance()
+                                    .then((SharedPreferences sp) {
+                                  sharedPreferences = sp;
+                                  bool isVerical =
+                                      sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                                  if (isVerical) {
+                                    Navigation.toScreen(
+                                        context: context,
+                                        screen: BabiesScreen(
+                                          bloc: mainScreenBloc,
+                                        ));
+                                  } else {
+                                    WidgetUtils.showErrorDialog(
+                                        context, 'Please verify your email first.');
+                                  }
+                                }
+                              );
+                            },
+                          )
+                        : Container(),
+                    actions: <Widget>[
+                      _selectedIndex == 0
+                        ? Stack(
+                            alignment: Alignment.center,
+                              children: <Widget>[
+                                IconButton(
+                                icon: ImageIcon(
+                                  AssetImage('assets/icons/notifications.png'),
+                                  size: 24,
+                                ),
+                                tooltip: 'Next page',
+                                onPressed: () {
+                                  Navigation.toScreen(
+                                    context: context,
+                                    screen: NotificationsScreen(
+                                      homeContext: context,
+                                    ),
+                                  );
+                                },
+                              ),
+                              hasUnread ?
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  alignment: Alignment.topRight,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                ) : Container(),
+                            ],
+                          )
+                        : Container(),
+                    ],
+                    elevation: 0,
+                    textTheme: TextTheme(
+                      title: TextStyle(
+                        color: Color(0xFFFFA685),
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    iconTheme: IconThemeData(
+                      color: Color(0xFFFFA685),
+                    ),
+                  ),
+                  body: tabPage,
+
                 );
               },
           );
@@ -214,6 +324,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 return Align(
                   alignment: Alignment.bottomCenter,
                   child: BottomSelector(
+                    mainScreenBloc: mainScreenBloc,
                     closeFunction: () {
                       Navigator.pop(context, 'close');
                     },

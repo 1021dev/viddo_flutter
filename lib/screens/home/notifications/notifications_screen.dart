@@ -16,15 +16,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grouped_list/grouped_list.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  final MainScreenBloc mainScreenBloc;
-  const NotificationsScreen({Key key, this.mainScreenBloc}) : super(key: key);
+  final BuildContext homeContext;
+  const NotificationsScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _NotificationsScreenState createState() => _NotificationsScreenState();
+  _NotificationsScreenState createState() => _NotificationsScreenState(homeContext);
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> with SingleTickerProviderStateMixin {
   NotificationScreenBloc screenBloc;
+  final BuildContext homeContext;
+
+  _NotificationsScreenState(this.homeContext);
   TabController _tabController;
 
   int _selectedIndex = 0;
@@ -32,7 +35,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
 
   @override
   void initState() {
-    screenBloc = NotificationScreenBloc(mainScreenBloc: widget.mainScreenBloc);
+    screenBloc = BlocProvider.of<NotificationScreenBloc>(homeContext);
     screenBloc.add(GetActivityListEvent(0));
     screenBloc.add(GetMessageListEvent(0));
 
@@ -426,20 +429,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
         floatingHeader: true,
         groupSeparatorBuilder: (String value) => Container(
           padding: EdgeInsets.only(top: 8, bottom: 4),
-          child: Container(
-            width: 50,
-            height: 16,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color(0xFFFAA382),
-              borderRadius: BorderRadius.circular(3),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: 60,
+              height: 16,
+              alignment: Alignment.center,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Color(0xFFFAA382),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                value,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 9, color: Colors.white),
+              ),
             ),
-            child: Text(
-              value,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 9, color: Colors.white),
-            ),
-          )
+          ),
         ),
         itemBuilder: (c, element) {
           return NotificationMessageItem(

@@ -17,7 +17,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 
 class CommentScreen extends StatefulWidget {
-  final HomeScreenBloc screenBloc;
+  final MainScreenBloc screenBloc;
   final DynamicContent content;
   const CommentScreen({Key key, this.screenBloc, this.content,}): super(key: key);
 
@@ -44,9 +44,9 @@ class _CommentScreenState extends State<CommentScreen> with SingleTickerProvider
   }
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenBloc, HomeScreenState>(
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
       bloc: widget.screenBloc,
-      builder: (BuildContext context, HomeScreenState state) {
+      builder: (BuildContext context, MainScreenState state) {
         content = state.dynamicDetails ?? widget.content;
         commentList = [];
         List<CommentModel> parentList = content.commentList.where((CommentModel model) {
@@ -92,7 +92,7 @@ class _CommentScreenState extends State<CommentScreen> with SingleTickerProvider
     );
   }
 
-  Widget _getBody(HomeScreenState state) {
+  Widget _getBody(MainScreenState state) {
     return SafeArea(
       child: NotificationListener<ScrollStartNotification>(
         onNotification: (x) {
@@ -262,7 +262,7 @@ class _CommentScreenState extends State<CommentScreen> with SingleTickerProvider
       _refreshController.loadComplete();
   }
 
-  Widget buildPostView(HomeScreenState state) {
+  Widget buildPostView(MainScreenState state) {
     String babyName = content.baby != null ? content.baby.name ?? '' : '';
     String babyAvatar = content.baby != null ? content.baby.avatar ?? '' : '';
     String babyRelationShip =
