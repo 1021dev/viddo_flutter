@@ -22,23 +22,18 @@ import '../../utils/navigation.dart';
 import 'baby/babies_visible_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final BuildContext homeContext;
-  // const ProfileScreen({Key key, this.homeContext}) : super(key: key);
+  final MainScreenBloc mainScreenBloc;
   final GlobalKey<NavigatorState> navKey;
 
-  const ProfileScreen({@required this.navKey, @required this.homeContext});
+  const ProfileScreen({@required this.navKey, this.mainScreenBloc});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(this.homeContext);
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final BuildContext homeContext;
-
-  _ProfileScreenState(this.homeContext);
-  ProfileScreenBloc screenBloc;
 
   Timer _timer;
   int _start = 10;
@@ -59,7 +54,6 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: FamilyScreen(
-              bloc: screenBloc,
             ),
           );
         },
@@ -91,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: ReportProblemScreen(
-              bloc: screenBloc,
+              bloc: widget.mainScreenBloc,
             ),
           );
         },
@@ -107,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: SettingsScreen(
-              bloc: screenBloc,
+              bloc: widget.mainScreenBloc,
             ),
           );
         },
@@ -117,17 +111,10 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
-    if (screenBloc == null) {
-      screenBloc = BlocProvider.of<ProfileScreenBloc>(homeContext);
-
-      screenBloc.add(InitProfileScreen());
-      screenBloc.add(UserProfile());
-    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
-      bool isShowWelcome = sp.getBool(Constants.IS_VERI_CAL) ?? false;
     });
-
+    widget.mainScreenBloc.add(GetUserProfile());
     super.initState();
   }
 
@@ -138,40 +125,26 @@ class _ProfileScreenState extends State<ProfileScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: screenBloc,
-      listener: (BuildContext context, ProfileScreenState state) async {
+      bloc: widget.mainScreenBloc,
+      listener: (BuildContext context, MainScreenState state) async {
         if (state is VerificationSuccess) {
           _hadleVerification();
         }
       },
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
-        bloc: screenBloc,
-        builder: (BuildContext context, state) {
-          return Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              iconTheme: IconThemeData(
-                color: Color(0xFFFFA685),
-                size: 12,
-              ),
-              elevation: 0,
-              backgroundColor: Colors.white,
-              title: Text(
-                'Profile', 
-                style: TextStyle(
-                  color: Color(0xFF8476AB),
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            body: _getBody(state),
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+        bloc: widget.mainScreenBloc,
+        builder: (BuildContext context, MainScreenState state) {
+          return CupertinoTabView(
+            builder: (BuildContext context) {
+              return _getBody(state);
+            },
           );
         },
       ),
     );
   }
 
-  Widget _getBody(ProfileScreenState state) {
+  Widget _getBody(MainScreenState state) {
     if (sharedPreferences != null) {
       isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
     }
@@ -188,12 +161,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                   Navigation.toScreen(
                     context: context,
                     screen: EditProfileScreen(
-                      bloc: screenBloc,
+                      mainScreenBloc: widget.mainScreenBloc,
                     ),
                   );
                 },
-                nikName: state.username,
-                avatar: state.avatar,
+                nikName: state.userName,
+                avatar: state.userAvatar,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -206,9 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                       sentCode: _sentCode,
                       onTap: () {
                         if (!_sentCode) {
-                          screenBloc.add(
-                            VerificationCode(
-                              state.email,
+                          widget.mainScreenBloc.add(
+                            SendVerificationCode(
+                              state.userModel.email,
                               'REGISTER',
                             ),
                           );
