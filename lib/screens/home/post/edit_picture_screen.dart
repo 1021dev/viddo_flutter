@@ -2,24 +2,27 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/models/sticker_model.dart';
 import 'package:Viiddo/screens/home/post/all_stickers_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_complete_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 class EditPictureScreen extends StatefulWidget {
-  MainScreenBloc bloc;
-
+  final MainScreenBloc mainScreenBloc;
   final File image;
   EditPictureScreen({
-    this.bloc,
+    this.mainScreenBloc,
     this.image,
   });
 
   @override
-  _EditPictureScreenState createState() => _EditPictureScreenState(this.image);
+  _EditPictureScreenState createState() => _EditPictureScreenState(this.image, this.mainScreenBloc);
 }
 
 class _EditPictureScreenState extends State<EditPictureScreen>
@@ -27,15 +30,22 @@ class _EditPictureScreenState extends State<EditPictureScreen>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final File image;
-  int _selectedIndex = 0;
+  int _selectedIndex = 10019;
   bool isEmpty = false;
   Animation<double> animation;
   AnimationController controller;
+  PostBloc screenBloc;
+  final MainScreenBloc mainScreenBloc;
 
-  _EditPictureScreenState(this.image);
+  _EditPictureScreenState(this.image, this.mainScreenBloc);
 
   @override
   void initState() {
+    if (screenBloc == null) {
+      screenBloc = PostBloc(mainScreenBloc: widget.mainScreenBloc);
+    }
+    // screenBloc.add(InitPostScreen());
+    screenBloc.add(GetStickerCategory());
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     animation = Tween<double>(begin: 109, end: 0).animate(controller)
@@ -52,10 +62,10 @@ class _EditPictureScreenState extends State<EditPictureScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
-        bloc: widget.bloc,
+      bloc: screenBloc,
+      listener: (BuildContext context, PostState state) async {},
+      child: BlocBuilder<PostBloc, PostState>(
+        bloc: screenBloc,
         builder: (BuildContext context, state) {
           return Scaffold(
             appBar: new AppBar(
@@ -63,7 +73,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
               backgroundColor: Colors.transparent,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -86,7 +96,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                     Navigation.toScreen(
                       context: context,
                       screen: EditPictureCompleteScreen(
-                        bloc: widget.bloc,
+                        bloc: screenBloc,
                         image: this.image,
                       ),
                     );
@@ -125,7 +135,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     );
   }
 
-  Widget _body(MainScreenState state) {
+  Widget _body(PostState state) {
     return Expanded(
       child: Container(
         alignment: Alignment.topCenter,
@@ -136,7 +146,13 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     );
   }
 
-  Widget _bottomBar(MainScreenState state) {
+  Widget _bottomBar(PostState state) {
+    List<StickerModel> stickers = [];
+    if (state.stickers != null) {
+      if (state.stickers.containsKey(_selectedIndex)) {
+        stickers = state.stickers[_selectedIndex];
+      }
+    }
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
@@ -235,7 +251,11 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _selectedIndex = 10019;
+                          });
+                        },
                         child: Text(
                           'Trending',
                           style: TextStyle(
@@ -245,7 +265,11 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                         ),
                       ),
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _selectedIndex = 10020;
+                          });
+                        },
                         child: Text(
                           'New',
                           style: TextStyle(
@@ -260,7 +284,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                           Navigation.toScreen(
                             context: context,
                             screen: AllStickerScreen(
-                              bloc: widget.bloc,
+                              bloc: screenBloc,
                             ),
                           );
                         },
@@ -279,8 +303,9 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                   height: 65,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
+                    itemCount: stickers.length,
                     itemBuilder: (context, index) {
-                      return _stickerItem(index);
+                      return _stickerItem(stickers[index]);
                     },
                   ),
                 ),
@@ -292,7 +317,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     );
   }
 
-  Widget _stickerItem(int index) {
+  Widget _stickerItem(StickerModel sticker) {
     return GestureDetector(
       onTap: () {
         controller.reverse();
@@ -302,6 +327,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
         child: Container(
           width: 55,
           height: 55,
+          padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,
@@ -311,7 +337,15 @@ class _EditPictureScreenState extends State<EditPictureScreen>
             ),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Image.asset(
+          child: sticker.url != null ? //WebsafeSvg.network(sticker.url)://SvgPicture(AdvancedNetworkSvg(sticker.url, SvgPicture.svgByteDecoder)):
+            SvgPicture.network(
+              sticker.url,
+              excludeFromSemantics: true,
+              placeholderBuilder: (BuildContext context) => Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: const CircularProgressIndicator(strokeWidth: 2,)),
+                  ): 
+                  Image.asset(
             'assets/icons/ic_sticker.png',
           ),
         ),
@@ -319,7 +353,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     );
   }
 
-  Widget _bottomToolBar(MainScreenState state) {
+  Widget _bottomToolBar(PostState state) {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
@@ -443,7 +477,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                           Navigation.toScreen(
                             context: context,
                             screen: AllStickerScreen(
-                              bloc: widget.bloc,
+                              bloc: screenBloc,
                             ),
                           );
                         },
@@ -463,7 +497,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return _stickerItem(index);
+                      return Container();//_stickerItem(index);
                     },
                   ),
                 ),
@@ -483,7 +517,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
   @override
   void dispose() {
     controller.dispose();
-
+    screenBloc.close();
     super.dispose();
   }
 }

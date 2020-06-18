@@ -191,21 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         footer: CustomFooter(
           builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
-            } else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("release to load more");
-            } else {
-              body = Text("No more Data");
-            }
             return Container(
               height: 55.0,
-              child: Center(child: body),
             );
           },
         ),
@@ -301,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
-            _handleRefresh();
+            widget.mainScreenBloc.add(MainScreenGetRefresh());
             time -= 1;
           }
         } else {

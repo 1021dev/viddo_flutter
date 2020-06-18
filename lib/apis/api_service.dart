@@ -11,6 +11,9 @@ import 'package:Viiddo/models/growth_record_list_model.dart';
 import 'package:Viiddo/models/message_list_model.dart';
 import 'package:Viiddo/models/message_model.dart';
 import 'package:Viiddo/models/page_response_model.dart';
+import 'package:Viiddo/models/sticker_category_model.dart';
+import 'package:Viiddo/models/sticker_list_model.dart';
+import 'package:Viiddo/models/sticker_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:Viiddo/models/vaccine_list_model.dart';
 import 'package:Viiddo/models/vaccine_model.dart';
@@ -588,24 +591,24 @@ class ApiService {
         String path = imageFiles[i].path;
         String extension = p.extension(path);
 
-       String result;
-       AwsS3 awsS3 = AwsS3(
-           awsFolderPath: 'Posts',
-           file: imageFiles[i],
-           fileNameWithExt: '${uuid}_$i$extension',
-           poolId: Constants.cognitoPoolId,
-           region: Regions.US_EAST_2,
-           bucketName: Constants.bucket);
-       try {
-         try {
-           result = await awsS3.uploadFile;
-           debugPrint("Result :'$result'.");
-         } on PlatformException {
-           debugPrint("Result :'$result'.");
-         }
-       } on PlatformException catch (e) {
-         debugPrint("Failed :'${e.message}'.");
-       }
+        String result;
+        AwsS3 awsS3 = AwsS3(
+            awsFolderPath: 'Posts',
+            file: imageFiles[i],
+            fileNameWithExt: '${uuid}_$i$extension',
+            poolId: Constants.cognitoPoolId,
+            region: Regions.US_EAST_2,
+            bucketName: Constants.bucket);
+        try {
+          try {
+            result = await awsS3.uploadFile;
+            debugPrint("Result :'$result'.");
+          } on PlatformException {
+            debugPrint("Result :'$result'.");
+          }
+        } on PlatformException catch (e) {
+          debugPrint("Failed :'${e.message}'.");
+        }
 
         // String uploadedImageUrl = await AmazonS3Cognito.upload(
         //     imageFiles[i].path,
@@ -1868,4 +1871,70 @@ class ApiService {
     }
   }
 
+  Future<List<StickerCategory>> getStikerCategory() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}information/getStikerCategory',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getStikerCategory: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          List categories = List.castFrom(responseModel.content);
+          List<StickerCategory> stickerCategory = [];
+          for (int i = 0; i < categories.length; i++)
+          {
+            stickerCategory.add(StickerCategory.fromJson(categories[i]));
+          }
+          return stickerCategory;
+        }
+      }
+      return [];
+    } on DioError catch (e, s) {
+      print('getStikerCategory error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<StickerListModel> getStickers(
+      int objectId,
+      int page,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'categoryid': objectId,
+        'page': page,
+      });
+      Response response = await _client.postForm(
+        '${url}information/getStickers',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getStickers: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          StickerListModel stickerListModel = StickerListModel.fromJson(responseModel.content);
+          return stickerListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getStickers error: $e, $s');
+      return Future.error(e);
+    }
+  }
 }

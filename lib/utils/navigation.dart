@@ -6,8 +6,9 @@ class Navigation {
     @required BuildContext context,
     @required Widget screen,
   }) async {
-    return await Navigator.of(context, rootNavigator: true).push(FadePageRoute(
-      screen,
+    return await Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+      builder: (_) => screen,
     ));
   }
 
@@ -16,7 +17,9 @@ class Navigation {
     @required Widget screen,
   }) async {
     return await Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      FadePageRoute(screen),
+      MaterialPageRoute(
+        builder: (_) => screen,
+      ),
       (_) => false,
     );
   }
@@ -27,7 +30,9 @@ class Navigation {
   }) async {
     return await Navigator.pushReplacement(
       context,
-      FadePageRoute(screen),
+      MaterialPageRoute(
+        builder: (_) => screen,
+      ),
     );
   }
 }

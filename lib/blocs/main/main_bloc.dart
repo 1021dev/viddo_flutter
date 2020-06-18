@@ -79,8 +79,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield* _getAccountInfo(event);
     } else if (event is VerificationCode) {
       yield* _sendVerification(event);
+    } else if (event is MainScreenGetRefresh) {
+      yield* getRefreshInformation();
     }
-
   }
 
   Stream<MainScreenState> init() async* {
@@ -182,6 +183,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   Stream<MainScreenState> getRefreshInformation() async* {
     try {
       bool isRefresh = await _apiService.getRefreshInformation();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      sharedPreferences.setBool(Constants.IS_REFRESH, false);
       if (isRefresh) {
         add(GetDataWithHeader(true));
       }
