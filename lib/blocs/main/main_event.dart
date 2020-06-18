@@ -209,3 +209,4 @@ class SendVerificationCode extends MainScreenEvent {
       ];
 }
 class GetUserProfile extends MainScreenEvent {}
+class MainScreenGetRefresh extends MainScreenEvent {}

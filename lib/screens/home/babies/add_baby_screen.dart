@@ -7,7 +7,6 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/babies/baby_info_screen.dart';
 import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 
 class AddBabyScreen extends StatefulWidget {
   final MainScreenBloc bloc;
@@ -53,7 +52,7 @@ class _AddBabyScreenState extends State<AddBabyScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -74,68 +73,64 @@ class _AddBabyScreenState extends State<AddBabyScreen>
   }
 
   Widget _getBody(MainScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      return SafeArea(
-        key: formKey,
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'Choose baby gender or pregnancy',
-                  style: TextStyle(
-                    color: Color(0xFF8476AB),
-                    fontSize: 12,
-                  ),
+    return SafeArea(
+      key: formKey,
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              child: Text(
+                'Choose baby gender or pregnancy',
+                style: TextStyle(
+                  color: Color(0xFF8476AB),
+                  fontSize: 12,
                 ),
               ),
-              Expanded(
-                child: GridView.count(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24,
-                    horizontal: 20,
-                  ),
-                  physics: NeverScrollableScrollPhysics(),
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 20,
-                  childAspectRatio: 5 / 7,
-                  mainAxisSpacing: 20,
-                  children: <Widget>[
-                    _babyButton(state, 0),
-                    _babyButton(state, 1),
-                    _babyButton(state, 2),
-                  ],
+            ),
+            Expanded(
+              child: GridView.count(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 20,
                 ),
+                physics: NeverScrollableScrollPhysics(),
+                crossAxisCount: 3,
+                crossAxisSpacing: 20,
+                childAspectRatio: 5 / 7,
+                mainAxisSpacing: 20,
+                children: <Widget>[
+                  _babyButton(state, 0),
+                  _babyButton(state, 1),
+                  _babyButton(state, 2),
+                ],
               ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigation.toScreen(
-                      context: context,
-                      screen: InvitationCodeInputScreen(
-                        bloc: widget.bloc,
-                      ),
-                    );
-                  },
-                  child: Center(
-                    child: Text(
-                      'Enter invitation code to join a group',
-                      style: TextStyle(
-                        color: Color(0xFFE46E5C),
-                        fontSize: 14,
-                      ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigation.toScreen(
+                    context: context,
+                    screen: InvitationCodeInputScreen(
+                      bloc: widget.bloc,
+                    ),
+                  );
+                },
+                child: Center(
+                  child: Text(
+                    'Enter invitation code to join a group',
+                    style: TextStyle(
+                      color: Color(0xFFE46E5C),
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    }
+      ),
+    );
   }
 
   Widget _babyButton(MainScreenState state, int index) {

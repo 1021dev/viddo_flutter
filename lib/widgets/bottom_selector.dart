@@ -47,7 +47,7 @@ class BottomSelector extends StatelessWidget {
                     fit: BoxFit.cover,
                     image: avatar != '' ? new NetworkImage(
                       avatar,
-                    ): Image.asset('assets/icons/ic_baby_solic.png'),
+                    ): Image.asset('assets/icons/ic_baby_solid.png').image,
                   ),
                 ),
               ),

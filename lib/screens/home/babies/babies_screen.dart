@@ -4,7 +4,6 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
-import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
 import 'package:Viiddo/screens/home/baby_details.dart';
 import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -60,7 +59,7 @@ class _BabiesScreenState extends State<BabiesScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',

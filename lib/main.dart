@@ -10,6 +10,7 @@ import 'package:Viiddo/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 import 'blocs/simple_bloc_delegate.dart';
 import 'env.dart';
@@ -17,8 +18,11 @@ import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'themes.dart';
 
+const debug = true;
 Future main() async {
   BlocSupervisor.delegate = SimpleBlocDelegate();
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: debug);
   Env();
 }
 

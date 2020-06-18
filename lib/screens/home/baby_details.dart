@@ -192,20 +192,8 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen> with SingleTicker
         ),
         footer: CustomFooter(
           builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Container();
-            } else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("release to load more");
-            } else {
-              body = Text("No more Data");
-            }
             return Container(
-              child: Center(child: body),
+              height: 55.0,
             );
           },
         ),
@@ -445,7 +433,7 @@ class _BabyDetailsScreenState extends State<BabyDetailsScreen> with SingleTicker
       Navigation.toScreen(
         context: context,
         screen: EditPictureScreen(
-          bloc: widget.screenBloc,
+          mainScreenBloc: widget.screenBloc,
           image: File(image.path),
         ),
       );

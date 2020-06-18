@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/blocs/post/post_bloc.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
@@ -91,8 +92,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             mainScreenBloc: mainScreenBloc,
           ),
         ),
-        BlocProvider<BabyScreenBloc>(
-          create: (context) => BabyScreenBloc(
+        BlocProvider<PostBloc>(
+          create: (context) => PostBloc(
             mainScreenBloc: mainScreenBloc,
           ),
         ),
@@ -223,7 +224,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     ],
                     elevation: 0,
                     textTheme: TextTheme(
-                      title: TextStyle(
+                      headline6: TextStyle(
                         color: Color(0xFFFFA685),
                         fontSize: 20.0,
                       ),
@@ -384,7 +385,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       Navigation.toScreen(
         context: context,
         screen: EditPictureScreen(
-          bloc: mainScreenBloc,
+          mainScreenBloc: mainScreenBloc,
           image: File(image.path),
         ),
       );

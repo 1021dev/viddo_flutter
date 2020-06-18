@@ -1,6 +1,10 @@
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/models/baby_info.dart';
+import 'package:Viiddo/models/baby_list_model.dart';
+import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/screens/profile/baby/baby_item_tile.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,25 +13,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../utils/widget_utils.dart';
 
 class BabiesVisibleScreen extends StatefulWidget {
-  final BuildContext homeContext;
-  const BabiesVisibleScreen({Key key, this.homeContext}) : super(key: key);
+  final MainScreenBloc mainScreenBloc;
+  const BabiesVisibleScreen({Key key, this.mainScreenBloc}) : super(key: key);
 
   @override
-  _BabiesVisibleScreenState createState() => _BabiesVisibleScreenState(this.homeContext);
+  _BabiesVisibleScreenState createState() => _BabiesVisibleScreenState();
 }
 
 class _BabiesVisibleScreenState extends State<BabiesVisibleScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  BabyScreenBloc screenBloc;
-  final BuildContext homeContext;
-
-  _BabiesVisibleScreenState(this.homeContext);
-
   @override
   void initState() {
-    screenBloc = BlocProvider.of<BabyScreenBloc>(homeContext);
+    widget.mainScreenBloc.add(GetBabyListModel(0));
     super.initState();
   }
 
@@ -37,8 +36,8 @@ class _BabiesVisibleScreenState extends State<BabiesVisibleScreen>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder<BabyScreenBloc, BabyScreenState>(
-      bloc: screenBloc,
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
+      bloc: widget.mainScreenBloc,
       builder: (BuildContext context, state) {
         return Scaffold(
           appBar: new AppBar(
@@ -46,7 +45,7 @@ class _BabiesVisibleScreenState extends State<BabiesVisibleScreen>
             backgroundColor: Colors.white,
             elevation: 0,
             textTheme: TextTheme(
-              title: TextStyle(
+              headline6: TextStyle(
                 color: Color(0xFF7861B7),
                 fontSize: 18.0,
                 fontFamily: 'Roboto',
@@ -65,71 +64,34 @@ class _BabiesVisibleScreenState extends State<BabiesVisibleScreen>
     );
   }
 
-  Widget _getBody(BabyScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      return SafeArea(
-        key: scaffoldKey,
-        child: Container(
-          child: _listView(),
-        ),
-      );
-    }
+  Widget _getBody(MainScreenState state) {
+    return SafeArea(
+      child: Container(
+        child: _listView(state),
+      ),
+    );
   }
 
-  Widget _listView() {
-    List<BabyItemTile> list = [
-      BabyItemTile(
-        title: 'Kendra',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        value: '07/15/2013',
-        ison: true,
-        function: (_) {},
-      ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        ison: true,
-        function: (_) {},
-      ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        ison: true,
-        function: (_) {},
-      ),
-      BabyItemTile(
-        title: 'Kendra',
-        value: '07/15/2013',
-        image: Image.asset(
-          'assets/icons/icon_place_holder.png',
-          fit: BoxFit.cover,
-          width: 40,
-        ),
-        ison: true,
-        function: (_) {},
-      ),
-    ];
+  Widget _listView(MainScreenState state) {
+    BabyListModel babyListModel = state.babyListModel;
+    List<BabyModel> babies = babyListModel != null ? babyListModel.content : [];
     return RefreshIndicator(
       child: ListView.separated(
-        itemCount: list.length,
+        itemCount: babies.length,
         itemBuilder: (BuildContext context, int index) {
-          return list[index];
+          BabyModel baby = babies[index];
+          String name = baby.name;
+          int birthday = baby.birthDay;
+          DateTime birth = DateTime.fromMillisecondsSinceEpoch(birthday);
+          String dateString = formatDate(birth, [m, '/', dd, '/', yyyy]);
+          String avatar = baby.avatar;
+          return BabyItemTile(
+            title: name,
+            value: dateString,
+            image: avatar,
+            ison: true,
+            function: (_) {},
+          );
         },
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
