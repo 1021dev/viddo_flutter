@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AllStickerScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  PostBloc bloc;
 
   AllStickerScreen({
     this.bloc,
@@ -57,8 +57,8 @@ class _AllStickerScreenState extends State<AllStickerScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, PostState state) async {},
+      child: BlocBuilder<PostBloc, PostState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -67,7 +67,7 @@ class _AllStickerScreenState extends State<AllStickerScreen>
               backgroundColor: Colors.transparent,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -137,7 +137,7 @@ class _AllStickerScreenState extends State<AllStickerScreen>
     );
   }
 
-  Widget _body(MainScreenState state, int index) {
+  Widget _body(PostState state, int index) {
     return GridView.count(
       crossAxisCount: 5,
       padding: EdgeInsets.all(8),

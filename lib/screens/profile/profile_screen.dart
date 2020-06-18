@@ -54,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: FamilyScreen(
+              mainScreenBloc: widget.mainScreenBloc,
             ),
           );
         },
@@ -69,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: BabiesVisibleScreen(
-              homeContext: context,
+              mainScreenBloc: widget.mainScreenBloc,
             ),
           );
         },
@@ -135,6 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         bloc: widget.mainScreenBloc,
         builder: (BuildContext context, MainScreenState state) {
           return CupertinoTabView(
+            key: widget.navKey,
             builder: (BuildContext context) {
               return _getBody(state);
             },

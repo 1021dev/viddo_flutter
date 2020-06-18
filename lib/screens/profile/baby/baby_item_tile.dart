@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 class BabyItemTile extends StatelessWidget {
   final String title;
   final String value;
-  final Image image;
+  final String image;
   final bool ison;
   final Function function;
 
@@ -27,7 +27,24 @@ class BabyItemTile extends StatelessWidget {
         left: 16.0,
         right: 16.0,
       ),
-      leading: image,
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: new BoxDecoration(
+          shape: BoxShape.circle,
+          image: new DecorationImage(
+            fit: BoxFit.cover,
+            image: image != '' ?
+                FadeInImage.assetNetwork(
+                  placeholder: 'assets/icons/ic_tag_baby.png',
+                  image: image,
+                  width: 24,
+                  height: 24,
+                ).image:
+                  AssetImage('assets/icons/ic_tag_baby.png')
+            ),
+          ),
+      ),
       title: Text(
         title,
         style: TextStyle(

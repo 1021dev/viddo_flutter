@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class PostScreen extends StatefulWidget {
-  final MainScreenBloc bloc;
+  final PostBloc bloc;
 
   final File image;
 
@@ -46,10 +46,10 @@ class _PostScreenState extends State<PostScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {
+      listener: (BuildContext context, PostState state) async {
         FocusScope.of(context).unfocus();
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      child: BlocBuilder<PostBloc, PostState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -62,7 +62,7 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(PostState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
