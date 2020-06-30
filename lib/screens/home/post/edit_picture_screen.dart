@@ -5,13 +5,13 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/sticker_model.dart';
 import 'package:Viiddo/screens/home/post/all_stickers_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_complete_screen.dart';
+import 'package:Viiddo/screens/home/post/sticker_image.dart';
 import 'package:Viiddo/utils/navigation.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:websafe_svg/websafe_svg.dart';
 
 class EditPictureScreen extends StatefulWidget {
   final MainScreenBloc mainScreenBloc;
@@ -28,6 +28,21 @@ class EditPictureScreen extends StatefulWidget {
 class _EditPictureScreenState extends State<EditPictureScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ExtendedImageEditorState> editorKey =
+      GlobalKey<ExtendedImageEditorState>();
+  // final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
+  //   AspectRatioItem(text: 'custom', value: CropAspectRatios.custom),
+  //   AspectRatioItem(text: 'original', value: CropAspectRatios.original),
+  //   AspectRatioItem(text: '1*1', value: CropAspectRatios.ratio1_1),
+  //   AspectRatioItem(text: '4*3', value: CropAspectRatios.ratio4_3),
+  //   AspectRatioItem(text: '3*4', value: CropAspectRatios.ratio3_4),
+  //   AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
+  //   AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
+  // ];
+  // AspectRatioItem _aspectRatio;
+  final GlobalKey key = GlobalKey();
+  Widget source;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final File image;
   int _selectedIndex = 10019;
@@ -36,6 +51,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
   AnimationController controller;
   PostBloc screenBloc;
   final MainScreenBloc mainScreenBloc;
+  Size viewport;
 
   _EditPictureScreenState(this.image, this.mainScreenBloc);
 
@@ -54,7 +70,19 @@ class _EditPictureScreenState extends State<EditPictureScreen>
       })
       ..addStatusListener((status) {});
     controller.reverse();
-
+    source = ExtendedImage.file(
+      image,
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.editor,
+      extendedImageEditorKey: editorKey,
+      initEditorConfigHandler: (state) {
+        return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            cropAspectRatio: CropAspectRatios.ratio3_4);
+      },
+    );
     super.initState();
   }
 
@@ -137,10 +165,20 @@ class _EditPictureScreenState extends State<EditPictureScreen>
 
   Widget _body(PostState state) {
     return Expanded(
-      child: Container(
-        alignment: Alignment.topCenter,
-        child: Image.file(
-          image,
+      child: RepaintBoundary(
+        key: key,
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                viewport = viewport ??
+                    Size(constraints.maxWidth, constraints.maxHeight);
+                return source;
+              },
+            ),
+            Stack(children: state.attachedList, fit: StackFit.expand)
+          ],
         ),
       ),
     );
@@ -285,6 +323,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                             context: context,
                             screen: AllStickerScreen(
                               bloc: screenBloc,
+                              categories: state.categories,
                             ),
                           );
                         },
@@ -321,6 +360,21 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     return GestureDetector(
       onTap: () {
         controller.reverse();
+        screenBloc.add(AddStickerEvent(StickerImage(
+            SvgPicture.network(
+              sticker.url,
+              excludeFromSemantics: true,
+            ),
+            key: Key('sticker_${sticker.name}'),
+            width: 100,
+            height: 100,
+            viewport: viewport,
+            maxScale: 20,
+            minScale: 0.2,
+            onTapRemove: (sk) {
+
+            },
+        )));
       },
       child: Padding(
         padding: EdgeInsets.all(5),
@@ -509,7 +563,7 @@ class _EditPictureScreenState extends State<EditPictureScreen>
     );
   }
 
-  Future<Null> _handleRefresh(context) {
+  Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
     return completer.future;
   }
