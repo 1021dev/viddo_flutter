@@ -88,7 +88,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
+      bool isRefresh = sharedPreferences.getBool(Constants.IS_REFRESH) ?? false;
       int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
       String babyAvatar = sharedPreferences.getString(Constants.BABY_ICON) ?? '';
       bool isCreator = sharedPreferences.getBool(Constants.IS_CREATOR) ?? false;
@@ -114,8 +114,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       }
       add(UnreadMessage());
     } catch (error) {
-      yield MainScreenFailure(error: error);
-    } 
+      print(error.toString());
+      yield MainScreenFailure(error: error.toString());
+    }
   }
 
 

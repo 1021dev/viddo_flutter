@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  static final FacebookLogin facebookSignIn = new FacebookLogin();
+  final FacebookLogin facebookSignIn = new FacebookLogin();
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -468,20 +468,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<Null> _loginFacebook() async {
+    await facebookSignIn.logOut();
     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
         print('''
-         Logged in!
-         
-         Token: ${accessToken.token}
-         User id: ${accessToken.userId}
-         Expires: ${accessToken.expires}
-         Permissions: ${accessToken.permissions}
-         Declined permissions: ${accessToken.declinedPermissions}
-         ''');
+        Logged in!
+        Token: ${accessToken.token}
+        User id: ${accessToken.userId}
+        Expires: ${accessToken.expires}
+        Permissions: ${accessToken.permissions}
+        Declined permissions: ${accessToken.declinedPermissions}
+        ''');
         screenBloc.add(FacebookLoginEvent(accessToken));
         break;
       case FacebookLoginStatus.cancelledByUser:

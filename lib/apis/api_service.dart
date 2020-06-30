@@ -1920,7 +1920,7 @@ class ApiService {
           'accept': '*/*',
         },
       );
-      print('getStickers: {$response}');
+      print('objectId => $objectId, page => $page  getStickers: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
         if (responseModel.status == 1000) {
