@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes.dart';
@@ -28,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final FacebookLogin facebookSignIn = new FacebookLogin();
 
   @override
   void initState() {
@@ -110,8 +112,12 @@ class _SettingsScreenState extends State<SettingsScreen>
                               fontFamily: 'Roboto',
                             )),
                         onPressed: () {
-                          SharedPreferences.getInstance().then((sp) {
+                          SharedPreferences.getInstance().then((sp) async {
                             sp.setString(Constants.TOKEN, '');
+                            bool isSignin = await facebookSignIn.isLoggedIn;
+                            if (isSignin) {
+                              facebookSignIn.logOut();
+                            }
                             Navigation.toScreenAndCleanBackStack(
                               context: context, screen: LoginScreen());
                           });
