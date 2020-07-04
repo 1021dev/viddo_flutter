@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -381,17 +382,68 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       source: type == 0 ? ImageSource.gallery : ImageSource.camera,
     );
 
+//    if (image != null) {
+//      Navigation.toScreen(
+//        context: context,
+//        screen: EditPictureScreen(
+//          mainScreenBloc: mainScreenBloc,
+//          image: File(image.path),
+//        ),
+//      );
+//    }
+
     if (image != null) {
+    await _cropImage(File(image.path));
+    }
+  }
+
+  Future<Null> _cropImage(File imageFile) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: imageFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    //    if (croppedFile != null) {
+    //      imageFile = croppedFile;
+    //      setState(() {
+    //        state = AppState.cropped;
+    //      });
+    //    }
+
+    if (croppedFile != null) {
       Navigation.toScreen(
         context: context,
         screen: EditPictureScreen(
           mainScreenBloc: mainScreenBloc,
-          image: File(image.path),
+          image: File(croppedFile.path),
         ),
       );
     }
   }
-
   @override
   void dispose() {
     mainScreenBloc.close();
