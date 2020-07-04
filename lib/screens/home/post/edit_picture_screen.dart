@@ -70,18 +70,18 @@ class _EditPictureScreenState extends State<EditPictureScreen>
       })
       ..addStatusListener((status) {});
     controller.reverse();
-    source = ExtendedImage.file(
+    source = Image.file(
       image,
       fit: BoxFit.contain,
-      mode: ExtendedImageMode.editor,
-      extendedImageEditorKey: editorKey,
-      initEditorConfigHandler: (state) {
-        return EditorConfig(
-            maxScale: 8.0,
-            cropRectPadding: EdgeInsets.all(20.0),
-            hitTestSize: 20.0,
-            cropAspectRatio: CropAspectRatios.ratio3_4);
-      },
+//      mode: ExtendedImageMode.editor,
+//      extendedImageEditorKey: editorKey,
+//      initEditorConfigHandler: (state) {
+//        return EditorConfig(
+//            maxScale: 8.0,
+//            cropRectPadding: EdgeInsets.all(20.0),
+//            hitTestSize: 20.0,
+//            cropAspectRatio: CropAspectRatios.ratio3_4);
+//      },
     );
     super.initState();
   }
