@@ -52,7 +52,8 @@ dependencies:
   flutter_downloader: 1.4.4
   flutter_svg: ^0.17.0
   flutter_advanced_networkimage: ^0.7.0
-  websafe_svg: 1.1.0
+  image_cropper: ^1.2.3
+
 dev_dependencies:
   build_runner: ^1.10.0
   json_serializable: ^3.3.0
