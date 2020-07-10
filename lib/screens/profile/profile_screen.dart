@@ -61,22 +61,6 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       ProfileSettingModel(
         icon: ImageIcon(
-          AssetImage('assets/icons/ic_baby_solid.png'),
-          size: 20,
-          color: lightTheme.accentColor,
-        ),
-        title: 'Babies',
-        function: () {
-          Navigation.toScreen(
-            context: context,
-            screen: BabiesVisibleScreen(
-              mainScreenBloc: widget.mainScreenBloc,
-            ),
-          );
-        },
-      ),
-      ProfileSettingModel(
-        icon: ImageIcon(
           AssetImage('assets/icons/ic_report_solid.png'),
           size: 20,
           color: lightTheme.accentColor,
