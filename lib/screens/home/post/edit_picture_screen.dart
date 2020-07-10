@@ -5,6 +5,7 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/sticker_model.dart';
 import 'package:Viiddo/screens/home/post/all_stickers_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_complete_screen.dart';
+import 'package:Viiddo/screens/home/post/post_screen.dart';
 import 'package:Viiddo/screens/home/post/sticker_image.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:extended_image/extended_image.dart';
@@ -123,9 +124,9 @@ class _EditPictureScreenState extends State<EditPictureScreen>
                   onPressed: () {
                     Navigation.toScreen(
                       context: context,
-                      screen: EditPictureCompleteScreen(
+                      screen: PostScreen(
                         bloc: screenBloc,
-                        image: this.image,
+                        image: image,
                       ),
                     );
                   },

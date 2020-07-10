@@ -18,25 +18,25 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-    <key>FDMaximumConcurrentTasks</key>
-    <integer>5</integer>
-    <key>FDAllFilesDownloadedMessage</key>
-    <string>All files have been downloaded</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb2424610224449561</string>
+				<string>fb1205305599809297</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FDAllFilesDownloadedMessage</key>
+	<string>All files have been downloaded</string>
+	<key>FDMaximumConcurrentTasks</key>
+	<integer>5</integer>
 	<key>FacebookAppID</key>
-	<string>2424610224449561</string>
+	<string>1205305599809297</string>
 	<key>FacebookDisplayName</key>
-	<string>Viiddo</string>
+	<string>Viiddo app</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

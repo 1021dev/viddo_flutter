@@ -33,8 +33,12 @@ class _PostScreenState extends State<PostScreen>
   final TextEditingController captionController = TextEditingController();
   FocusNode captionFocus = FocusNode();
 
+  List<File> images = [];
   @override
   void initState() {
+    if (widget.image != null) {
+      images.add(widget.image);
+    }
     super.initState();
   }
 
@@ -182,7 +186,7 @@ class _PostScreenState extends State<PostScreen>
                     ),
                     child: ListView.builder(
                       physics: AlwaysScrollableScrollPhysics(),
-                      itemCount: 3,
+                      itemCount: images.length + 1,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return _photoItem(index);
@@ -482,20 +486,18 @@ class _PostScreenState extends State<PostScreen>
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: widget.image == null
+                  image: index == images.length
                       ? new AssetImage(
-                          index == 2
-                              ? 'assets/icons/ic_upload.png'
-                              : 'assets/icons/signin_logo.png',
-                        )
+                    'assets/icons/ic_upload.png',
+                  )
                       : Image.file(
-                          widget.image,
-                        ),
+                    images[index],
+                  ).image,
                 ),
               ),
             ),
           ),
-          index == 2
+          index == images.length
               ? Container()
               : GestureDetector(
                   child: Container(
