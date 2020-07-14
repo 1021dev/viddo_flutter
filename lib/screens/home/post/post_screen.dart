@@ -9,6 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'edit_picture_screen.dart';
 
 
 class PostScreen extends StatefulWidget {
@@ -476,7 +480,41 @@ class _PostScreenState extends State<PostScreen>
         alignment: Alignment.topRight,
         children: <Widget>[
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              if (index == images.length) {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoActionSheet(
+                      title: const Text('Choose Photo'),
+                      message: const Text('Your options are '),
+                      actions: <Widget>[
+                        CupertinoActionSheetAction(
+                          child: const Text('Take a Picture'),
+                          onPressed: () {
+                            Navigator.pop(context, 'Take a Picture');
+                            getImage(0);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Camera Roll'),
+                          onPressed: () {
+                            Navigator.pop(context, 'Camera Roll');
+                            getImage(1);
+                          },
+                        )
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        isDefaultAction: true,
+                        onPressed: () {
+                          Navigator.pop(context, 'Cancel');
+                        },
+                      )),
+                );
+              } else {
+                Navigator.pop(context);
+              }
+            },
             child: Container(
               width: 80,
               height: 80,
@@ -522,4 +560,58 @@ class _PostScreenState extends State<PostScreen>
   void dispose() {
     super.dispose();
   }
+
+  Future getImage(int type) async {
+    ImagePicker imagePicker = ImagePicker();
+    var image = await imagePicker.getImage(
+      source: type == 0 ? ImageSource.gallery : ImageSource.camera,
+    );
+    if (image != null) {
+      await _cropImage(File(image.path));
+    }
+  }
+
+  Future<Null> _cropImage(File imageFile) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: imageFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+//    if (croppedFile != null) {
+//      imageFile = croppedFile;
+//      setState(() {
+//        state = AppState.cropped;
+//      });
+//    }
+
+    if (croppedFile != null) {
+    }
+
+  }
+
+
 }
