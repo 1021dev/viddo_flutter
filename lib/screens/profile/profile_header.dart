@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 
 class ProfileHeaderView extends StatelessWidget {
   final Function onTap;
+  String avatar;
+  String nikName;
 
-  const ProfileHeaderView({
+  ProfileHeaderView({
     Key key,
     @required this.onTap,
+    this.nikName = '',
+    this.avatar = '',
   }) : super(key: key);
 
   @override
@@ -34,11 +38,26 @@ class ProfileHeaderView extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: 40,
                   ),
-                  Image.asset(
-                    'assets/icons/icon_place_holder.png',
-                    fit: BoxFit.cover,
-                    width: 40,
-                  ),
+                  (avatar != ''
+                      ? Container(
+                          width: 35.0,
+                          height: 35.0,
+                          padding: EdgeInsets.all(4),
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.cover,
+                              image: new NetworkImage(
+                                avatar,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/icons/icon_place_holder.png',
+                          fit: BoxFit.cover,
+                          width: 40,
+                        ))
                 ],
               ),
               Padding(
@@ -50,7 +69,7 @@ class ProfileHeaderView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Test',
+                      nikName,
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFFE46E5C),

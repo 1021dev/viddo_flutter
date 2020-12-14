@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
 import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
+import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +29,9 @@ class _BabiesScreenState extends State<BabiesScreen>
 
   @override
   void initState() {
+    if (widget.bloc.state.babyListModel == null) {
+      widget.bloc.add(GetBabyListModel(0));
+    }
     super.initState();
   }
 
@@ -75,119 +80,127 @@ class _BabiesScreenState extends State<BabiesScreen>
   }
 
   Widget _getBody(MainScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      return GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: SafeArea(
-          key: formKey,
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 86,
-                  padding: EdgeInsets.only(
-                    top: 8,
-                    bottom: 8,
-                    left: 36,
-                    right: 36,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {},
-                        child: Column(
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/icons/baby_list_add.png',
-                              width: 45,
-                              height: 45,
-                              color: Color(0xFFFFA685),
-                            ),
-                            Text(
-                              'Add Baby',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Column(
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/icons/invitation_code.png',
-                              width: 45,
-                              height: 45,
-                              color: Color(0xFFFFA685),
-                            ),
-                            Text(
-                              'Enter Invitation Code',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Column(
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/icons/scan_qr.png',
-                              width: 45,
-                              height: 45,
-                              color: Color(0xFFFFA685),
-                            ),
-                            Text(
-                              'Scan',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontSize: 12,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+    List<BabyModel> babyListModel = state.babyListModel != null ? state.babyListModel.content : [];
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: SafeArea(
+        key: formKey,
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 86,
+                padding: EdgeInsets.only(
+                  top: 8,
+                  bottom: 8,
+                  left: 36,
+                  right: 36,
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: 4,
-                    itemBuilder: (BuildContext context, int index) {
-                      return BabiesItemTile(
-                        index: index,
-                        function: () {
-                          Navigation.toScreen(
-                            context: context,
-                            screen: EditBabyInformationScreen(
-                              bloc: widget.bloc,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        Navigation.toScreen(
+                          context: context,
+                          screen: AddBabyScreen(bloc: widget.bloc,),
+                        );
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            'assets/icons/baby_list_add.png',
+                            width: 45,
+                            height: 45,
+                            color: Color(0xFFFFA685),
+                          ),
+                          Text(
+                            'Add Baby',
+                            style: TextStyle(
+                              color: Color(0xFF8476AB),
+                              fontSize: 12,
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                          )
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigation.toScreen(
+                          context: context,
+                          screen: InvitationCodeInputScreen(bloc: widget.bloc,),
+                        );
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            'assets/icons/invitation_code.png',
+                            width: 45,
+                            height: 45,
+                            color: Color(0xFFFFA685),
+                          ),
+                          Text(
+                            'Enter Invitation Code',
+                            style: TextStyle(
+                              color: Color(0xFF8476AB),
+                              fontSize: 12,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            'assets/icons/scan_qr.png',
+                            width: 45,
+                            height: 45,
+                            color: Color(0xFFFFA685),
+                          ),
+                          Text(
+                            'Scan',
+                            style: TextStyle(
+                              color: Color(0xFF8476AB),
+                              fontSize: 12,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: babyListModel.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return BabiesItemTile(
+                      model: babyListModel[index],
+                      function: () {
+                        Navigation.toScreen(
+                          context: context,
+                          screen: EditBabyInformationScreen(
+                            bloc: widget.bloc,
+                            baby: babyListModel[index],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   Future<Null> _handleRefresh(context) {
