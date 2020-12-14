@@ -38,7 +38,7 @@ DynamicContent _$DynamicContentFromJson(Map<String, dynamic> json) {
         ?.toList(),
     isLike: json['isLike'] as bool,
     canEdit: json['canEdit'] as bool,
-    toWho: json['toWho'] as int,
+    toWho: json['toWho'] as String,
     lat: (json['lat'] as num)?.toDouble(),
     lng: (json['lng'] as num)?.toDouble(),
     babys: (json['babys'] as List)

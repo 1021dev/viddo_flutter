@@ -42,7 +42,7 @@ class _WebViewScreenState extends State<WebViewScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         textTheme: TextTheme(
-          title: TextStyle(
+          headline6: TextStyle(
             color: Color(0xFF7861B7),
             fontSize: 18.0,
             fontFamily: 'Roboto',

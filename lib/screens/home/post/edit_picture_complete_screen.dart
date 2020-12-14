@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditPictureCompleteScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+  PostBloc bloc;
 
   final File image;
   EditPictureCompleteScreen({
@@ -54,8 +54,8 @@ class _EditPictureCompleteScreenState extends State<EditPictureCompleteScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {},
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      listener: (BuildContext context, PostState state) async {},
+      child: BlocBuilder<PostBloc, PostState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -64,7 +64,7 @@ class _EditPictureCompleteScreenState extends State<EditPictureCompleteScreen>
               backgroundColor: Colors.transparent,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -125,7 +125,7 @@ class _EditPictureCompleteScreenState extends State<EditPictureCompleteScreen>
     );
   }
 
-  Widget _body(MainScreenState state) {
+  Widget _body(PostState state) {
     return Expanded(
       child: Container(
         alignment: Alignment.topCenter,
@@ -136,7 +136,7 @@ class _EditPictureCompleteScreenState extends State<EditPictureCompleteScreen>
     );
   }
 
-  Widget _bottomBar(MainScreenState state) {
+  Widget _bottomBar(PostState state) {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {

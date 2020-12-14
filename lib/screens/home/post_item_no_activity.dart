@@ -1,7 +1,7 @@
 import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/dynamic_tag.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,7 +32,7 @@ class PostNoActivityItem extends StatelessWidget {
     String babyAvatar = content.baby != null ? content.baby.avatar ?? '' : '';
     String babyRelationShip =
         content.baby != null ? content.baby.relationship ?? '' : '';
-    String userName = content.creator != null ? content.creator.name ?? '' : '';
+    String userName = content.creator != null ? content.creator.nickName ?? '' : '';
     String userAvatar =
         content.creator != null ? content.creator.avatar ?? '' : '';
     String desc = content.content ?? '';
@@ -40,7 +40,13 @@ class PostNoActivityItem extends StatelessWidget {
 
     String address = content.address ?? '';
     int created = content.createTime ?? 0;
-    String timeAgo = timeago.format(DateTime.fromMillisecondsSinceEpoch(created));
+    int diff = DateTime.now().millisecondsSinceEpoch - created;
+    String timeAgo = '';
+    if (diff > 86400000) {
+      timeAgo = formatDate(DateTime.fromMillisecondsSinceEpoch(created), [mm, '/', dd, ' ', HH, ':', nn]);
+    } else {
+      timeAgo = timeago.format(DateTime.fromMillisecondsSinceEpoch(created));
+    }
 
     int gridCount = 1;
     int itemCount = 1;
@@ -82,9 +88,9 @@ class PostNoActivityItem extends StatelessWidget {
             (index) {
               String url = photoList[index];
               if (url.contains('http://image.mux.com/')) {
-                return _postView(url, width, height, true, content.albums[index], index, onTapView, photoList);
+                return _postView(url, width, height, true, content.albums[index], index, photoList);
               } else {
-                return _postView(url, width, height, false, '', index, onTapView, photoList);
+                return _postView(url, width, height, false, '', index, photoList);
               }
             },
           ),
@@ -139,13 +145,15 @@ class PostNoActivityItem extends StatelessWidget {
     List<Widget> bottomViewList = [];
     if (content.likeList.length > 0) {
       bottomViewList.add(favView);
-      bottomViewList.add(Divider(
-        color: Color(0x66FFA685),
-        height: 0,
-        thickness: 1,
-      ));
     }
     if (content.commentCount > 0) {
+      if (bottomViewList.length > 0) {
+        bottomViewList.add(Divider(
+          color: Color(0x66FFA685),
+          height: 0,
+          thickness: 1,
+        ));
+      }
       bottomViewList.add(commentView);
     }
 
@@ -163,7 +171,9 @@ class PostNoActivityItem extends StatelessWidget {
     );
 
     final makeListTile = GestureDetector(
-      onTap: onTapDetail,
+      onTap: () {
+        onTapDetail(content);
+      },
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -179,53 +189,58 @@ class PostNoActivityItem extends StatelessWidget {
                 left: 12,
                 right: 12,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: 30.0,
-                    height: 30.0,
-                    padding: EdgeInsets.all(4),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: FadeInImage.assetNetwork(
-                          placeholder: 'assets/icons/ic_baby_solid.png',
-                          image: babyAvatar,
-                        ).image,
+              child: GestureDetector(
+                onTap: () {
+                  onTapView(content);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: 30.0,
+                      height: 30.0,
+                      padding: EdgeInsets.all(4),
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: babyAvatar != '' ? FadeInImage.assetNetwork(
+                            placeholder: 'assets/icons/ic_baby_solid.png',
+                            image: babyAvatar,
+                          ).image : AssetImage('assets/icons/ic_baby_solid.png'),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 12,
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 12,
+                      ),
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                          text: babyName,
-                          style: TextStyle(
-                            color: Color(0xFFE46E5C),
-                            fontFamily: 'Roboto',
-                            fontSize: 13,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        RichText(
+                          text: TextSpan(
+                            text: babyName,
+                            style: TextStyle(
+                              color: Color(0xFFE46E5C),
+                              fontFamily: 'Roboto',
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        address,
-                        style: TextStyle(
-                          color: Color(0xFF8476AB),
-                          fontFamily: 'Roboto',
-                          fontSize: 10,
+                        Text(
+                          address,
+                          style: TextStyle(
+                            color: Color(0xFF8476AB),
+                            fontFamily: 'Roboto',
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             desc != '' ?
@@ -263,11 +278,14 @@ class PostNoActivityItem extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 image: new DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: FadeInImage.assetNetwork(
+                                  image: userAvatar != '' ? FadeInImage.assetNetwork(
                                     placeholder:
-                                        'assets/icons/baby_icon_place_holder.png',
+                                        'assets/icons/icon_place_holder.png',
                                     image: userAvatar,
-                                  ).image,
+                                  ).image: Image.asset(
+                                      'assets/icons/icon_place_holder.png',
+                                      fit: BoxFit.cover,
+                                    ).image,
                                 ),
                               ),
                             ),
@@ -356,10 +374,7 @@ class PostNoActivityItem extends StatelessWidget {
     );
   }
 
-  Widget _postView(String picture, double width, double height, bool isVideo, String videoUrl, int index, Function onTap, List<String> photoList) {
-    // return GestureDetector(
-    //   onTap: () {onTap(index);},
-    //   child: 
+  Widget _postView(String picture, double width, double height, bool isVideo, String videoUrl, int index, List<String> photoList) {
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -378,16 +393,7 @@ class PostNoActivityItem extends StatelessWidget {
               list: content.albums,
             ),
           ),
-          isVideo ? IconButton(
-            icon: Icon(
-                Icons.play_circle_outline,
-                color: Colors.white,
-                size: 36,
-              ),
-            onPressed: () {onTap(index);},
-          ) : Container(),
         ],
-      // ),
     );
   }
 
@@ -418,7 +424,7 @@ class PostNoActivityItem extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 4),
           child: Text(
-            creator.name,
+            lines.length == groups.length ? creator.name : '${creator.name},',
             style: TextStyle(
               color: Color(0xFFFFA685),
               fontFamily: 'Roboto',

@@ -2,15 +2,21 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:Viiddo/models/activity_notification_list_model.dart';
+import 'package:Viiddo/models/agree_info_model.dart';
 import 'package:Viiddo/models/baby_list_model.dart';
 import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/models/dynamic_content.dart';
 import 'package:Viiddo/models/friend_list_model.dart';
+import 'package:Viiddo/models/growth_record_list_model.dart';
 import 'package:Viiddo/models/message_list_model.dart';
 import 'package:Viiddo/models/message_model.dart';
 import 'package:Viiddo/models/page_response_model.dart';
+import 'package:Viiddo/models/sticker_category_model.dart';
+import 'package:Viiddo/models/sticker_list_model.dart';
+import 'package:Viiddo/models/sticker_model.dart';
 import 'package:Viiddo/models/unread_message_model.dart';
-import 'package:amazon_s3_cognito/amazon_s3_cognito.dart';
-import 'package:amazon_s3_cognito/aws_region.dart';
+import 'package:Viiddo/models/vaccine_list_model.dart';
+import 'package:Viiddo/models/vaccine_model.dart';
 import 'package:aws_s3/aws_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -303,9 +309,9 @@ class ApiService {
   }
 
   Future<bool> getSmsCode(
-    String email,
-    String type,
-  ) async {
+      String email,
+      String type,
+      ) async {
     try {
       FormData formData = FormData.fromMap({
         'email': email,
@@ -332,6 +338,198 @@ class ApiService {
       return false;
     } on DioError catch (e, s) {
       print('updatePassword error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> resetPassword(
+      String email,
+      String password,
+      String code,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'email': email,
+        'password': password,
+        'code': code,
+      });
+      Response response = await _client.postForm(
+        '${url}account/resetpassword',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('resetPassword: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('resetPassword error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> changeEmail(
+      String oldEmail,
+      String newEmail,
+      String password,
+      String newCode,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'oldEmail': oldEmail,
+        'newEmail': newEmail,
+        'password': password,
+        'newCode': newCode,
+      });
+      Response response = await _client.postForm(
+        '${url}account/changeEmail',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('changeEmail: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('changeEmail error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> verifyOldEmail(
+      String oldEmail,
+      String code,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'oldEmail': oldEmail,
+        'code': code,
+      });
+      Response response = await _client.postForm(
+        '${url}account/verifyOldEmail',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('verifyOldEmail: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('verifyOldEmail error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> checkCode(
+      String code,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'code': code,
+      });
+      Response response = await _client.postForm(
+        '${url}account/checkCode',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('checkCode: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('checkCode error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> logout() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}account/logout',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('logout: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('logout error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> accountTime() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}account/time',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('accountTime: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('accountTime error: $e, $s');
       return Future.error(e);
     }
   }
@@ -393,24 +591,24 @@ class ApiService {
         String path = imageFiles[i].path;
         String extension = p.extension(path);
 
-       String result;
-       AwsS3 awsS3 = AwsS3(
-           awsFolderPath: 'Posts',
-           file: imageFiles[i],
-           fileNameWithExt: '${uuid}_$i$extension',
-           poolId: Constants.cognitoPoolId,
-           region: Regions.US_EAST_2,
-           bucketName: Constants.bucket);
-       try {
-         try {
-           result = await awsS3.uploadFile;
-           debugPrint("Result :'$result'.");
-         } on PlatformException {
-           debugPrint("Result :'$result'.");
-         }
-       } on PlatformException catch (e) {
-         debugPrint("Failed :'${e.message}'.");
-       }
+        String result;
+        AwsS3 awsS3 = AwsS3(
+            awsFolderPath: 'Posts',
+            file: imageFiles[i],
+            fileNameWithExt: '${uuid}_$i$extension',
+            poolId: Constants.cognitoPoolId,
+            region: Regions.US_EAST_2,
+            bucketName: Constants.bucket);
+        try {
+          try {
+            result = await awsS3.uploadFile;
+            debugPrint("Result :'$result'.");
+          } on PlatformException {
+            debugPrint("Result :'$result'.");
+          }
+        } on PlatformException catch (e) {
+          debugPrint("Failed :'${e.message}'.");
+        }
 
         // String uploadedImageUrl = await AmazonS3Cognito.upload(
         //     imageFiles[i].path,
@@ -460,6 +658,37 @@ class ApiService {
       return null;
     } on DioError catch (e, s) {
       print('getFriendsByBaby error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> inviteJoinBaby(
+    int objectId,
+    String email,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({'objectId': objectId, 'email': email});
+      Response response = await _client.postForm(
+        '${url}user/inviteJoinBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('inviteJoinBaby: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('inviteJoinBaby error: $e, $s');
       return Future.error(e);
     }
   }
@@ -593,6 +822,220 @@ class ApiService {
     }
   }
 
+  Future<bool> deleteMoment(
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+      });
+      Response response = await _client.postForm(
+        '${url}information/deleteMoment',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('deleteMoment: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('deleteMoment error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> deleteBaby(
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+      });
+      Response response = await _client.postForm(
+        '${url}user/deleteBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('deleteBaby: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('deleteBaby error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> deleteBodyRecord(
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+      });
+      Response response = await _client.postForm(
+        '${url}user/deleteBodyRecord',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('deleteBodyRecord: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('deleteBodyRecord error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> removeFriendShip(
+    int objectId,
+    int babyId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'babyId': babyId,
+      });
+      Response response = await _client.postForm(
+        '${url}user/removeFriendShip',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('removeFriendShip: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('removeFriendShip error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> babyBorn(
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+      });
+      Response response = await _client.postForm(
+        '${url}user/babyBorn',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('babyBorn: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('babyBorn error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> postMonment(
+      String content,
+      String resource,
+      String tags,
+      String address,
+      double lat,
+      double lng,
+      String toWho,
+      int addTime,
+      String babyids,
+      int objectId,
+      int tagId,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'content': content,
+        'resource': resource,
+        'tags': tags,
+        'address': address,
+        'lat': lat,
+        'lng': lng,
+        'toWho': toWho,
+        'addTime': addTime,
+        'babyids': babyids,
+        'objectId': objectId,
+        'tagId': tagId,
+      });
+      Response response = await _client.postForm(
+        '${url}information/postMonment',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('postMonment: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('postMonment error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
   Future<bool> getRefreshInformation() async {
     try {
       Response response = await _client.postForm(
@@ -669,6 +1112,76 @@ class ApiService {
           MessageModel messageModel =
               MessageModel.fromJson(responseModel.content);
           return messageModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getSystemMessageDetails error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> feedback(
+      String content,
+      String attachs,
+      String email,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'content': content,
+        'attachs': attachs,
+        'email': email,
+      });
+      Response response = await _client.postForm(
+        '${url}common/feedback',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getSystemMessageDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        return true;
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('getSystemMessageDetails error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<String> getStaticPage(
+      String content,
+      String attachs,
+      String email,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'content': content,
+        'attachs': attachs,
+        'email': email,
+      });
+      Response response = await _client.postForm(
+        '${url}common/getStaticPage',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getSystemMessageDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return responseModel.content['data'];
         }
       }
       return null;
@@ -893,6 +1406,187 @@ class ApiService {
     }
   }
 
+  Future<bool> addBodyRecord(
+    double height,
+    double weight,
+    int recodTime,
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'weight': weight,
+        'height': height,
+        'recodTime': recodTime,
+        });
+      Response response = await _client.postForm(
+        '${url}user/addBodyRecord',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('addBodyRecord: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status == 200) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('addBodyRecord error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<GrowthRecordListModel> getBodyRecord(
+    int page,
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'page': page,
+        });
+      Response response = await _client.postForm(
+        '${url}user/getBodyRecord',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getBodyRecord: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status == 200) {
+          GrowthRecordListModel growthRecordListModel = GrowthRecordListModel.fromJson(responseModel.content);
+          return growthRecordListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getBodyRecord error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<VaccineListModel> getVaccineByBaby(
+    int page,
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'page': page,
+        });
+      Response response = await _client.postForm(
+        '${url}user/getVaccineByBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getVaccineByBaby: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status != null) {
+          VaccineListModel vaccineListModel = VaccineListModel.fromJson(responseModel.content);
+          return vaccineListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getVaccineByBaby error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<VaccineModel> getVaccineDetails(
+    int babyId,
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'babyId': babyId,
+        });
+      Response response = await _client.postForm(
+        '${url}user/getVaccineDetails',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getVaccineDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status != null) {
+          VaccineModel vaccineModel = VaccineModel.fromJson(responseModel.content);
+          return vaccineModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getVaccineDetails error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> setVaccineStatus(
+    int babyId,
+    int time,
+    String status,
+    int objectId,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'time': time,
+        'status': status,
+        'babyId': babyId,
+        });
+      Response response = await _client.postForm(
+        '${url}user/setVaccineStatus',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('setVaccineStatus: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('setVaccineStatus error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
   Future<bool> postComment(
     int objectId, int parentId, int replyUserId, String content,
   ) async {
@@ -906,7 +1600,7 @@ class ApiService {
           'accept': '*/*',
         },
       );
-      print('isLikeMoment: {$response}');
+      print('postComment: {$response}');
       if (response.statusCode == 200) {
         ResponseModel responseModel = ResponseModel.fromJson(response.data);
         if (responseModel.status == 1000) {
@@ -918,9 +1612,329 @@ class ApiService {
       }
       return false;
     } on DioError catch (e, s) {
-      print('isLikeMoment error: $e, $s');
+      print('postComment error: $e, $s');
       return Future.error(e);
     }
   }
 
+  Future<bool> addBaby(
+    String avatar,
+    String name,
+    int birthday,
+    String relationship,
+    bool isBirth,
+    String gender,
+    int expectedDate,
+  ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'avatar': avatar,
+        'name': name,
+        'birthday': birthday,
+        'relationship': relationship,
+        'isBirth': isBirth,
+        'gender': gender,
+        'expectedDate': expectedDate,
+        });
+      Response response = await _client.postForm(
+        '${url}user/addBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('addBaby: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.status == 200) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('addBaby error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> verifyInvitationCode(
+      String invitationCode,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'invitationCode': invitationCode,
+      });
+      Response response = await _client.postForm(
+        '${url}user/VerifyInvitationCode',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('verifyInvitationCode: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('verifyInvitationCode error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> joinBaby(
+      String invitationCode,
+      String relationship,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'invitationCode': invitationCode,
+        'relationship': relationship,
+      });
+      Response response = await _client.postForm(
+        '${url}user/joinBaby',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('joinBaby: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('joinBaby error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<DynamicContent> getMomentDetails(
+      int objectId,
+      int babyId,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'babyId': babyId,
+      });
+      Response response = await _client.postForm(
+        '${url}information/getMonmentDetails',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getMomentDetails: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          DynamicContent dynamicContent =
+          DynamicContent.fromJson(responseModel.content);
+          return dynamicContent;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getMomentDetails error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<AgreeInfoModel> invitateFriendsDetails(
+      int objectId,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+      });
+      Response response = await _client.postForm(
+        '${url}invitate/FriendsDetials',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('invitateFriendsDetials: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          AgreeInfoModel agreeInfoModel =
+          AgreeInfoModel.fromJson(responseModel.content);
+          return agreeInfoModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('invitateFriendsDetials error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> invitateDispose(
+      int objectId,
+      bool isAgree,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'objectId': objectId,
+        'isAgree': isAgree,
+      });
+      Response response = await _client.postForm(
+        '${url}invitate/dispose',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('invitateDispose: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          return true;
+        }
+      }
+      return false;
+    } on DioError catch (e, s) {
+      print('invitateDispose error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> uploadPushToken(
+      String token,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'token': token,
+      });
+      Response response = await _client.postForm(
+        '${url}common/push?token=$token',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('uploadPushToken: {$response}');
+      return true;
+    } on DioError catch (e, s) {
+      print('uploadPushToken error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<bool> clearBadge() async {
+    try {
+      Response response = await _client.get(
+        '${url}common/clearBadge',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('clearBadge: {$response}');
+      return true;
+    } on DioError catch (e, s) {
+      print('clearBadge error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<List<StickerCategory>> getStikerCategory() async {
+    try {
+      Response response = await _client.postForm(
+        '${url}information/getStikerCategory',
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('getStikerCategory: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          List categories = List.castFrom(responseModel.content);
+          List<StickerCategory> stickerCategory = [];
+          for (int i = 0; i < categories.length; i++)
+          {
+            stickerCategory.add(StickerCategory.fromJson(categories[i]));
+          }
+          return stickerCategory;
+        }
+      }
+      return [];
+    } on DioError catch (e, s) {
+      print('getStikerCategory error: $e, $s');
+      return Future.error(e);
+    }
+  }
+
+  Future<StickerListModel> getStickers(
+      int objectId,
+      int page,
+      ) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'categoryid': objectId,
+        'page': page,
+      });
+      Response response = await _client.postForm(
+        '${url}information/getStickers',
+        body: formData,
+        headers: {
+          'content-type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      );
+      print('objectId => $objectId, page => $page  getStickers: {$response}');
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel.fromJson(response.data);
+        if (responseModel.status == 1000) {
+          return Future.error('Logout');
+        }
+        if (responseModel.content != null) {
+          StickerListModel stickerListModel = StickerListModel.fromJson(responseModel.content);
+          return stickerListModel;
+        }
+      }
+      return null;
+    } on DioError catch (e, s) {
+      print('getStickers error: $e, $s');
+      return Future.error(e);
+    }
+  }
 }

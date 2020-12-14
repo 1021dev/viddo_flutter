@@ -50,6 +50,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       String email = sharedPreferences.getString(Constants.EMAIL) ?? '';
       bool isVerical =
           sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
+      add(UserProfile());
       yield state.copyWith(
         username: username,
         email: email,
@@ -61,7 +62,6 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       );
     } catch (error) {
       yield ProfileScreenFailure(error: error);
-      yield state.copyWith(isLoading: false);
     }
   }
 
@@ -75,6 +75,16 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
       String location = userModel.area ?? '';
       int birthday = userModel.birthDay ?? 0;
       bool isVerical = userModel.vertical ?? false;
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      sharedPreferences.setString(Constants.USERNAME, username);
+      sharedPreferences.setString(Constants.AVATAR, avatar);
+      sharedPreferences.setString(Constants.GENDER, gender);
+      sharedPreferences.setString(Constants.LOCATION, location);
+      sharedPreferences.setInt(Constants.BIRTHDAY, birthday);
+      sharedPreferences.setString(Constants.EMAIL, email);
+      sharedPreferences.setBool(Constants.IS_VERI_CAL, isVerical);
+
       yield state.copyWith(
         userModel: userModel,
         username: username,
@@ -98,6 +108,7 @@ class ProfileScreenBloc extends Bloc<ProfileScreenEvent, ProfileScreenState> {
         event.email,
         event.type,
       );
+      yield state.copyWith(isLoading: false);
       if (isLogin) {
         yield VerificationSuccess();
       } else {
