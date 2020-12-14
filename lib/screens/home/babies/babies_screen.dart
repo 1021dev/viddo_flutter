@@ -4,7 +4,7 @@ import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
 import 'package:Viiddo/screens/home/babies/babies_item_tile.dart';
-import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
 import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
@@ -59,7 +59,7 @@ class _BabiesScreenState extends State<BabiesScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -81,114 +81,116 @@ class _BabiesScreenState extends State<BabiesScreen>
 
   Widget _getBody(MainScreenState state) {
     List<BabyModel> babyListModel = state.babyListModel != null ? state.babyListModel.content : [];
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-      child: SafeArea(
+    return SafeArea(
         key: formKey,
-        child: Container(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                height: 86,
-                padding: EdgeInsets.only(
-                  top: 8,
-                  bottom: 8,
-                  left: 36,
-                  right: 36,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigation.toScreen(
-                          context: context,
-                          screen: AddBabyScreen(bloc: widget.bloc,),
-                        );
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(
-                            'assets/icons/baby_list_add.png',
-                            width: 45,
-                            height: 45,
-                            color: Color(0xFFFFA685),
-                          ),
-                          Text(
-                            'Add Baby',
-                            style: TextStyle(
-                              color: Color(0xFF8476AB),
-                              fontSize: 12,
+              SizedBox(
+                height: 90,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    bottom: 8,
+                    left: 36,
+                    right: 36,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          Navigation.toScreen(
+                            context: context,
+                            screen: AddBabyScreen(bloc: widget.bloc,),
+                          );
+                        },
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(
+                              'assets/icons/baby_list_add.png',
+                              width: 45,
+                              height: 45,
+                              color: Color(0xFFFFA685),
                             ),
-                          )
-                        ],
+                            Text(
+                              'Add Baby',
+                              style: TextStyle(
+                                color: Color(0xFF8476AB),
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigation.toScreen(
-                          context: context,
-                          screen: InvitationCodeInputScreen(bloc: widget.bloc,),
-                        );
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(
-                            'assets/icons/invitation_code.png',
-                            width: 45,
-                            height: 45,
-                            color: Color(0xFFFFA685),
-                          ),
-                          Text(
-                            'Enter Invitation Code',
-                            style: TextStyle(
-                              color: Color(0xFF8476AB),
-                              fontSize: 12,
+                      GestureDetector(
+                        onTap: () {
+                          Navigation.toScreen(
+                            context: context,
+                            screen: InvitationCodeInputScreen(bloc: widget.bloc,),
+                          );
+                        },
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(
+                              'assets/icons/invitation_code.png',
+                              width: 45,
+                              height: 45,
+                              color: Color(0xFFFFA685),
                             ),
-                          )
-                        ],
+                            Text(
+                              'Enter Invitation Code',
+                              style: TextStyle(
+                                color: Color(0xFF8476AB),
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(
-                            'assets/icons/scan_qr.png',
-                            width: 45,
-                            height: 45,
-                            color: Color(0xFFFFA685),
-                          ),
-                          Text(
-                            'Scan',
-                            style: TextStyle(
-                              color: Color(0xFF8476AB),
-                              fontSize: 12,
+                      GestureDetector(
+                        onTap: () {},
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(
+                              'assets/icons/scan_qr.png',
+                              width: 45,
+                              height: 45,
+                              color: Color(0xFFFFA685),
                             ),
-                          )
-                        ],
+                            Text(
+                              'Scan',
+                              style: TextStyle(
+                                color: Color(0xFF8476AB),
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: ListView.builder(
                   itemCount: babyListModel.length,
+                  shrinkWrap: false,
+                  physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
+                    print(state.babyId);
                     return BabiesItemTile(
                       model: babyListModel[index],
+                      isSelected: babyListModel[index].objectId == state.babyId,
                       function: () {
+                        widget.bloc.add(SelectBabyEvent(babyListModel[index]));
                         Navigation.toScreen(
                           context: context,
-                          screen: EditBabyInformationScreen(
-                            bloc: widget.bloc,
-                            baby: babyListModel[index],
+                          screen: BabyDetailsScreen(
+                            screenBloc: widget.bloc,
+                            babyModel: babyListModel[index],
                           ),
                         );
                       },
@@ -198,8 +200,6 @@ class _BabiesScreenState extends State<BabiesScreen>
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 

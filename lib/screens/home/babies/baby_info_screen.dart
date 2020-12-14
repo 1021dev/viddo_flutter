@@ -55,7 +55,7 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -76,9 +76,6 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
   }
 
   Widget _getBody(MainScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
       return GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -275,7 +272,6 @@ class _BabyInfoScreenState extends State<BabyInfoScreen>
           ),
         ),
       );
-    }
   }
 
   Widget _relationshipButton(int type, bool isSelected) {

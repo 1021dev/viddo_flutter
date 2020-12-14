@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class InviteSomeOneScreen extends StatefulWidget {
-  ProfileScreenBloc bloc;
+  MainScreenBloc bloc;
 
   InviteSomeOneScreen({
     this.bloc,
@@ -40,8 +40,8 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, ProfileScreenState state) async {},
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+      listener: (BuildContext context, MainScreenState state) async {},
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return DefaultTabController(
@@ -53,7 +53,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 textTheme: TextTheme(
-                  title: TextStyle(
+                  headline6: TextStyle(
                     color: Color(0xFF7861B7),
                     fontSize: 18.0,
                     fontFamily: 'Roboto',
@@ -135,7 +135,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _codeBody(ProfileScreenState state) {
+  Widget _codeBody(MainScreenState state) {
     return Container(
       alignment: Alignment.center,
       child: Padding(
@@ -224,7 +224,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _emailBody(ProfileScreenState state) {
+  Widget _emailBody(MainScreenState state) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -403,7 +403,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Widget _qrBody(ProfileScreenState state) {
+  Widget _qrBody(MainScreenState state) {
     return Container(
       alignment: Alignment.topCenter,
       color: Color(0xFFFFF5EF),
@@ -501,7 +501,7 @@ class _InviteSomeOneScreenState extends State<InviteSomeOneScreen>
     );
   }
 
-  Future<Null> _handleRefresh(context) {
+  Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
     return completer.future;
   }
