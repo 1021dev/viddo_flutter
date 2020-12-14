@@ -155,7 +155,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
               backgroundColor: Colors.transparent,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -429,20 +429,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
         floatingHeader: true,
         groupSeparatorBuilder: (String value) => Container(
           padding: EdgeInsets.only(top: 8, bottom: 4),
-          child: Container(
-            width: 50,
-            height: 16,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color(0xFFFAA382),
-              borderRadius: BorderRadius.circular(3),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: 60,
+              height: 16,
+              alignment: Alignment.center,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Color(0xFFFAA382),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                value,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 9, color: Colors.white),
+              ),
             ),
-            child: Text(
-              value,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 9, color: Colors.white),
-            ),
-          )
+          ),
         ),
         itemBuilder: (c, element) {
           return NotificationMessageItem(

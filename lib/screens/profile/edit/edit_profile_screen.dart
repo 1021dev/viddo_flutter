@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Viiddo/blocs/main/main_bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
 import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
@@ -17,11 +18,8 @@ import '../../../utils/navigation.dart';
 import '../../../utils/widget_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  ProfileScreenBloc bloc;
-
-  EditProfileScreen({
-    this.bloc,
-  });
+  MainScreenBloc mainScreenBloc;
+  EditProfileScreen({this.mainScreenBloc});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -32,9 +30,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   DateTime birthday;
+
+  ProfileScreenBloc profileScreenBloc;
   @override
   void initState() {
     super.initState();
+    profileScreenBloc = ProfileScreenBloc(mainScreenBloc: widget.mainScreenBloc);
+    profileScreenBloc.add(InitProfileScreen());
   }
 
   @override
@@ -44,7 +46,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: widget.bloc,
+      bloc: profileScreenBloc,
       listener: (BuildContext context, ProfileScreenState state) async {
         if (state is UpdateProfileSuccess) {
         } else if (state is ProfileScreenFailure) {
@@ -52,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         }
       },
       child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
-        bloc: widget.bloc,
+        bloc: profileScreenBloc,
         builder: (BuildContext context, state) {
           return ModalProgressHUD(
             child: Scaffold(
@@ -61,7 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 backgroundColor: Colors.white,
                 elevation: 0,
                 textTheme: TextTheme(
-                  title: TextStyle(
+                  headline6: TextStyle(
                     color: Color(0xFF7861B7),
                     fontSize: 18.0,
                     fontFamily: 'Roboto',
@@ -173,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: ChangeNameScreen(
-              screenBloc: widget.bloc,
+              screenBloc: profileScreenBloc,
             ),
           );
         },
@@ -193,7 +195,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     child: const Text('Male'),
                     onPressed: () {
                       Navigator.pop(context, 'Male');
-                      widget.bloc.add(
+                      profileScreenBloc.add(
                         UpdateUserProfile({'gender': 'M'}),
                       );
                     },
@@ -202,7 +204,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     child: const Text('Female'),
                     onPressed: () {
                       Navigator.pop(context, 'Female');
-                      widget.bloc.add(
+                      profileScreenBloc.add(
                         UpdateUserProfile({'gender': 'F'}),
                       );
                     },
@@ -241,7 +243,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             ),
                           ),
                           onPressed: () {
-                            widget.bloc.add(
+                            profileScreenBloc.add(
                               UpdateUserProfile({'birthDay': state.birthday}),
                             );
                             Navigator.of(context).pop();
@@ -257,7 +259,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                           onPressed: () {
                             Navigator.of(context).pop();
 
-                            widget.bloc.add(
+                            profileScreenBloc.add(
                               UpdateUserProfile({
                                 'birthDay': birthday.millisecondsSinceEpoch
                               }),
@@ -272,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         initialDateTime: birthday ?? DateTime.now(),
                         onDateTimeChanged: (DateTime newdate) {
                           print(newdate);
-                          widget.bloc.add(
+                          profileScreenBloc.add(
                             UpdateBirthDay(newdate),
                           );
                         },
@@ -294,7 +296,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           Navigation.toScreen(
             context: context,
             screen: ChangeLocationScreen(
-              bloc: widget.bloc,
+              bloc: profileScreenBloc,
             ),
           );
         },
@@ -331,7 +333,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (image != null) {
       List<File> files = [];
       files.add(new File(image.path));
-      widget.bloc.add(PickImageFile(files));
+      profileScreenBloc.add(PickImageFile(files));
     }
   }
 

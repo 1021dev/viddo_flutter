@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:Viiddo/blocs/main/main_bloc.dart';
 import 'package:flutter/material.dart';
 
 class BottomSelector extends StatelessWidget {
@@ -8,8 +7,10 @@ class BottomSelector extends StatelessWidget {
   final Function cameraFunction;
   final Function growthFunction;
   final Function vaccinesFunction;
+  final MainScreenBloc mainScreenBloc;
   const BottomSelector({
     Key key,
+    this.mainScreenBloc,
     this.closeFunction,
     this.libraryFunction,
     this.cameraFunction,
@@ -19,6 +20,7 @@ class BottomSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String avatar = mainScreenBloc.state.babyModel != null ? mainScreenBloc.state.babyModel.avatar ?? '' : '';
     final makeContent = Container(
       height: 235,
       margin: EdgeInsets.only(bottom: 0, left: 0, right: 0),
@@ -43,9 +45,9 @@ class BottomSelector extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: new DecorationImage(
                     fit: BoxFit.cover,
-                    image: new NetworkImage(
-                      'https://i.imgur.com/BoN9kdC.png',
-                    ),
+                    image: avatar != '' ? new NetworkImage(
+                      avatar,
+                    ): Image.asset('assets/icons/ic_baby_solid.png').image,
                   ),
                 ),
               ),

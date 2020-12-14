@@ -9,10 +9,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'edit_picture_screen.dart';
 
 
 class PostScreen extends StatefulWidget {
-  final MainScreenBloc bloc;
+  final PostBloc bloc;
 
   final File image;
 
@@ -33,8 +37,12 @@ class _PostScreenState extends State<PostScreen>
   final TextEditingController captionController = TextEditingController();
   FocusNode captionFocus = FocusNode();
 
+  List<File> images = [];
   @override
   void initState() {
+    if (widget.image != null) {
+      images.add(widget.image);
+    }
     super.initState();
   }
 
@@ -46,10 +54,10 @@ class _PostScreenState extends State<PostScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, MainScreenState state) async {
+      listener: (BuildContext context, PostState state) async {
         FocusScope.of(context).unfocus();
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+      child: BlocBuilder<PostBloc, PostState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -62,7 +70,7 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _getBody(MainScreenState state) {
+  Widget _getBody(PostState state) {
     if (state.isLoading) {
       return WidgetUtils.loadingView();
     } else {
@@ -182,7 +190,7 @@ class _PostScreenState extends State<PostScreen>
                     ),
                     child: ListView.builder(
                       physics: AlwaysScrollableScrollPhysics(),
-                      itemCount: 3,
+                      itemCount: images.length + 1,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return _photoItem(index);
@@ -472,7 +480,41 @@ class _PostScreenState extends State<PostScreen>
         alignment: Alignment.topRight,
         children: <Widget>[
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              if (index == images.length) {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoActionSheet(
+                      title: const Text('Choose Photo'),
+                      message: const Text('Your options are '),
+                      actions: <Widget>[
+                        CupertinoActionSheetAction(
+                          child: const Text('Take a Picture'),
+                          onPressed: () {
+                            Navigator.pop(context, 'Take a Picture');
+                            getImage(0);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Camera Roll'),
+                          onPressed: () {
+                            Navigator.pop(context, 'Camera Roll');
+                            getImage(1);
+                          },
+                        )
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        isDefaultAction: true,
+                        onPressed: () {
+                          Navigator.pop(context, 'Cancel');
+                        },
+                      )),
+                );
+              } else {
+                Navigator.pop(context);
+              }
+            },
             child: Container(
               width: 80,
               height: 80,
@@ -482,20 +524,18 @@ class _PostScreenState extends State<PostScreen>
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: widget.image == null
+                  image: index == images.length
                       ? new AssetImage(
-                          index == 2
-                              ? 'assets/icons/ic_upload.png'
-                              : 'assets/icons/signin_logo.png',
-                        )
+                    'assets/icons/ic_upload.png',
+                  )
                       : Image.file(
-                          widget.image,
-                        ),
+                    images[index],
+                  ).image,
                 ),
               ),
             ),
           ),
-          index == 2
+          index == images.length
               ? Container()
               : GestureDetector(
                   child: Container(
@@ -520,4 +560,58 @@ class _PostScreenState extends State<PostScreen>
   void dispose() {
     super.dispose();
   }
+
+  Future getImage(int type) async {
+    ImagePicker imagePicker = ImagePicker();
+    var image = await imagePicker.getImage(
+      source: type == 0 ? ImageSource.gallery : ImageSource.camera,
+    );
+    if (image != null) {
+      await _cropImage(File(image.path));
+    }
+  }
+
+  Future<Null> _cropImage(File imageFile) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: imageFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+//    if (croppedFile != null) {
+//      imageFile = croppedFile;
+//      setState(() {
+//        state = AppState.cropped;
+//      });
+//    }
+
+    if (croppedFile != null) {
+    }
+
+  }
+
+
 }

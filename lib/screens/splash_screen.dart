@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _getBody(SplashScreenState state) {
-    return Center(child: Image.asset('assets/icons/signin_logo.png'));
+    return Container();//Center(child: Image.asset('assets/icons/signin_logo.png'));
   }
 
   @override
