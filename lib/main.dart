@@ -1,15 +1,28 @@
+import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
+import 'package:Viiddo/screens/home/babies/babies_screen.dart';
+import 'package:Viiddo/screens/home/babies/edit_baby_information.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
+import 'package:Viiddo/screens/home/comments/comment_screen.dart';
+import 'package:Viiddo/screens/main_screen.dart';
+import 'package:Viiddo/screens/register_screen.dart';
+import 'package:Viiddo/screens/reset_password_screen.dart';
 import 'package:Viiddo/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 import 'blocs/simple_bloc_delegate.dart';
 import 'env.dart';
+import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'themes.dart';
 
+const debug = true;
 Future main() async {
   BlocSupervisor.delegate = SimpleBlocDelegate();
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: debug);
   Env();
 }
 
@@ -53,6 +66,18 @@ class ViiddoState extends State<Viiddo> {
       },
       theme: lightTheme,
       home: SplashScreen(),
+      routes: <String, WidgetBuilder> {
+        '/splash' : (BuildContext context) => new SplashScreen(),
+        '/login' : (BuildContext context) => new LoginScreen(),
+        '/register' : (BuildContext context) => new RegisterScreen(),
+        '/resetpassword' : (BuildContext context) => new ResetPasswordScreen(),
+        '/main' : (BuildContext context) => new MainScreen(),
+        '/babydetails' : (BuildContext context) => new BabyDetailsScreen(),
+        '/babylist' : (BuildContext context) => new BabiesScreen(),
+        '/addbaby' : (BuildContext context) => new AddBabyScreen(),
+        '/editbaby' : (BuildContext context) => new EditBabyInformationScreen(),
+        '/comments' : (BuildContext context) => new CommentScreen(),
+      },
     );
   }
 }

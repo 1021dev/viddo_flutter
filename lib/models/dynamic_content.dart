@@ -28,7 +28,7 @@ class DynamicContent extends Jsonable {
   List<DynamicTag> tags;
   bool isLike;
   bool canEdit;
-  int toWho;
+  String toWho;
   double lat;
   double lng;
   List<BabyInfo> babys;
