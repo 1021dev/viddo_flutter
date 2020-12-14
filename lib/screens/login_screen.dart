@@ -60,10 +60,21 @@ class _LoginScreenState extends State<LoginScreen> {
               'username', emailController.text.toString());
           sharedPreferences.setString(
               'password', passwordController.text.toString());
-          Navigation.toScreenAndCleanBackStack(
-            context: context,
-            screen: MainScreen(),
-          );
+          if (state.isVerical) {
+            Navigation.toScreenAndCleanBackStack(
+              context: context,
+              screen: MainScreen(
+                selectedPage: 0,
+              ),
+            );
+          } else {
+            Navigation.toScreenAndCleanBackStack(
+              context: context,
+              screen: MainScreen(
+                selectedPage: 2,
+              ),
+            );
+          }
         }
       },
       child: BlocBuilder<LoginScreenBloc, LoginScreenState>(

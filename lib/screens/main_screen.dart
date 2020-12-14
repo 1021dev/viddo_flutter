@@ -19,8 +19,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 import '../themes.dart';
+
+
+@FFRoute(
+  name: 'viiddo://mainpage',
+  routeName: 'MainPage',
+)
 
 class OverflowMenuItem {
   final String title;
@@ -45,6 +52,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   MainScreenBloc mainScreenBloc = MainScreenBloc();
   TabController tabController;
   int _selectedIndex = 0;
@@ -52,6 +61,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   List<String> titles = ['Home', '', 'Profile'];
   int loginDate = 0;
   SharedPreferences sharedPreferences;
+  final PageStorageBucket bucket = PageStorageBucket();
 
   @override
   void initState() {
@@ -70,22 +80,50 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
     });
 
+    mainScreenBloc.add(MainScreenInitEvent());
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: mainScreenBloc,
-      listener: (BuildContext context, MainScreenState state) async {},
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MainScreenBloc>(
+          create: (context) => mainScreenBloc,
+        ),
+        BlocProvider<NotificationScreenBloc>(
+          create: (context) => NotificationScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+        BlocProvider<HomeScreenBloc>(
+          create: (context) => HomeScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+        BlocProvider<ProfileScreenBloc>(
+          create: (context) => ProfileScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+        BlocProvider<BabyScreenBloc>(
+          create: (context) => BabyScreenBloc(
+            mainScreenBloc: mainScreenBloc,
+          ),
+        ),
+      ],
       child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: mainScreenBloc,
         builder: (BuildContext context, state) {
           tabs = [
-            HomeScreen(),
+            HomeScreen(key: PageStorageKey('Home'), homeContext: context,),
             Container(),
-            ProfileScreen(),
+            ProfileScreen(key: PageStorageKey('Profile'), homeContext: context,),
           ];
+
+          String babyAvatar = state.babyModel != null ? state.babyModel.avatar ?? '' : '';
+          bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
           return DefaultTabController(
             length: 2,
             child: new Scaffold(
@@ -102,50 +140,86 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 backgroundColor: Colors.white,
                 automaticallyImplyLeading: false,
                 leading: _selectedIndex == 0
-                    ? IconButton(
-                        icon: ImageIcon(
-                          AssetImage('assets/icons/tag_baby.png'),
-                          size: 24,
-                        ),
-                        tooltip: 'Next page',
-                        onPressed: () {
-                          SharedPreferences.getInstance()
-                              .then((SharedPreferences sp) {
-                            sharedPreferences = sp;
-                            bool isVerical =
-                                sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                            if (isVerical) {
-                              Navigation.toScreen(
-                                  context: context,
-                                  screen: BabiesScreen(
-                                    bloc: mainScreenBloc,
-                                  ));
-                            } else {
-                              WidgetUtils.showErrorDialog(
-                                  context, 'Please verify your email first.');
+                    ? GestureDetector(
+                        child: Center(
+                          child: Container(
+                            width: babyAvatar.length > 0 ? 30.0 : 24.0,
+                            height: babyAvatar.length > 0 ? 30.0 : 24.0,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                fit: BoxFit.cover,
+                                image: babyAvatar != '' ?
+                                    FadeInImage.assetNetwork(
+                                      placeholder: 'assets/icons/ic_tag_baby.png',
+                                      image: babyAvatar,
+                                      width: 24,
+                                      height: 24,
+                                    ).image:
+                                      AssetImage('assets/icons/ic_tag_baby.png')
+                                ),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            SharedPreferences.getInstance()
+                                .then((SharedPreferences sp) {
+                              sharedPreferences = sp;
+                              bool isVerical =
+                                  sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                              if (isVerical) {
+                                Navigation.toScreen(
+                                    context: context,
+                                    screen: BabiesScreen(
+                                      bloc: mainScreenBloc,
+                                    ));
+                              } else {
+                                WidgetUtils.showErrorDialog(
+                                    context, 'Please verify your email first.');
+                              }
                             }
-                          });
+                          );
                         },
                       )
                     : Container(),
                 actions: <Widget>[
                   _selectedIndex == 0
-                      ? IconButton(
-                          icon: ImageIcon(
-                            AssetImage('assets/icons/notifications.png'),
-                            size: 24,
+                    ? Stack(
+                        alignment: Alignment.center,
+                          children: <Widget>[
+                            IconButton(
+                            icon: ImageIcon(
+                              AssetImage('assets/icons/notifications.png'),
+                              size: 24,
+                            ),
+                            tooltip: 'Next page',
+                            onPressed: () {
+                              Navigation.toScreen(
+                                context: context,
+                                screen: NotificationsScreen(
+                                  homeContext: context,
+                                ),
+                              );
+                            },
                           ),
-                          tooltip: 'Next page',
-                          onPressed: () {
-                            Navigation.toScreen(
-                              context: context,
-                              screen: NotificationsScreen(
-                                bloc: mainScreenBloc,
-                              ),
-                            );
-                          },
-                        )
-                      : Container(),
+                          hasUnread ? 
+                            Container(
+                              width: 24,
+                              height: 24,
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red,
+                                ),
+                              )
+                            ) : Container(),
+                        ],
+                      )
+                    : Container(),
                 ],
                 elevation: 0,
                 textTheme: TextTheme(
@@ -158,7 +232,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   color: Color(0xFFFFA685),
                 ),
               ),
-              body: Center(
+              body: PageStorage(
+                bucket: bucket,
                 child: tabs[_selectedIndex],
               ),
               bottomNavigationBar: BottomNavigationBar(

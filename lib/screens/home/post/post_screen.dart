@@ -6,12 +6,10 @@ import 'package:Viiddo/screens/main_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../themes.dart';
 
 class PostScreen extends StatefulWidget {
   final MainScreenBloc bloc;
@@ -409,7 +407,7 @@ class _PostScreenState extends State<PostScreen>
                               Row(
                                 children: <Widget>[
                                   Image.asset(
-                                    'assets/icons/tag_baby.png',
+                                    'assets/icons/ic_tag_baby.png',
                                     width: 20,
                                     height: 20,
                                     color: Color(0xFF8476AB),
