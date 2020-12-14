@@ -1,13 +1,13 @@
 import 'package:Viiddo/blocs/splash/splash_bloc.dart';
 import 'package:Viiddo/blocs/splash/splash_event.dart';
 import 'package:Viiddo/blocs/splash/splash_state.dart';
+import 'package:Viiddo/screens/main_screen.dart';
 import 'package:Viiddo/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../themes.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         } else if (state is AutoLoginSuccess) {
           Navigation.toScreenAndCleanBackStack(
             context: context,
-            screen: LoginScreen(),
+            screen: MainScreen(),
           );
         }
       },

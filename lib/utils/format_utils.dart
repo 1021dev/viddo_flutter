@@ -21,4 +21,21 @@ class FormatUtils {
         .replaceAll(')', '')
         .replaceAll('+', '');
   }
+
+  static bool isToday(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final aDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+    return today == aDate;
+  }
+
+  static bool isYesterday(DateTime dateTime) {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final aDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+    return yesterday == aDate;
+  }
+
 }
