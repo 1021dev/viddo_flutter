@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 abstract class HomeScreenEvent extends Equatable {
   HomeScreenEvent();
@@ -6,25 +7,6 @@ abstract class HomeScreenEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
-
-class GetFriendByBaby extends HomeScreenEvent {
-  final int objectId;
-
-  GetFriendByBaby(this.objectId);
-
-  @override
-  List<Object> get props => [objectId];
-}
-
-class GetBabyInfo extends HomeScreenEvent {
-  final int objectId;
-
-  GetBabyInfo(this.objectId);
-
-  @override
-  List<Object> get props => [objectId];
-}
-
 class GetMomentByBaby extends HomeScreenEvent {
   final int objectId;
   final int page;
@@ -44,15 +26,45 @@ class GetMomentByBaby extends HomeScreenEvent {
       ];
 }
 
-class HomeInitEvent extends HomeScreenEvent {}
-
-class HomeScreenRefresh extends HomeScreenEvent {}
-
-class GetDataWithHeader extends HomeScreenEvent {
-  final bool isHeader;
-
-  GetDataWithHeader(this.isHeader);
+@immutable
+class LikeEvent extends HomeScreenEvent {
+  final int objectId;
+  final bool isLike;
+  final int index;
+  LikeEvent(
+    this.objectId,
+    this.isLike,
+    this.index,
+  );
 
   @override
-  List<Object> get props => [isHeader];
+  List<Object> get props => [
+        this.objectId,
+        this.isLike,
+        this.index,
+      ];
 }
+
+@immutable
+class CommentEvent extends HomeScreenEvent {
+  final int objectId;
+  final int parentId;
+  final int replyUserId;
+  final String content;
+  CommentEvent(
+    this.objectId,
+    this.parentId,
+    this.replyUserId,
+    this.content,
+  );
+
+  @override
+  List<Object> get props => [
+        this.objectId,
+        this.parentId,
+        this.replyUserId,
+        this.content,
+      ];
+}
+
+
