@@ -1,19 +1,20 @@
 import 'dart:async';
 
-import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/babies/baby_info_screen.dart';
-import 'package:Viiddo/screens/home/invitation_code_input_screen.dart';
-import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddBabyScreen extends StatefulWidget {
-  MainScreenBloc bloc;
+import 'package:Viiddo/blocs/bloc.dart';
+import 'package:Viiddo/screens/home/babies/baby_info_screen.dart';
+import 'package:Viiddo/screens/home/invite/invitation_code_input_screen.dart';
+import 'package:Viiddo/utils/navigation.dart';
+import 'package:Viiddo/utils/widget_utils.dart';
 
+class AddBabyScreen extends StatefulWidget {
+  final MainScreenBloc bloc;
   AddBabyScreen({
+    Key key,
     this.bloc,
-  });
+  }) : super(key: key);
 
   @override
   _AddBabyScreenState createState() => _AddBabyScreenState();

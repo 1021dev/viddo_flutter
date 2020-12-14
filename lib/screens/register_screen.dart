@@ -1,6 +1,4 @@
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/blocs/login/login_bloc.dart';
-import 'package:Viiddo/blocs/login/login_state.dart';
 import 'package:Viiddo/blocs/register/register.dart';
 import 'package:Viiddo/utils/email_validator.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -8,7 +6,7 @@ import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main_screen.dart';
@@ -26,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   FocusNode emailFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
@@ -52,7 +51,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: screenBloc,
-      listener: (BuildContext context, RegisterScreenState state) async {},
+      listener: (BuildContext context, RegisterScreenState state) async {
+        if (state is RegisterSuccess) {
+          Navigation.toScreenWithReplacement(
+            context: context,
+            screen: MainScreen(
+              selectedPage: 2,
+            ),
+          );
+        } else if (state is RegisterScreenFailure) {
+          WidgetUtils.showErrorDialog(context, state.error);
+        }
+      },
       child: BlocBuilder<RegisterScreenBloc, RegisterScreenState>(
         bloc: screenBloc,
         builder: (BuildContext context, state) {
@@ -164,7 +174,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: emailFocus,
@@ -195,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: userNameFocus,
@@ -226,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: passwordFocus,
@@ -249,7 +259,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
                 suffixIcon: IconButton(
                   icon: ImageIcon(
-                    AssetImage('assets/icons/ic_show_password.png'),
+                    AssetImage('assets/icons/ic_reveal_password.png'),
                   ),
                   color: isPasswordShow ? Color(0xFF8476AB) : Color(0xFFFAA382),
                   onPressed: () {
@@ -269,7 +279,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 20.0,
+              top: 16.0,
             ),
             child: TextField(
               focusNode: confirmPasswordFocus,
@@ -292,7 +302,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hintStyle: TextStyle(fontFamily: "Roboto", fontSize: 16.0),
                 suffixIcon: IconButton(
                   icon: ImageIcon(
-                    AssetImage('assets/icons/ic_show_password.png'),
+                    AssetImage('assets/icons/ic_reveal_password.png'),
                   ),
                   color: isConfirmPasswordShow
                       ? Color(0xFF8476AB)
@@ -319,17 +329,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _signUoButton() {
     return Container(
-      height: 50,
+      height: 44,
       child: SizedBox.expand(
         child: Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
           ),
-          elevation: 1.0,
+          elevation: 0.0,
           color: Color(0xFFFFA685),
           clipBehavior: Clip.antiAlias,
           child: MaterialButton(
-            height: 46.0,
+            height: 44.0,
             color: Color(0xFFFFA685),
             child: Text('Register',
                 style: TextStyle(
@@ -449,7 +459,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               width: 24.0,
               height: 24.0,
             ),
-            onPressed: () {},
+            onPressed: () {
+              _loginFacebook();
+            },
           ),
         ],
       ),
@@ -488,6 +500,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
     );
+  }
+
+  Future<Null> _loginFacebook() async {
+    final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accessToken = result.accessToken;
+        print('''
+         Logged in!
+         
+         Token: ${accessToken.token}
+         User id: ${accessToken.userId}
+         Expires: ${accessToken.expires}
+         Permissions: ${accessToken.permissions}
+         Declined permissions: ${accessToken.declinedPermissions}
+         ''');
+        screenBloc.add(FacebookRegisterEvent(accessToken));
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print('Login cancelled by the user.');
+        break;
+      case FacebookLoginStatus.error:
+        print('Something went wrong with the login process.\n'
+            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        break;
+    }
   }
 
   @override
