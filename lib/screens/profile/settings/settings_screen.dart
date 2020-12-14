@@ -9,12 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes.dart';
 
 class SettingsScreen extends StatefulWidget {
-  ProfileScreenBloc bloc;
+  MainScreenBloc bloc;
 
   SettingsScreen({
     this.bloc,
@@ -28,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final FacebookLogin facebookSignIn = new FacebookLogin();
 
   @override
   void initState() {
@@ -42,8 +44,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, ProfileScreenState state) async {},
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+      listener: (BuildContext context, MainScreenState state) async {},
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -52,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -71,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _getBody(ProfileScreenState state) {
+  Widget _getBody(MainScreenState state) {
     return SafeArea(
       key: formKey,
       child: Container(
@@ -110,8 +112,12 @@ class _SettingsScreenState extends State<SettingsScreen>
                               fontFamily: 'Roboto',
                             )),
                         onPressed: () {
-                          SharedPreferences.getInstance().then((sp) {
+                          SharedPreferences.getInstance().then((sp) async {
                             sp.setString(Constants.TOKEN, '');
+                            bool isSignin = await facebookSignIn.isLoggedIn;
+                            if (isSignin) {
+                              facebookSignIn.logOut();
+                            }
                             Navigation.toScreenAndCleanBackStack(
                               context: context, screen: LoginScreen());
                           });
@@ -128,8 +134,8 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _listView(ProfileScreenState state) {
-    String email = state.email;
+  Widget _listView(MainScreenState state) {
+    String email = state.email ?? '';
 
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(

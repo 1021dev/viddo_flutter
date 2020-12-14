@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/home/babies/babies_screen.dart';
+import 'package:Viiddo/blocs/post/post_bloc.dart';
 import 'package:Viiddo/screens/home/growth/growth_screen.dart';
 import 'package:Viiddo/screens/home/home_screen.dart';
-import 'package:Viiddo/screens/home/notifications/notifications_screen.dart';
 import 'package:Viiddo/screens/home/post/edit_picture_screen.dart';
 import 'package:Viiddo/screens/home/vaccines/vaccines_screen.dart';
 import 'package:Viiddo/screens/profile/profile_screen.dart';
@@ -17,30 +16,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
 
-import '../themes.dart';
+import 'home/babies/babies_screen.dart';
+import 'home/notifications/notifications_screen.dart';
 
 
-@FFRoute(
-  name: 'viiddo://mainpage',
-  routeName: 'MainPage',
-)
-
-class OverflowMenuItem {
-  final String title;
-  final Color textColor;
-  final VoidCallback onTap;
-
-  OverflowMenuItem({
-    this.title,
-    this.textColor = Colors.black,
-    this.onTap,
-  });
-}
-
+// ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
   int selectedPage;
 
@@ -52,16 +36,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   MainScreenBloc mainScreenBloc = MainScreenBloc();
-  TabController tabController;
   int _selectedIndex = 0;
-  List<Widget> tabs = [];
-  List<String> titles = ['Home', '', 'Profile'];
+  int _previousIndex = 0;
   int loginDate = 0;
   SharedPreferences sharedPreferences;
   final PageStorageBucket bucket = PageStorageBucket();
+
+  final GlobalKey<NavigatorState> homeTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> profileTabNavKey = GlobalKey<NavigatorState>();
+  final CupertinoTabController _tabController = CupertinoTabController();
 
   @override
   void initState() {
@@ -69,7 +55,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       DeviceOrientation.portraitUp,
     ]);
     _selectedIndex = widget.selectedPage;
-    tabController = TabController(length: 2, vsync: this);
+    // tabController = TabController(length: 2, vsync: this);
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
@@ -107,189 +93,224 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             mainScreenBloc: mainScreenBloc,
           ),
         ),
-        BlocProvider<BabyScreenBloc>(
-          create: (context) => BabyScreenBloc(
+        BlocProvider<PostBloc>(
+          create: (context) => PostBloc(
             mainScreenBloc: mainScreenBloc,
           ),
         ),
       ],
       child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: mainScreenBloc,
-        builder: (BuildContext context, state) {
-          tabs = [
-            HomeScreen(key: PageStorageKey('Home'), homeContext: context,),
-            Container(),
-            ProfileScreen(key: PageStorageKey('Profile'), homeContext: context,),
-          ];
-
-          String babyAvatar = state.babyModel != null ? state.babyModel.avatar ?? '' : '';
+        builder: (BuildContext context, MainScreenState state) {
+          _tabController.index = _selectedIndex;
+          String babyAvatar = state.babyAvatar ?? '';
           bool hasUnread = state.unreadMessageModel != null ? state.unreadMessageModel.hasUnread ?? false : false;
-          return DefaultTabController(
-            length: 2,
-            child: new Scaffold(
-              appBar: new AppBar(
-                title: _selectedIndex == 0
-                    ? ImageIcon(
-                        AssetImage('assets/icons/ic_logo_viiddo.png'),
-                        size: 72,
-                      )
-                    : Text(
-                        titles[_selectedIndex],
-                        style: TextStyle(color: Color(0xFF7861B7)),
-                      ),
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: false,
-                leading: _selectedIndex == 0
-                    ? GestureDetector(
-                        child: Center(
-                          child: Container(
-                            width: babyAvatar.length > 0 ? 30.0 : 24.0,
-                            height: babyAvatar.length > 0 ? 30.0 : 24.0,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                fit: BoxFit.cover,
-                                image: babyAvatar != '' ?
-                                    FadeInImage.assetNetwork(
-                                      placeholder: 'assets/icons/ic_tag_baby.png',
-                                      image: babyAvatar,
-                                      width: 24,
-                                      height: 24,
-                                    ).image:
-                                      AssetImage('assets/icons/ic_tag_baby.png')
+
+          return CupertinoTabScaffold(
+              controller: _tabController,
+              tabBar: _createTabBar(),
+              tabBuilder: (BuildContext context, int index) {
+                Widget tabPage;
+                switch (index) {
+                  case 0:
+                    tabPage = HomeScreen(
+                      navKey: homeTabNavKey,
+                      mainScreenBloc: mainScreenBloc,
+                    );
+                    break;
+                  case 1:
+                    tabPage = null;
+                    break;
+                  case 2:
+                    tabPage = ProfileScreen(
+                      navKey: profileTabNavKey,
+                      mainScreenBloc: mainScreenBloc,
+                    );
+                    break;
+                }
+                return new Scaffold(
+                  appBar: new AppBar(
+                    title: _selectedIndex == 0
+                        ? ImageIcon(
+                            AssetImage('assets/icons/ic_logo_viiddo.png'),
+                            size: 72,
+                          )
+                        : Text(
+                            'Profile',
+                            style: TextStyle(color: Color(0xFF7861B7)),
+                          ),
+                    backgroundColor: Colors.white,
+                    automaticallyImplyLeading: false,
+                    leading: _selectedIndex == 0
+                        ? GestureDetector(
+                            child: Center(
+                              child: Container(
+                                width: babyAvatar.length > 0 ? 30.0 : 24.0,
+                                height: babyAvatar.length > 0 ? 30.0 : 24.0,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: new BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: babyAvatar != '' ?
+                                        FadeInImage.assetNetwork(
+                                          placeholder: 'assets/icons/ic_tag_baby.png',
+                                          image: babyAvatar,
+                                          width: 24,
+                                          height: 24,
+                                        ).image:
+                                          AssetImage('assets/icons/ic_tag_baby.png')
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          onTap: () {
-                            SharedPreferences.getInstance()
-                                .then((SharedPreferences sp) {
-                              sharedPreferences = sp;
-                              bool isVerical =
-                                  sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                              if (isVerical) {
-                                Navigation.toScreen(
-                                    context: context,
-                                    screen: BabiesScreen(
-                                      bloc: mainScreenBloc,
-                                    ));
-                              } else {
-                                WidgetUtils.showErrorDialog(
-                                    context, 'Please verify your email first.');
-                              }
-                            }
-                          );
-                        },
-                      )
-                    : Container(),
-                actions: <Widget>[
-                  _selectedIndex == 0
-                    ? Stack(
-                        alignment: Alignment.center,
-                          children: <Widget>[
-                            IconButton(
-                            icon: ImageIcon(
-                              AssetImage('assets/icons/notifications.png'),
-                              size: 24,
-                            ),
-                            tooltip: 'Next page',
-                            onPressed: () {
-                              Navigation.toScreen(
-                                context: context,
-                                screen: NotificationsScreen(
-                                  homeContext: context,
-                                ),
+                              onTap: () {
+                                SharedPreferences.getInstance()
+                                    .then((SharedPreferences sp) {
+                                  sharedPreferences = sp;
+                                  bool isVerical =
+                                      sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                                  if (isVerical) {
+                                    Navigation.toScreen(
+                                        context: context,
+                                        screen: BabiesScreen(
+                                          bloc: mainScreenBloc,
+                                        ));
+                                  } else {
+                                    WidgetUtils.showErrorDialog(
+                                        context, 'Please verify your email first.');
+                                  }
+                                }
                               );
                             },
-                          ),
-                          hasUnread ? 
-                            Container(
-                              width: 24,
-                              height: 24,
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.red,
+                          )
+                        : Container(),
+                    actions: <Widget>[
+                      _selectedIndex == 0
+                        ? Stack(
+                            alignment: Alignment.center,
+                              children: <Widget>[
+                                IconButton(
+                                icon: ImageIcon(
+                                  AssetImage('assets/icons/notifications.png'),
+                                  size: 24,
                                 ),
-                              )
-                            ) : Container(),
-                        ],
-                      )
-                    : Container(),
-                ],
-                elevation: 0,
-                textTheme: TextTheme(
-                  title: TextStyle(
-                    color: Color(0xFFFFA685),
-                    fontSize: 20.0,
-                  ),
-                ),
-                iconTheme: IconThemeData(
-                  color: Color(0xFFFFA685),
-                ),
-              ),
-              body: PageStorage(
-                bucket: bucket,
-                child: tabs[_selectedIndex],
-              ),
-              bottomNavigationBar: BottomNavigationBar(
-                showSelectedLabels: false, // <-- HERE
-                showUnselectedLabels: false, // <-- AND HERE
-                items: [
-                  BottomNavigationBarItem(
-                      icon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_off.png'),
+                                tooltip: 'Next page',
+                                onPressed: () {
+                                  Navigation.toScreen(
+                                    context: context,
+                                    screen: NotificationsScreen(
+                                      homeContext: context,
+                                    ),
+                                  );
+                                },
+                              ),
+                              hasUnread ?
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  alignment: Alignment.topRight,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                ) : Container(),
+                            ],
+                          )
+                        : Container(),
+                    ],
+                    elevation: 0,
+                    textTheme: TextTheme(
+                      headline6: TextStyle(
                         color: Color(0xFFFFA685),
+                        fontSize: 20.0,
                       ),
-                      activeIcon: ImageIcon(
-                        AssetImage('assets/icons/tab_home_on.png'),
-                        color: Color(0xFFFFA685),
-                      ),
-                      title: Text('Home')),
-                  BottomNavigationBarItem(
-                    icon: ImageIcon(
-                      AssetImage("assets/icons/tab_add_off.png"),
+                    ),
+                    iconTheme: IconThemeData(
                       color: Color(0xFFFFA685),
                     ),
-                    title: Text('Profile'),
                   ),
-                  BottomNavigationBarItem(
-                    icon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_off.png"),
-                      color: Color(0xFFFFA685),
-                    ),
-                    activeIcon: ImageIcon(
-                      AssetImage("assets/icons/tab_profile_on.png"),
-                      color: Color(0xFFFFA685),
-                    ),
-                    title: Text('Profile'),
-                  ),
-                ],
-                currentIndex: _selectedIndex,
-                backgroundColor: lightTheme.primaryColor,
-                selectedItemColor: Colors.white,
-                unselectedItemColor: Colors.grey,
-                onTap: (index) {
-                  _onItemTapped(index);
-                },
-              ),
-            ),
+                  body: tabPage,
+
+                );
+              },
           );
         },
       ),
     );
   }
+  GlobalKey<NavigatorState> _currentNavigatorKey() {
+    switch (_tabController.index) {
+      case 0:
+        return homeTabNavKey;
+        break;
+
+      case 2:
+        return profileTabNavKey;
+        break;
+    }
+    return null;
+  }
+
+  CupertinoTabBar _createTabBar() {
+    return CupertinoTabBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/icons/tab_home_off.png'),
+              color: Color(0xFFFFA685),
+              size: 24,
+            ),
+            activeIcon: ImageIcon(
+              AssetImage('assets/icons/tab_home_on.png'),
+              color: Color(0xFFFFA685),
+            size: 24,
+            ),
+          ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(
+            AssetImage("assets/icons/tab_add_off.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(
+            AssetImage("assets/icons/tab_profile_off.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+          activeIcon: ImageIcon(
+            AssetImage("assets/icons/tab_profile_on.png"),
+            color: Color(0xFFFFA685),
+            size: 24,
+          ),
+        ),
+      ],
+      onTap: (index) {
+        _onItemTapped(index);
+      },
+    );
+  }
 
   void _onItemTapped(int index) {
     if (index != 1) {
+      if (index == 0) {
+            mainScreenBloc.add(MainScreenInitEvent());
+      }
       setState(() {
         _selectedIndex = index;
+        _previousIndex = index;
       });
     } else {
+      setState(() {
+        _selectedIndex = _previousIndex;
+        _tabController.index = _selectedIndex;
+      });
       SharedPreferences.getInstance().then(
         (SharedPreferences sp) {
           sharedPreferences = sp;
@@ -305,6 +326,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 return Align(
                   alignment: Alignment.bottomCenter,
                   child: BottomSelector(
+                    mainScreenBloc: mainScreenBloc,
                     closeFunction: () {
                       Navigator.pop(context, 'close');
                     },
@@ -360,17 +382,68 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       source: type == 0 ? ImageSource.gallery : ImageSource.camera,
     );
 
+//    if (image != null) {
+//      Navigation.toScreen(
+//        context: context,
+//        screen: EditPictureScreen(
+//          mainScreenBloc: mainScreenBloc,
+//          image: File(image.path),
+//        ),
+//      );
+//    }
+
     if (image != null) {
+    await _cropImage(File(image.path));
+    }
+  }
+
+  Future<Null> _cropImage(File imageFile) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: imageFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    //    if (croppedFile != null) {
+    //      imageFile = croppedFile;
+    //      setState(() {
+    //        state = AppState.cropped;
+    //      });
+    //    }
+
+    if (croppedFile != null) {
       Navigation.toScreen(
         context: context,
         screen: EditPictureScreen(
-          bloc: mainScreenBloc,
-          image: File(image.path),
+          mainScreenBloc: mainScreenBloc,
+          image: File(croppedFile.path),
         ),
       );
     }
   }
-
   @override
   void dispose() {
     mainScreenBloc.close();

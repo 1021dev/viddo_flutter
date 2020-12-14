@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/screens/home/babies/add_baby_screen.dart';
+import 'package:Viiddo/screens/home/baby_details.dart';
+import 'package:Viiddo/screens/home/comments/comment_screen.dart';
 import 'package:Viiddo/screens/home/post_item_no_activity.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:Viiddo/utils/navigation.dart';
@@ -12,22 +14,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class HomeScreen extends StatefulWidget {
-  final BuildContext homeContext;
-  const HomeScreen({Key key, this.homeContext}) : super(key: key);
+  final MainScreenBloc mainScreenBloc;
+  final GlobalKey<NavigatorState> navKey;
+  final Function showDetail;
+  final Function showBaby;
+
+  const HomeScreen({@required this.navKey, this.mainScreenBloc, this.showDetail, this.showBaby});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(homeContext);
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  HomeScreenBloc screenBloc;
-
-  final BuildContext homeContext;
-
-  _HomeScreenState(this.homeContext);
 
   Timer refreshTimer;
   bool isLogin = true;
@@ -36,15 +37,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
-    initialRefresh: false,
+    initialRefresh: true,
   );
 
   @override
   void initState() {
-    if (screenBloc == null) {
-      screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
-      screenBloc.add(GetMomentByBaby(0, 0, false));
-    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       setState(() {
@@ -53,112 +50,127 @@ class _HomeScreenState extends State<HomeScreen>
       });
     });
 
-    startTimer();
     super.initState();
+        startTimer();
+
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: screenBloc,
-      builder: (BuildContext context, state) {
-        return Scaffold(
-          key: scaffoldKey,
-          body: _getBody(state),
-        );
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
+      bloc: widget.mainScreenBloc,
+      builder: (BuildContext context, MainScreenState state) {
+
+        return _getBody(state);
       },
     );
   }
 
-  Widget _getBody(HomeScreenState state) {
+  Widget _getBody(MainScreenState state) {
     return SafeArea(
       child: Container(
         child: isVerical
             ? state.dataArr != null && state.dataArr.length == 0
-                ? Container(
-                    child: Image.asset('assets/icons/no_data.png'),
-                  )
-                : _buildPostList(state)
+            ? Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/icons/no_post_yet.png'),
+                Padding(padding: EdgeInsets.only(top: 8),),
+                Text(
+                  'No Data',
+                  style: TextStyle(
+                    color: Color(0xFFC4C4C4),
+                    fontFamily: 'Roboto',
+                    fontSize: 18,
+                  ),
+                ),
+
+              ],
+              ),
+          )
+            : _buildPostList(state)
             : Center(
-                child: GestureDetector(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset('assets/icons/ic_home_empty.png'),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 8,
+          child: GestureDetector(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/icons/ic_home_empty.png'),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: 'Add a baby ',
+                    style: TextStyle(
+                      color: Color(0xFFFFA685),
+                      fontFamily: 'Roboto-Bold',
+                      fontSize: 13,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' or ',
+                        style: TextStyle(
+                          color: Color(0xFF8476AB),
+                          fontFamily: 'Roboto-Light',
+                          fontSize: 13,
                         ),
                       ),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Add a baby ',
-                          style: TextStyle(
-                            color: Color(0xFFFFA685),
-                            fontFamily: 'Roboto-Bold',
-                            fontSize: 13,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: ' or ',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'enter invitation code',
-                              style: TextStyle(
-                                color: Color(0xFFFFA685),
-                                fontFamily: 'Roboto-Bold',
-                                fontSize: 13,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' to join a group',
-                              style: TextStyle(
-                                color: Color(0xFF8476AB),
-                                fontFamily: 'Roboto-Light',
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                      TextSpan(
+                        text: 'enter invitation code',
+                        style: TextStyle(
+                          color: Color(0xFFFFA685),
+                          fontFamily: 'Roboto-Bold',
+                          fontSize: 13,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' to join a group',
+                        style: TextStyle(
+                          color: Color(0xFF8476AB),
+                          fontFamily: 'Roboto-Light',
+                          fontSize: 13,
                         ),
                       ),
                     ],
                   ),
-                  onTap: () {
-                    SharedPreferences.getInstance().then(
-                      (SharedPreferences sp) {
-                        bool isVerical =
-                            sp.getBool(Constants.IS_VERI_CAL) ?? false;
-                        if (isVerical) {
-                          Navigation.toScreen(
-                            context: context,
-                            screen: AddBabyScreen(
-                              bloc: screenBloc.mainScreenBloc,
-                            ),
-                          );
-                        } else {
-                          WidgetUtils.showErrorDialog(
-                              context, 'Please verify your email first.');
-                        }
-                      },
-                    );
-                  },
                 ),
-              ),
+              ],
+            ),
+            onTap: () {
+              SharedPreferences.getInstance().then(
+                    (SharedPreferences sp) {
+                  bool isVerical =
+                      sp.getBool(Constants.IS_VERI_CAL) ?? false;
+                  if (isVerical) {
+                    Navigation.toScreen(
+                      context: context,
+                      screen: AddBabyScreen(
+                        bloc: widget.mainScreenBloc,
+                      ),
+                    );
+                  } else {
+                    WidgetUtils.showErrorDialog(
+                        context, 'Please verify your email first.');
+                  }
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildPostList(HomeScreenState state) {
+  Widget _buildPostList(MainScreenState state) {
     dataCount = state.dataArr != null ? state.dataArr.length : 0;
     print('Data Count: => ${state.dataArr}');
     return Container(
@@ -179,21 +191,8 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         footer: CustomFooter(
           builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
-            } else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("release to load more");
-            } else {
-              body = Text("No more Data");
-            }
             return Container(
               height: 55.0,
-              child: Center(child: body),
             );
           },
         ),
@@ -205,15 +204,33 @@ class _HomeScreenState extends State<HomeScreen>
           itemBuilder: (context, index) {
             return PostNoActivityItem(
               content: state.dataArr[index],
-              onTapDetail: () {},
+              onTapDetail:(content) {
+                widget.mainScreenBloc.add(ClearMomentDetailEvent());
+                widget.mainScreenBloc.add(GetMomentDetailsEvent(content.objectId, content.baby.objectId));
+                Navigator.of(context, rootNavigator: true).push<void>(
+                  FadePageRoute(
+                      CommentScreen(
+                        screenBloc: widget.mainScreenBloc,
+                        content: content,
+                      )
+                  ),
+                );
+              },
               onTapLike: () {
-                screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
+                widget.mainScreenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
               },
               onTapComment: () {},
               onTapShare: () {},
-              onTapView: (int i) {
-                // DynamicContent content = state.dataArr[index];
-                // open(context, i, content.albums);
+              onTapView:(content) {
+                widget.mainScreenBloc.add(SelectBabyEvent(content.baby));
+                Navigator.of(context, rootNavigator: true).push<void>(
+                  FadePageRoute(
+                      BabyDetailsScreen(
+                        screenBloc: widget.mainScreenBloc,
+                        babyModel: content.baby,
+                      )
+                  ),
+                );
               },
             );
           },
@@ -224,12 +241,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
-    // screenBloc.add(HomeScreenRefresh(completer));
+    widget.mainScreenBloc.add(MainScreenRefresh(completer));
     return completer.future;
   }
 
   void _onRefresh() async {
-    // await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -239,17 +256,17 @@ class _HomeScreenState extends State<HomeScreen>
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadFailed() async {
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   void _loadNodata() async {
     if (mounted) setState(() {});
-     _refreshController.loadComplete();
+    _refreshController.loadComplete();
   }
 
   @override
@@ -263,20 +280,20 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void startTimer() {
-    if (refreshTimer != null) return;
+    print('Timer Started');
+    if (refreshTimer != null && refreshTimer.isActive) return;
     int time = 20;
     const oneSec = const Duration(seconds: 1);
-    refreshTimer = new Timer.periodic(
-      oneSec,
-      (Timer timer) => () {
+    refreshTimer = Timer.periodic(oneSec, (timer) {
         if (time <= 0) {
           time = 20;
           if (dataCount > 0 && isLogin) {
-            _handleRefresh();
+            widget.mainScreenBloc.add(MainScreenGetRefresh());
             time -= 1;
           }
+        } else {
+            time -= 1;
         }
-      },
-    );
+    });
   }
 }

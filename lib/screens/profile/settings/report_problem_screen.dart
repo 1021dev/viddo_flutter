@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../themes.dart';
 
 class ReportProblemScreen extends StatefulWidget {
-  ProfileScreenBloc bloc;
+  MainScreenBloc bloc;
 
   ReportProblemScreen({
     this.bloc,
@@ -39,10 +39,10 @@ class _ReportProblemScreenState extends State<ReportProblemScreen>
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: widget.bloc,
-      listener: (BuildContext context, ProfileScreenState state) async {
+      listener: (BuildContext context, MainScreenState state) async {
         FocusScope.of(context).requestFocus(reportFocus);
       },
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
         bloc: widget.bloc,
         builder: (BuildContext context, state) {
           return Scaffold(
@@ -51,7 +51,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -73,7 +73,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen>
     );
   }
 
-  Widget _getBody(ProfileScreenState state) {
+  Widget _getBody(MainScreenState state) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);

@@ -12,10 +12,10 @@ import '../../../utils/widget_utils.dart';
 import 'family_item_tile.dart';
 
 class FamilyScreen extends StatefulWidget {
-  ProfileScreenBloc bloc;
+  MainScreenBloc mainScreenBloc;
 
   FamilyScreen({
-    this.bloc,
+    this.mainScreenBloc,
   });
 
   @override
@@ -39,10 +39,10 @@ class _FamilyScreenState extends State<FamilyScreen>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: widget.bloc,
-      listener: (BuildContext context, ProfileScreenState state) async {},
-      child: BlocBuilder<ProfileScreenBloc, ProfileScreenState>(
-        bloc: widget.bloc,
+      bloc: widget.mainScreenBloc,
+      listener: (BuildContext context, MainScreenState state) async {},
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+        bloc: widget.mainScreenBloc,
         builder: (BuildContext context, state) {
           return Scaffold(
             appBar: new AppBar(
@@ -50,7 +50,7 @@ class _FamilyScreenState extends State<FamilyScreen>
               backgroundColor: Colors.white,
               elevation: 0,
               textTheme: TextTheme(
-                title: TextStyle(
+                headline6: TextStyle(
                   color: Color(0xFF7861B7),
                   fontSize: 18.0,
                   fontFamily: 'Roboto',
@@ -73,7 +73,7 @@ class _FamilyScreenState extends State<FamilyScreen>
                     Navigation.toScreen(
                       context: context,
                       screen: InviteSomeOneScreen(
-                        bloc: widget.bloc,
+                        bloc: widget.mainScreenBloc,
                       ),
                     );
                   },
@@ -89,17 +89,13 @@ class _FamilyScreenState extends State<FamilyScreen>
     );
   }
 
-  Widget _getBody(ProfileScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      return SafeArea(
-        key: formKey,
-        child: Container(
-          child: _listView(),
-        ),
-      );
-    }
+  Widget _getBody(MainScreenState state) {
+    return SafeArea(
+      key: formKey,
+      child: Container(
+        child: _listView(),
+      ),
+    );
   }
 
   Widget _listView() {

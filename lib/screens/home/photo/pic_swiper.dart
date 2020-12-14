@@ -11,7 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:toast/toast.dart';
   
 import 'package:chewie/chewie.dart';
-import 'package:chewie/src/chewie_player.dart';
+import 'package:chewie/src/chewie_player.dart' show Chewie, ChewieController;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -103,7 +103,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    if (isVideo) {
+    if (!isVideo) {
       rebuildIndex.close();
       rebuildSwiper.close();
       rebuildDetail.close();
@@ -204,7 +204,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           }
         },
       );
-
+      return result;
 
     } else {
       final Size size = MediaQuery.of(context).size;
@@ -377,13 +377,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   image = GestureDetector(
                     child: image,
                     onTap: () {
-                      // if (translateY != 0) {
-                      //   translateY = 0;
-                      //   rebuildDetail.sink.add(translateY);
-                      // }
-                      // else
                       {
-                        slidePagekey.currentState.popPage();
+                        // slidePagekey.currentState.popPage();
                         Navigator.pop(context);
                       }
                     },
