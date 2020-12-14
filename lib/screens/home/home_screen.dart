@@ -13,39 +13,47 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen();
+  final BuildContext homeContext;
+  const HomeScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState(homeContext);
 }
 
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  HomeScreenBloc screenBloc;
 
-  HomeScreenBloc screenBloc = HomeScreenBloc();
+  final BuildContext homeContext;
+
+  _HomeScreenState(this.homeContext);
 
   Timer refreshTimer;
   bool isLogin = true;
   int dataCount = 0;
+  bool isVerical = true;
 
   SharedPreferences sharedPreferences;
   RefreshController _refreshController = RefreshController(
-    initialRefresh: true,
+    initialRefresh: false,
   );
 
   @override
   void initState() {
+    if (screenBloc == null) {
+      screenBloc = BlocProvider.of<HomeScreenBloc>(homeContext);
+      screenBloc.add(GetMomentByBaby(0, 0, false));
+    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       setState(() {
         isLogin = (sp.getString(Constants.TOKEN) ?? '').length > 0;
+        isVerical = sp.getBool(Constants.IS_VERI_CAL) ?? false;
       });
     });
 
     startTimer();
-    screenBloc.add(HomeInitEvent());
     super.initState();
   }
 
@@ -55,29 +63,26 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return BlocListener(
+    return BlocBuilder(
       bloc: screenBloc,
-      listener: (BuildContext context, HomeScreenState state) async {},
-      child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
-        bloc: screenBloc,
-        builder: (BuildContext context, state) {
-          return Scaffold(
-            key: scaffoldKey,
-            body: _getBody(state),
-          );
-        },
-      ),
+      builder: (BuildContext context, state) {
+        return Scaffold(
+          key: scaffoldKey,
+          body: _getBody(state),
+        );
+      },
     );
   }
 
   Widget _getBody(HomeScreenState state) {
-    bool isPost = true;
-
     return SafeArea(
-      key: formKey,
       child: Container(
-        child: isPost
-            ? _buildPostList(state)
+        child: isVerical
+            ? state.dataArr != null && state.dataArr.length == 0
+                ? Container(
+                    child: Image.asset('assets/icons/no_data.png'),
+                  )
+                : _buildPostList(state)
             : Center(
                 child: GestureDetector(
                   child: Column(
@@ -137,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen>
                           Navigation.toScreen(
                             context: context,
                             screen: AddBabyScreen(
-                              bloc: screenBloc,
+                              bloc: screenBloc.mainScreenBloc,
                             ),
                           );
                         } else {
@@ -155,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildPostList(HomeScreenState state) {
     dataCount = state.dataArr != null ? state.dataArr.length : 0;
-    
+    print('Data Count: => ${state.dataArr}');
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -200,6 +205,16 @@ class _HomeScreenState extends State<HomeScreen>
           itemBuilder: (context, index) {
             return PostNoActivityItem(
               content: state.dataArr[index],
+              onTapDetail: () {},
+              onTapLike: () {
+                screenBloc.add(LikeEvent(state.dataArr[index].objectId, !state.dataArr[index].isLike, index));
+              },
+              onTapComment: () {},
+              onTapShare: () {},
+              onTapView: (int i) {
+                // DynamicContent content = state.dataArr[index];
+                // open(context, i, content.albums);
+              },
             );
           },
         ),
@@ -207,15 +222,14 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Future<Null> _handleRefresh(context) {
+  Future<Null> _handleRefresh() {
     Completer<Null> completer = new Completer<Null>();
+    // screenBloc.add(HomeScreenRefresh(completer));
     return completer.future;
   }
 
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+    // await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -225,33 +239,44 @@ class _HomeScreenState extends State<HomeScreen>
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 //    items.add((items.length+1).toString());
     if (mounted) setState(() {});
-    _refreshController.loadComplete();
+     _refreshController.loadComplete();
+  }
+
+  void _loadFailed() async {
+    if (mounted) setState(() {});
+     _refreshController.loadComplete();
+  }
+
+  void _loadNodata() async {
+    if (mounted) setState(() {});
+     _refreshController.loadComplete();
   }
 
   @override
   void dispose() {
     if (refreshTimer != null) {
       refreshTimer.cancel();
+      refreshTimer = null;
     }
+    // screenBloc.close();
     super.dispose();
   }
 
   void startTimer() {
+    if (refreshTimer != null) return;
     int time = 20;
     const oneSec = const Duration(seconds: 1);
     refreshTimer = new Timer.periodic(
       oneSec,
-      (Timer timer) => setState(
-        () {
-          if (time <= 0) {
-            time = 20;
-            if (dataCount > 0 && isLogin) {
-              screenBloc.add(HomeScreenRefresh());
-            }
+      (Timer timer) => () {
+        if (time <= 0) {
+          time = 20;
+          if (dataCount > 0 && isLogin) {
+            _handleRefresh();
+            time -= 1;
           }
-          time -= 1;
-        },
-      ),
+        }
+      },
     );
   }
 }

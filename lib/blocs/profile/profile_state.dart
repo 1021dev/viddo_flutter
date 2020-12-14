@@ -61,10 +61,13 @@ class ProfileScreenState {
   }
 }
 
+// ignore: must_be_immutable
 class VerificationSuccess extends ProfileScreenState {}
 
+// ignore: must_be_immutable
 class UpdateProfileSuccess extends ProfileScreenState {}
 
+// ignore: must_be_immutable
 class ProfileScreenFailure extends ProfileScreenState {
   final String error;
 

@@ -1,30 +1,78 @@
+import 'package:Viiddo/models/baby_model.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class BabiesItemTile extends StatelessWidget {
   final Function function;
-  final int index;
+  final BabyModel model;
   const BabiesItemTile({
     Key key,
     this.function,
-    this.index,
+    this.model,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String name = model.name ?? '';
+    String avatar = model.avatar ?? '';
+    String defaultImage = (model.gender ?? '') == '' ? 'assets/icons/default_unisex.png' :
+                            (model.gender == 'M' ? 'assets/icons/default_boy.png':
+                            'assets/icons/default_girl.png');
+    int birthDay = model.birthDay ?? 0;
+    String ageString = '';
+    int age = -1;
+    double diff = -1;
+    String birthString = '';
+    if (birthDay != 0) {
+      DateTime now = DateTime.now();
+      DateTime birth = DateTime.fromMillisecondsSinceEpoch(birthDay);
+      age = now.year - birth.year;
+      diff = now.difference(birth).inDays / 30;
+      birthString = formatDate(
+                      birth,
+                      [m, '/', dd, '/', yyyy],
+                    );
+      if (age > 1) {
+        ageString = '$age Years';
+      } else if (age == 1) {
+        ageString = '1 Year';
+      } else {
+        if (diff.toInt() > 1) {
+          ageString = '${diff.toInt()} Months';
+        } else if (diff.toInt() == 1) {
+          ageString = '1 Month';
+        }
+      }
+    }
+
     final makeListTile = ListTile(
       leading: Container(
         width: 45,
         height: 45,
-        child: Image.asset('assets/icons/default_boy.png'),
-      ),
-      title: Text(
-        'Lean',
-        style: TextStyle(
-          color: Color(0xFFFFA685),
-          fontSize: 12,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: avatar != '' ?
+                FadeInImage.assetNetwork(
+                  placeholder: defaultImage,
+                  image: avatar,
+                ).image : AssetImage(defaultImage)
+          ),
         ),
+      ),
+      title: Row(
+        children:<Widget>[
+          Text(
+            name,
+            style: TextStyle(
+              color: Color(0xFFFFA685),
+              fontSize: 12,
+            ),
+          ),
+          birthDay == 0 ? Image.asset('assets/icons/baby_indicator.png'): Container(),
+        ],
       ),
       subtitle: Row(
         children: <Widget>[
@@ -36,13 +84,13 @@ class BabiesItemTile extends StatelessWidget {
             ),
           ),
           Text(
-            '07/15/2013',
+            birthString,
             style: TextStyle(
               color: Color(0xFF8476AB),
               fontSize: 11,
             ),
           ),
-          Padding(
+          ageString != '' ? Padding(
             padding: EdgeInsets.only(left: 4),
             child: Container(
               alignment: Alignment.center,
@@ -54,14 +102,14 @@ class BabiesItemTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Text(
-                '1 Month',
+                ageString,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 9,
-                ),
+                ) ,
               ),
             ),
-          ),
+          ): Container(),
         ],
       ),
       trailing: Image.asset(

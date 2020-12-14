@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:Viiddo/blocs/bloc.dart';
 import 'package:Viiddo/blocs/profile/profile.dart';
 import 'package:Viiddo/models/profile_setting_model.dart';
-import 'package:Viiddo/screens/profile/baby/babies_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_screen.dart';
 import 'package:Viiddo/screens/profile/family/family_screen.dart';
 import 'package:Viiddo/screens/profile/profile_header.dart';
@@ -11,7 +11,6 @@ import 'package:Viiddo/screens/profile/settings/report_problem_screen.dart';
 import 'package:Viiddo/screens/profile/settings/settings_screen.dart';
 import 'package:Viiddo/screens/profile/verify_email_view.dart';
 import 'package:Viiddo/utils/constants.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -20,20 +19,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../themes.dart';
 import '../../utils/navigation.dart';
-import '../../utils/widget_utils.dart';
+import 'baby/babies_visible_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen();
+  final BuildContext homeContext;
+  const ProfileScreen({Key key, this.homeContext}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState(homeContext);
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  ProfileScreenBloc screenBloc = ProfileScreenBloc();
+  final BuildContext homeContext;
+
+  _ProfileScreenState(this.homeContext);
+  ProfileScreenBloc screenBloc;
 
   Timer _timer;
   int _start = 10;
@@ -69,8 +71,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: BabiesScreen(
-              bloc: screenBloc,
+            screen: BabiesVisibleScreen(
+              homeContext: context,
             ),
           );
         },
@@ -112,8 +114,12 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
-    screenBloc.add(InitProfileScreen());
-    screenBloc.add(UserProfile());
+    if (screenBloc == null) {
+      screenBloc = BlocProvider.of<ProfileScreenBloc>(homeContext);
+
+      screenBloc.add(InitProfileScreen());
+      screenBloc.add(UserProfile());
+    }
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       bool isShowWelcome = sp.getBool(Constants.IS_VERI_CAL) ?? false;
@@ -149,10 +155,9 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _getBody(ProfileScreenState state) {
     if (sharedPreferences != null) {
-      isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL);
+      isVerified = sharedPreferences.getBool(Constants.IS_VERI_CAL) ?? false;
     }
     return SafeArea(
-      key: formKey,
       child: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: 24),
         child: Container(

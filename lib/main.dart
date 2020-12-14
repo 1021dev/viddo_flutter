@@ -1,3 +1,4 @@
+import 'package:Viiddo/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +35,7 @@ class ViiddoState extends State<Viiddo> {
     ]);
     return MaterialApp(
       builder: (context, child) {
+        ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
         var data = MediaQuery.of(context);
         var textScaleFactor = data.textScaleFactor;
         if (textScaleFactor > 1.25) {

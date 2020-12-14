@@ -1,111 +1,46 @@
 import 'dart:async';
 
 import 'package:Viiddo/apis/api_service.dart';
-import 'package:Viiddo/models/baby_list_model.dart';
-import 'package:Viiddo/models/baby_model.dart';
 import 'package:Viiddo/models/dynamic_content.dart';
-import 'package:Viiddo/models/friend_list_model.dart';
+import 'package:Viiddo/models/dynamic_creator.dart';
 import 'package:Viiddo/models/page_response_model.dart';
-import 'package:Viiddo/models/unread_message_model.dart';
 import 'package:Viiddo/utils/constants.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc.dart';
 
 class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
   ApiService _apiService = ApiService();
+  final MainScreenBloc mainScreenBloc;
+  HomeScreenBloc({@required this.mainScreenBloc});
+
 
   @override
   HomeScreenState get initialState => HomeScreenState();
 
   @override
   Stream<HomeScreenState> mapEventToState(HomeScreenEvent event) async* {
-    if (event is HomeInitEvent) {
-      yield* init();
-    } else if (event is GetBabyInfo) {
-      yield* getBabyInfo(event.objectId);
-    } else if (event is GetFriendByBaby) {
-      yield* getFriendByBaby(event.objectId);
-    } else if (event is GetMomentByBaby) {
+    if (event is GetMomentByBaby) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
+
       yield* getMomentByBaby(
-        event.objectId,
+        babyId,
         event.page,
         event.tag,
       );
-    } else if (event is GetDataWithHeader) {
-      yield* getDataWithHeader(event.isHeader);
-    } else if (event is HomeScreenRefresh) {
-      yield* getDataWithHeader(true);
-    }
+    } else if (event is LikeEvent) {
+      yield* _likeMoment(event.objectId, event.isLike, event.index);
+    } else if (event is CommentEvent) {
+      yield* _postComment(event.objectId, event.parentId, event.replyUserId, event.content);
+   }
   }
-
-  Stream<HomeScreenState> init() async* {
-    try {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      bool isRefresh = sharedPreferences.getInt(Constants.IS_REFRESH) ?? false;
-      int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
-      add(GetDataWithHeader(true));
-
-      if (isRefresh) {
-        add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
-        add(GetFriendByBaby(babyId));
-//        getFriendByBaby(babyId);
-        sharedPreferences.setBool(Constants.IS_REFRESH, false);
-      }
-      if (babyId == 0) {
-        add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
-      } else {
-        add(GetBabyInfo(babyId));
-//        getBabyInfo(babyId);
-      }
-      if (!state.frameBaby) {
-//        getUnreadMessages();
-        try {
-          UnreadMessageModel model = await _apiService.getUnreadMessages();
-          yield state.copyWith(unreadMessageModel: model);
-        } catch (error) {
-          yield state.copyWith(unreadMessageModel: null);
-          print(error.toString());
-        } finally {}
-      }
-    } catch (error) {
-      yield HomeScreenFailure(error: error);
-    } finally {}
-  }
-
-  Stream<HomeScreenState> getBabyInfo(int objectId) async* {
-    try {
-      BabyModel model = await _apiService.getBabyInfo(objectId);
-      yield state.copyWith(babyModel: model);
-    } catch (error) {
-      yield HomeScreenFailure(error: error);
-    } finally {}
-  }
-
-  Stream<HomeScreenState> getFriendByBaby(int objectId) async* {
-    try {
-      FriendListModel model = await _apiService.getFriendsByBaby(objectId);
-      yield state.copyWith(friendListModel: model);
-    } catch (error) {
-      yield HomeScreenFailure(error: error);
-    } finally {}
-  }
-
-//  Stream<HomeScreenState> getMyBabys(int page) async* {
-//    try {
-//      BabyListModel model = await _apiService.getMyBabyList(page);
-//      yield state.copyWith(babyListModel: model);
-//    } catch (error) {
-//      yield HomeScreenFailure(error: error);
-//    } finally {}
-//  }
 
   Stream<HomeScreenState> getMomentByBaby(
-      int objectId, int page, bool tag) async* {
+    int objectId, int page, bool tag) async* {
     yield state.copyWith(isLoading: true);
     try {
       PageResponseModel pageResponseModel = await _apiService.getMomentByBaby(
@@ -114,9 +49,9 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         tag,
       );
       List<DynamicContent> dataArr = [];
-      if (state.dataArr != null) {
-        dataArr.addAll(state.dataArr);
-      }
+     if (state.dataArr != null && page != 0) {
+       dataArr.addAll(state.dataArr);
+     }
       if (pageResponseModel.content != null) {
         for (int i = 0; i < pageResponseModel.content.length; i++) {
           DynamicContent content =
@@ -126,66 +61,52 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
           }
         }
       }
-      yield state.copyWith(dataArr: dataArr);
+      print('data => $dataArr');
+      yield state.copyWith(isLoading: false, dataArr: dataArr);
     } catch (error) {
       yield HomeScreenFailure(error: error);
-    } finally {
       yield state.copyWith(isLoading: false);
     }
   }
 
-  Stream<HomeScreenState> getDataWithHeader(bool isHeader) async* {
+
+  Stream<HomeScreenState> _likeMoment(int objectId, bool isLike, int index) async* {
     try {
-      if (!state.frameBaby) {
-//        getUnreadMessages();
-        try {
-          UnreadMessageModel model = await _apiService.getUnreadMessages();
-          yield state.copyWith(unreadMessageModel: model);
-        } catch (error) {
-          yield state.copyWith(unreadMessageModel: null);
-          print(error.toString());
-        } finally {}
-      }
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      int babyId = sharedPreferences.getInt(Constants.BABY_ID) ?? 0;
-      if (babyId != 0) {
-        if (isHeader) {
-          if (state.frameBaby) {
-            add(GetBabyInfo(state.frameBaby ? state.babyId : babyId));
-          }
-        }
-        add(GetMomentByBaby(babyId, state.page, state.tag));
+      List<DynamicContent> dataArr = state.dataArr;
+      DynamicContent dynamicContent = dataArr[index];
+      dynamicContent.isLike = !dynamicContent.isLike;
+      List<DynamicCreator> likeList = dynamicContent.likeList;
+        String name = sharedPreferences.getString(Constants.USERNAME) ?? '';
+        String avatar = sharedPreferences.getString(Constants.AVATAR) ?? '';
+        int id = sharedPreferences.getInt(Constants.OBJECT_ID) ?? 0;
+      if (dynamicContent.isLike) {
+        likeList.add(DynamicCreator(name: name, avatar: avatar, objectId: id, nickName: name));
       } else {
-        try {
-          BabyListModel model = await _apiService.getMyBabyList(state.page);
-          yield state.copyWith(babyListModel: model);
-        } catch (error) {
-          yield HomeScreenFailure(error: error);
-        } finally {}
+        likeList = likeList.where( (user) {
+          return user.objectId != id;
+        }).toList();
       }
-    } catch (error) {} finally {}
+      dynamicContent.likeList = likeList;
+      dataArr[index] = dynamicContent;
+      yield state.copyWith(dataArr: dataArr);
+      bool isLiked =
+          await _apiService.updateLike(objectId, isLike);
+          print('isLiked => $isLiked');
+    } catch (error) {
+      print('error => $error');
+    }
   }
 
-  Stream<HomeScreenState> getUnreadMessages() async* {
+  Stream<HomeScreenState> _postComment(int objectId, int parentId, int replyUserId, String content) async* {
     try {
-      UnreadMessageModel model = await _apiService.getUnreadMessages();
-      yield state.copyWith(unreadMessageModel: model);
+      bool success =
+          await _apiService.postComment(objectId, parentId, replyUserId, content);
+          print('post comment success => $success');
     } catch (error) {
-      yield state.copyWith(unreadMessageModel: null);
-      print(error.toString());
-    } finally {}
+      print('error => $error');
+    }
   }
 
-  Stream<HomeScreenState> getRefreshInformation() async* {
-    try {
-      bool isRefresh = await _apiService.getRefreshInformation();
-      if (isRefresh) {
-        add(GetDataWithHeader(true));
-//        getDataWithHeader(true);
-      }
-    } catch (error) {
-      print(error.toString());
-    } finally {}
-  }
 }

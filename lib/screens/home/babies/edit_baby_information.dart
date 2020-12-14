@@ -1,18 +1,23 @@
+import 'dart:io';
+
 import 'package:Viiddo/blocs/bloc.dart';
-import 'package:Viiddo/screens/profile/edit/change_location_screen.dart';
+import 'package:Viiddo/models/baby_model.dart';
+import 'package:Viiddo/screens/home/babies/change_baby_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit/change_name_screen.dart';
 import 'package:Viiddo/screens/profile/edit/edit_profile_setting_tile.dart';
 import 'package:Viiddo/utils/navigation.dart';
-import 'package:Viiddo/utils/widget_utils.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditBabyInformationScreen extends StatefulWidget {
   MainScreenBloc bloc;
-
+  BabyModel baby;
   EditBabyInformationScreen({
+    this.baby,
     this.bloc,
   });
 
@@ -26,6 +31,7 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  int tempBirthday = 0;
   @override
   void initState() {
     super.initState();
@@ -99,33 +105,38 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
   }
 
   Widget _getBody(MainScreenState state) {
-    if (state.isLoading) {
-      return WidgetUtils.loadingView();
-    } else {
-      return SafeArea(
-        key: formKey,
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                color: Color(0xFFF0F0F0),
-                height: 10,
-              ),
-              _listView(),
-            ],
-          ),
+    return SafeArea(
+      key: formKey,
+      child: Container(
+        color: Color(0xFFFFFBF8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+            ),
+            _listView(state),
+          ],
         ),
-      );
-    }
+      ),
+    );
   }
 
-  Widget _listView() {
+  Widget _listView(MainScreenState state) {
+    String avatar = widget.baby.avatar ?? 'assets/icons/icon_place_holder.png';
+    String name = widget.baby.name;
+    String gender = (widget.baby.gender ?? '') == 'M' ? 'Male': ((widget.baby.gender ?? '') == 'F' ? 'Female': '');
+    String birthDate = '';
+    int birth = widget.baby.birthDay ?? 0;
+    if (birth > 0) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(birth);
+      birthDate = formatDate(date, [m, '/' , dd, '/', yyyy]);
+    }
     List<EditProfileSettingTile> list = [
       EditProfileSettingTile(
         title: 'Profile Picture',
-        image: 'assets/icons/icon_place_holder.png',
-        height: 44,
+        image: avatar,
+        height: 45,
         function: () {
           showCupertinoModalPopup(
             context: context,
@@ -158,18 +169,20 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
       ),
       EditProfileSettingTile(
         title: 'Name',
-        value: 'Demo User',
-        height: 44,
+        value: name == '' ? 'Add Name' : name,
+        height: 45,
+        color: name == '' ? Color(0x907861B7): Color(0xFFFFA685),
         function: () {
           Navigation.toScreen(
             context: context,
-            screen: ChangeNameScreen(),
+            screen: ChangeBabyNameScreen(screenBloc: widget.bloc, babyModel: widget.baby,),
           );
         },
       ),
       EditProfileSettingTile(
         title: 'Gender',
-        value: 'Select Gender',
+        value: gender == '' ? 'Select Gender' : gender,
+        color: gender == '' ? Color(0x907861B7): Color(0xFFFFA685),
         height: 44,
         function: () {
           showCupertinoModalPopup(
@@ -203,19 +216,64 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
       ),
       EditProfileSettingTile(
         title: 'Birthdate',
-        value: 'Select Date',
-        height: 44,
+        value: birthDate == '' ? 'Select Date': birthDate,
+        color: birthDate == '' ? Color(0x907861B7): Color(0xFFFFA685),
+        height: 45,
         function: () async => await showModalBottomSheet(
           context: context,
           builder: (BuildContext builder) {
-            return Container(
-              height: 240,
-              child: CupertinoDatePicker(
-                initialDateTime: DateTime.now(),
-                onDateTimeChanged: (DateTime newdate) {
-                  print(newdate);
-                },
-                mode: CupertinoDatePickerMode.date,
+            return SafeArea(
+              child: Container(
+                height: 270,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        MaterialButton(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Color(0xFF8476AB),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              tempBirthday = 0;
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        MaterialButton(
+                          child: Text(
+                            'Done',
+                            style: TextStyle(
+                              color: Color(0xFFFFA685),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.bloc.add(
+                              UpdateBabyBirthDay(widget.baby.objectId, tempBirthday),
+                            );
+                          },
+                        )
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    Expanded(
+                      child: CupertinoDatePicker(
+                        initialDateTime: birth > 0 ? DateTime.fromMillisecondsSinceEpoch(birth): DateTime.now(),
+                        onDateTimeChanged: (DateTime newdate) {
+                          print(newdate);
+                          setState(() {
+                            tempBirthday = newdate.millisecondsSinceEpoch;
+                          });
+                        },
+                        mode: CupertinoDatePickerMode.date,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -243,6 +301,20 @@ class _EditBabyInformationScreenState extends State<EditBabyInformationScreen>
       ),
     );
   }
+  Future getImage(int type) async {
+    ImagePicker imagePicker = ImagePicker();
+    PickedFile image = await imagePicker.getImage(
+      source: type == 0 ? ImageSource.camera : ImageSource.gallery,
+    );
+
+    if (image != null) {
+      List<File> files = [];
+      files.add(new File(image.path));
+      widget.bloc.add(PickBabyProfileImage(widget.baby.objectId, files));
+    }
+  }
+
+
 
   @override
   void dispose() {
